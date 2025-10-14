@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+data/
+models/model_weights/
+notebooks/.ipynb_checkpoints/

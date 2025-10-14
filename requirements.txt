@@ -1,0 +1,8 @@
+numpy
+pandas
+torch
+tensorflow
+fastapi
+uvicorn
+pillow
+docker
