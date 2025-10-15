@@ -1,16 +1,14 @@
 import base64
 import json
 import requests
-from fastapi import UploadFile
 from src.config.settings import API_KEY, MODEL
 
-def prepare_image_input(image: UploadFile):
-    content = image.file.read()
-    b64 = base64.b64encode(content).decode("utf-8")
+def prepare_image_input(image_bytes: bytes):
+    b64 = base64.b64encode(image_bytes).decode("utf-8")
     return {"type": "image_url", "image_url": f"data:image/jpeg;base64,{b64}"}
 
-def predict_tags(image: UploadFile):
-    image_payload = prepare_image_input(image)
+def predict_tags(image_bytes: bytes):
+    image_payload = prepare_image_input(image_bytes)
     headers = {
         "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json",
