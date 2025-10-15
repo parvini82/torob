@@ -1,2 +1,15 @@
-API_KEY = "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"
-MODEL = "qwen/qwen2.5-vl-72b-instruct:free"
+# --- OpenRouter settings ---
+import os
+
+OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
+OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1/chat/completions"
+REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "60"))
+
+# Optional site metadata for OpenRouter ranking/headers
+OPENROUTER_SITE_URL: str = os.getenv("OPENROUTER_SITE_URL", "")
+OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "")
+
+# --- Default models ---
+VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-72b-instruct:free")
+TRANSLATE_MODEL: str = os.getenv("TRANSLATE_MODEL", "qwen/qwen2.5-7b-instruct:free")
+
