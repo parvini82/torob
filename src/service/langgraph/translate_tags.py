@@ -6,7 +6,7 @@ from .config import TRANSLATE_MODEL
 def build_translation_prompt(tags_en: Dict[str, Any]) -> str:
     return (
         "You are a professional translator specialized in e-commerce and apparel products.\n"
-        "Translate the following JSON object from English to Persian.\n"
+        "Translate the following JSON object from English to Persian.TRanslate both keys and values\n"
         "Do not change the structure;\n"
         f"Input JSON:\n{tags_en}\n"
         "Output only the translated JSON object, without any extra explanation."
