@@ -8,7 +8,7 @@ requests~=2.32.5
 langgraph~=0.6.10
 python-dotenv~=1.0.1
 python-multipart~=0.0.9
-
+prometheus-fastapi-instrumentator
 # Development tools
 black==25.9.0
 isort==7.0.0

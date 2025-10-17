@@ -17,6 +17,8 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENROUTER_MODEL=${OPENROUTER_MODEL:-qwen/qwen2.5-vl-72b-instruct:free}
     command: uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000 --reload --reload-dir src
+    networks:
+      - monitor-net
 
   frontend:
     image: node:20-alpine
@@ -31,3 +33,36 @@ services:
     command: sh -c "npm ci && npm run dev"
     depends_on:
       - app
+    networks:
+      - monitor-net
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000" # Mapped to 3001 to avoid conflict with your frontend
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - monitor-net
+
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+  grafana-storage:

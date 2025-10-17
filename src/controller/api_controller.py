@@ -1,15 +1,20 @@
-from fastapi import FastAPI, UploadFile, File, Body
+from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
-from src.service.langgraph.langgraph_service import run_langgraph_on_bytes, run_langgraph_on_url
+from src.service.langgraph.langgraph_service import run_langgraph_on_url
 from dotenv import load_dotenv
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Load environment variables from .env at project root if present
 load_dotenv()
 
 app = FastAPI(title="Image Tagging API")
-# فعال کردن CORS
+
+# Add Prometheus middleware and expose the /metrics endpoint
+Instrumentator().instrument(app).expose(app)
+
+# Enable CORS
 origins = [
-    "http://localhost:3000",  # آدرس فرانت‌اند شما
+    "http://localhost:3000",
     "http://127.0.0.1:3000"
 ]
 
