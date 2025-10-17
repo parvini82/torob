@@ -4,3 +4,4 @@ __pycache__/
 data/
 models/model_weights/
 notebooks/.ipynb_checkpoints/
+.idea

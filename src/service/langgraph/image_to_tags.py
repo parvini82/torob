@@ -1,12 +1,11 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
+from .config import VISION_MODEL
 from .model_client import (
     OpenRouterClient,
     make_image_part,
     make_text_part,
 )
-
-from .config import VISION_MODEL
 
 
 def build_prompt() -> str:
@@ -16,11 +15,7 @@ def build_prompt() -> str:
         "Return the result as a structured JSON with short English values.\n"
         "Example output:\n"
         "{"
-        "\"brand\": \"Nike\", "
-        "\"category\": \"Sneakers\", "
-        "\"color\": \"White\", "
-        "\"gender\": \"Men\", "
-        "\"material\": \"Leather\""
+        '"brand": "Nike", ...'
         "}\n"
         "Output strictly JSON only, with no explanations or extra text."
     )
@@ -52,5 +47,3 @@ def image_to_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
         "image_tags_en": image_tags_en,
         "raw_response": result.get("text"),
     }
-
-
