@@ -1,0 +1,67 @@
+{
+  "name": "Torob Dev Container",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "app",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
+
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.10"
+    }
+  },
+
+  "containerEnv": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUNBUFFERED": "1"
+  },
+
+  "remoteEnv": {
+    "OPENROUTER_API_KEY": "${localEnv:OPENROUTER_API_KEY}",
+    "OPENROUTER_MODEL": "${localEnv:OPENROUTER_MODEL}"
+  },
+
+  "mounts": [
+    "source=${localWorkspaceFolder}/.env,target=/app/.env,type=bind,consistency=cached"
+  ],
+
+  "envFile": "../.env",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": [
+          "-q"
+        ],
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true
+        }
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+
+  "postCreateCommand": "pip install -r requirements.txt && pre-commit install || true",
+
+  "forwardPorts": [8000, 3000, 3001, 9090],
+  "portsAttributes": {
+    "8000": { "label": "FastAPI" },
+    "3000": { "label": "Frontend" },
+    "3001": { "label": "Grafana" },
+    "9090": { "label": "Prometheus" }
+  }
+}
