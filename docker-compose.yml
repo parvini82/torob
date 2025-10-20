@@ -9,6 +9,8 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
+      - ./evaluation:/app/evaluation
+      - ./data:/app/data
       - ./.env:/app/.env
       - ./requirements.txt:/app/requirements.txt
     env_file:
