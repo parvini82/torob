@@ -265,6 +265,15 @@ class ImageProcessor:
             
             # Step 6: Parse response
             response_data = response.json()
+            try:
+                parsed_result = self._parse_api_response(response_data)
+            except ModelServiceError as e:
+                # If the model does not have JSON output, return error dict instead of exception
+                return {
+                    "error": "json_parse_error",
+                    "message": str(e),
+                    "_metadata": {"parse_failed": True}
+                }            
             parsed_result = self._parse_api_response(response_data)
             
             # Step 7: Add metadata to response
