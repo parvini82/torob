@@ -283,7 +283,6 @@ class ImageProcessor:
                 raise
             raise ModelServiceError(f"Unexpected error during image processing: {str(e)}") from e
 
-
 # Global instance for backward compatibility
 _default_processor = None
 
