@@ -24,3 +24,9 @@ isort==7.0.0
 mypy==1.18.2
 flake8==7.3.0
 pre-commit==3.6.2
+
+# Additional
+minio==7.1.6  # For MinIO client support
+redis==4.0.2  # Redis client for Python
+pymongo==4.3.3  # MongoDB client for Python
+qdrant-client==1.2.0

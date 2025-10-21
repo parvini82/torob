@@ -18,7 +18,16 @@ services:
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENROUTER_MODEL=${OPENROUTER_MODEL:-qwen/qwen2.5-vl-72b-instruct:free}
+      - MONGODB_URI=mongodb://mongodb:27017/
+      - REDIS_URL=redis://redis:6379
+      - MINIO_URL=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
     command: uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000 --reload --reload-dir src
+    depends_on:
+      - mongodb
+      - redis
+      - minio
     networks:
       - monitor-net
 
@@ -54,11 +63,44 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3001:3000" # Mapped to 3001 to avoid conflict with your frontend
+      - "3001:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
     depends_on:
       - prometheus
+    networks:
+      - monitor-net
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - monitor-net
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - monitor-net
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "44555:44555"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_USERNAME}
+      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+    volumes:
+      - minio_data:/data
+    command: server /data
     networks:
       - monitor-net
 
@@ -68,3 +110,5 @@ networks:
 
 volumes:
   grafana-storage:
+  mongodb_data:
+  minio_data:
