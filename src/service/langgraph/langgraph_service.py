@@ -63,19 +63,16 @@ class ImageProcessingPipeline:
             
         except Exception as e:
             raise LangGraphError(f"Failed to compile workflow: {str(e)}") from e
-    
+
+    # _validate_image_url
     def _validate_image_url(self, image_url: str) -> None:
-        """Validate image URL format and accessibility.
-        
-        Args:
-            image_url: URL or data URI of the image
-            
-        Raises:
-            LangGraphError: If URL format is invalid
-        """
         if not image_url or not isinstance(image_url, str):
             raise LangGraphError("Image URL must be a non-empty string")
-        
+        if not image_url.startswith(("http://", "https://", "data:")):
+            raise LangGraphError(
+                "Image URL must be either a valid HTTP/HTTPS URL or a data URI"
+            )
+
         # Check if it's a data URI or regular URL
         is_data_uri = image_url.startswith("data:")
         is_http_url = image_url.startswith(("http://", "https://"))
