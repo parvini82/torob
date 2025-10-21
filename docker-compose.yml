@@ -21,8 +21,8 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/
       - REDIS_URL=redis://redis:6379
       - MINIO_URL=http://minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_ACCESS_KEY=${MINIO_USERNAME}
+      - MINIO_SECRET_KEY=${MINIO_PASSWORD}
     command: uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000 --reload --reload-dir src
     depends_on:
       - mongodb
