@@ -2,106 +2,95 @@ import { useState } from "react";
 
 export default function UploadPage() {
   const [imageUrl, setImageUrl] = useState("");
-  const [tags, setTags] = useState(null);
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
-    if (!imageUrl) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!imageUrl) return setError("لطفاً آدرس تصویر را وارد کنید.");
+
     setLoading(true);
+    setError("");
+    setTags([]);
+
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiBase}/generate-tags`, {
+      const res = await fetch("http://127.0.0.1:8000/generate-tags", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_url: imageUrl }),
       });
-      const data = await response.json();
-      setTags(data);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      setTags({ error: "Something went wrong" });
-    }
 
-    setLoading(false);
+      if (!res.ok) throw new Error(`خطا از سرور: ${res.status}`);
+
+      const data = await res.json();
+      const extractedTags = data.entities.flatMap(e => e.مقادیر);
+      setTags(extractedTags);
+    } catch (err) {
+      setError(err.message || "خطا در ارتباط با سرور.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div
-      className="min-h-screen w-full flex flex-col items-center justify-start relative"
       style={{
-        backgroundImage:
-          "url('https://hamravesh.com/blog/wp-content/uploads/2023/03/rahnema_1_22.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "sans-serif",
+        padding: "20px",
       }}
     >
-      {/* Overlay برای کمرنگ شدن تصویر */}
-      <div className="absolute inset-0 bg-black opacity-30"></div>
+      <h1 style={{ marginBottom: "20px" }}>Welcome to Image Tagging</h1>
 
-      {/* عنوان بالا - مرکز */}
-      <h1 className="relative z-10 text-3xl md:text-4xl font-bold mt-8 text-center text-white w-full flex justify-center">
-        Welcome to Gashtal Image Tagger
-      </h1>
+      <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: "400px" }}>
+        <input
+          type="text"
+          placeholder="Enter image URL..."
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          style={{ width: "100%", padding: "10px", fontSize: "16px", marginBottom: "10px" }}
+        />
+        <button
+          type="submit"
+          style={{ width: "100%", padding: "10px", fontSize: "16px" }}
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Generate Tags"}
+        </button>
+      </form>
 
-      {/* کارت اصلی */}
-      <div className="relative z-10 mt-8 p-6 bg-white bg-opacity-90 rounded-xl shadow-2xl w-full max-w-6xl flex flex-col lg:flex-row gap-6">
-        {/* ورودی آدرس تصویر و ارسال - سمت چپ */}
-        <div className="flex flex-col items-center w-full lg:w-1/3">
-          <input
-            type="url"
-            placeholder="https://example.com/image.jpg"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full mb-3 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+      {error && <p style={{ color: "crimson", marginTop: "10px" }}>{error}</p>}
 
-          <button
-            onClick={handleSubmit}
-            disabled={loading || !imageUrl}
-            className={`w-full py-2 px-4 rounded text-white font-semibold ${
-              loading || !imageUrl
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "Generating..." : "Generate Tags"}
-          </button>
+      {tags.length > 0 && (
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            justifyContent: "center",
+          }}
+        >
+          {tags.map((tag, i) => (
+            <span
+              key={i}
+              style={{
+                padding: "6px 12px",
+                border: "1px solid #ddd",
+                borderRadius: "16px",
+                background: "#f7f7f7",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
         </div>
-
-        {/* جدول نمایش تگ‌ها - سمت راست */}
-        <div className="flex-1 w-full lg:w-2/3 overflow-x-auto">
-          {tags && (
-  <>
-    {tags.error ? (
-      <p className="text-red-600 font-semibold">{tags.error}</p>
-    ) : (
-      (() => {
-        // your backend returns direct key-value pairs (no nested object)
-        const tagEntries = Object.entries(tags);
-
-        return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-            {tagEntries.map(([key, value]) => (
-              <div
-                key={key}
-                className="bg-white bg-opacity-90 rounded-lg shadow p-4 border border-gray-200 hover:bg-gray-50 transition"
-              >
-                <h3 className="text-gray-700 font-semibold text-sm uppercase mb-1">
-                  {key}
-                </h3>
-                <p className="text-gray-900 text-base">{String(value)}</p>
-              </div>
-            ))}
-          </div>
-        );
-      })()
-    )}
-  </>
-)}
-
-        </div>
-      </div>
+      )}
     </div>
   );
 }
