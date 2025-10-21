@@ -1,6 +1,6 @@
 from pymongo import MongoClient
-from .database_config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-from typing import Optional, Dict, Any
+from src.service.database.database_config import DB_HOST,DB_NAME,DB_PASSWORD,DB_PORT,DB_USER
+from typing import Dict, Any, Optional
 
 def get_db_client() -> MongoClient:
     """Create and return a MongoDB client."""
@@ -8,8 +8,7 @@ def get_db_client() -> MongoClient:
         db_uri = f"mongodb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/"
     else:
         db_uri = f"mongodb://{DB_HOST}:{DB_PORT}/"
-    client = MongoClient(db_uri)
-    return client
+    return MongoClient(db_uri)
 
 def get_database() -> MongoClient:
     """Get the MongoDB database instance."""
@@ -27,8 +26,7 @@ def find_document(collection_name: str, query: Dict[str, Any]) -> Optional[Dict[
     """Find a document by query in the specified collection."""
     db = get_database()
     collection = db[collection_name]
-    document = collection.find_one(query)
-    return document
+    return collection.find_one(query)
 
 def update_document(collection_name: str, query: Dict[str, Any], update_values: Dict[str, Any]) -> bool:
     """Update a document in the collection."""

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.service.langgraph.langgraph_service import run_langgraph_on_url
 from dotenv import load_dotenv
 from prometheus_fastapi_instrumentator import Instrumentator
-
+from src.service.database.database import save_request_response
 # Load environment variables from .env at project root if present
 load_dotenv()
 
@@ -26,15 +26,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
 
 @app.post("/generate-tags")
 async def generate_tags(payload: dict = Body(...)):
     image_url = payload.get("image_url")
     if not image_url:
         return {"error": "image_url is required"}
+
+    # Call the LangGraph service to process the URL and get the response
     result = run_langgraph_on_url(image_url)
+
+    # Save the response to the database after processing
+    save_request_response(image_url, result)  # Save to DB
+
     # Return only Persian JSON as requested
     return result.get("persian", {})
