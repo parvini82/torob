@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function UploadPage() {
   const [imageUrl, setImageUrl] = useState("");
@@ -8,26 +8,39 @@ export default function UploadPage() {
   const [error, setError] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [animateTags, setAnimateTags] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setTags([]);
     setAnimateTags(false);
+    setUploadedImage(null);
+    setProgress(0);
     setLoading(true);
 
     try {
       let res;
-
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
+        setUploadedImage(URL.createObjectURL(file));
+
+        // Simulate progress bar
+        let prog = 0;
+        const interval = setInterval(() => {
+          prog += 5;
+          if (prog >= 95) clearInterval(interval);
+          setProgress(prog);
+        }, 100);
 
         res = await fetch("http://localhost:8000/generate-tags", {
           method: "POST",
           body: formData,
         });
       } else if (imageUrl) {
+        setUploadedImage(imageUrl);
         res = await fetch("http://localhost:8000/generate-tags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -43,8 +56,10 @@ export default function UploadPage() {
       const extractedTags = data.entities?.flatMap((e) => e.مقادیر || []) || [];
       setTags(extractedTags);
       setAnimateTags(true);
+      setProgress(100);
     } catch (err) {
       setError(err.message || "خطا در ارتباط با سرور.");
+      setProgress(0);
     } finally {
       setLoading(false);
     }
@@ -70,6 +85,14 @@ export default function UploadPage() {
     backgroundSize: "200% 100%",
     animation: "loading 1.5s infinite",
     margin: "5px",
+  };
+
+  const progressBarStyle = {
+    width: `${progress}%`,
+    height: "6px",
+    borderRadius: "3px",
+    background: "linear-gradient(90deg, #6a11cb, #2575fc)",
+    transition: "width 0.2s ease",
   };
 
   return (
@@ -151,9 +174,23 @@ export default function UploadPage() {
         </button>
       </form>
 
+      {progress > 0 && loading && (
+        <div style={{ width: "100%", maxWidth: "400px", marginTop: "10px", background: "#ddd", borderRadius: "3px" }}>
+          <div style={progressBarStyle}></div>
+        </div>
+      )}
+
       {error && <p style={{ color: "crimson", marginTop: "10px" }}>{error}</p>}
 
-      {loading && (
+      {uploadedImage && (
+        <img
+          src={uploadedImage}
+          alt="Uploaded"
+          style={{ marginTop: "20px", maxWidth: "400px", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+        />
+      )}
+
+      {loading && !file && (
         <div style={{ marginTop: "20px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} style={skeletonStyle}></div>
