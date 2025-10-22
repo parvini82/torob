@@ -10,14 +10,36 @@ from .model_client import (
 
 def build_prompt() -> str:
     return (
-        "You are an expert visual NER model specialized in apparel understanding.\n"
-        "Analyze the given product image and extract key entities describing it.\n"
-        "Return the result as a structured JSON with short English values.\n"
-        "Example output:\n"
-        "{"
-        '"brand": "Nike", ...'
-        "}\n"
-        "Output strictly JSON only, with no explanations or extra text."
+        "You are an expert visual Named Entity Recognition (NER) model specialized "
+        "in analyzing apparel and fashion product images.\n\n"
+        
+        "Your task is to analyze the given product image and extract all relevant "
+        "entities that describe the item. Focus on identifying:\n"
+        "- Product type (e.g., shirt, dress, pants, shoes, bag)\n"
+        "- Colors (primary and secondary colors visible)\n"
+        "- Materials/fabric (e.g., cotton, leather, denim, silk)\n"
+        "- Patterns (e.g., solid, striped, floral, checkered)\n"
+        "- Style features (e.g., collar type, sleeve length, fit)\n"
+        "- Brand information (if clearly visible)\n"
+        "- Size indicators (if visible on tags or labels)\n"
+        "- Special features (e.g., pockets, buttons, zippers)\n\n"
+        
+        "Return the analysis as a structured JSON object with English values only. "
+        "Use concise, standardized terms for entity values.\n\n"
+        
+        "Example output format:\n"
+        "{\n"
+        '  "entities": [\n'
+        '    {"name": "product_type", "values": ["t-shirt"]},\n'
+        '    {"name": "color", "values": ["blue", "white"]},\n'
+        '    {"name": "material", "values": ["cotton"]},\n'
+        '    {"name": "pattern", "values": ["solid"]},\n'
+        '    {"name": "sleeve_type", "values": ["short-sleeve"]}\n'
+        "  ]\n"
+        "}\n\n"
+        
+        "IMPORTANT: Respond with valid JSON only. Do not include any explanatory "
+        "text, markdown formatting, or additional commentary."
     )
 
 

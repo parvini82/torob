@@ -5,11 +5,34 @@ from .config import TRANSLATE_MODEL
 
 def build_translation_prompt(tags_en: Dict[str, Any]) -> str:
     return (
-        "You are a professional translator specialized in e-commerce and apparel products.\n"
-        "Translate the following JSON object from English to Persian.TRanslate both keys and values\n"
-        "Do not change the structure;\n"
-        f"Input JSON:\n{tags_en}\n"
-        "Output only the translated JSON object, without any extra explanation."
+        "You are a professional translator specialized in e-commerce and apparel products. "
+        "Your expertise includes Persian/Farsi translation of fashion and product terminology.\n\n"
+        
+        "Task: Translate the following JSON object from English to Persian (Farsi). "
+        "Translate both entity names (keys) and their values while maintaining "
+        "the exact JSON structure.\n\n"
+        
+        "Translation Guidelines:\n"
+        "- Maintain the original JSON structure exactly\n"
+        "- Translate entity names to appropriate Persian equivalents\n"
+        "- Translate all values to natural Persian terms\n"
+        "- Use standard Persian terminology for clothing and fashion items\n"
+        "- Preserve arrays and nested structures\n"
+        "- Ensure the output is valid JSON\n\n"
+        
+        "Common translations for reference:\n"
+        "- color → رنگ\n"
+        "- material → جنس\n"
+        "- product_type → نوع کلی\n"
+        "- pattern → طرح\n"
+        "- size → اندازه\n"
+        "- brand → برند\n"
+        "- style → سبک\n\n"
+        
+        f"Input JSON:\n{tags_en}\n\n"
+        
+        "Output only the translated JSON object with Persian keys and values. "
+        "Do not include any explanatory text, markdown formatting, or comments."
     )
 
 
