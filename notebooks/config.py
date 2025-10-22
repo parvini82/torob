@@ -12,4 +12,3 @@ OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "")
 # --- Default models ---
 VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-72b-instruct:free")
 TRANSLATE_MODEL: str = os.getenv("TRANSLATE_MODEL", "qwen/qwen2.5-7b-instruct:free")
-

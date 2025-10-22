@@ -4,9 +4,7 @@ These tests verify the health check, root endpoint, and tag generation endpoint
 behavior, including input validation and error handling.
 """
 
-from typing import Dict, Any
 from fastapi.testclient import TestClient
-import pytest
 
 
 def test_health_endpoint(client: TestClient):
@@ -26,7 +24,9 @@ def test_root_endpoint(client: TestClient):
     data = resp.json()
     assert data.get("service")
     assert "endpoints" in data and isinstance(data["endpoints"], dict)
-    assert set(["health", "generate_tags", "docs", "metrics"]).issubset(data["endpoints"].keys())
+    assert set(["health", "generate_tags", "docs", "metrics"]).issubset(
+        data["endpoints"].keys()
+    )
 
 
 def test_generate_tags_requires_image_url(client: TestClient):

@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 from model_client import (
     OpenRouterClient,
@@ -19,11 +19,11 @@ def build_prompt() -> str:
         "Return the result as a structured JSON with short English values.\n"
         "Example output:\n"
         "{"
-        "\"brand\": \"Nike\", "
-        "\"category\": \"Sneakers\", "
-        "\"color\": \"White\", "
-        "\"gender\": \"Men\", "
-        "\"material\": \"Leather\""
+        '"brand": "Nike", '
+        '"category": "Sneakers", '
+        '"color": "White", '
+        '"gender": "Men", '
+        '"material": "Leather"'
         "}\n"
         "Output strictly JSON only, with no explanations or extra text."
     )

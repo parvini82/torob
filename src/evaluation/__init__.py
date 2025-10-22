@@ -8,14 +8,14 @@ This module provides comprehensive evaluation capabilities including:
 - Entity extraction evaluation with multiple metrics
 """
 
-from .metrics import EvaluationMetrics
-from .evaluator import ModelEvaluator
 from .config import EvaluationConfig
 from .entity_evaluator import EntityTagEvaluator
+from .evaluator import ModelEvaluator
+from .metrics import EvaluationMetrics
 
 __all__ = [
     "EvaluationMetrics",
     "ModelEvaluator",
     "EvaluationConfig",
-    "EntityTagEvaluator"
+    "EntityTagEvaluator",
 ]

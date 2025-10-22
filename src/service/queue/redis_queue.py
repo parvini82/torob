@@ -1,14 +1,16 @@
-import os
+from dotenv import load_dotenv
 from redis import Redis
 from rq import Queue
-from dotenv import load_dotenv
+
 from .config import Config  # Import centralized config
 
 # Load environment variables
 load_dotenv()
 
+
 class RedisQueue:
     """Class to manage Redis connection and task queue."""
+
     def __init__(self):
         self.redis_host = Config.REDIS_HOST
         self.redis_port = Config.REDIS_PORT

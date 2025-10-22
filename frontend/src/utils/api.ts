@@ -10,5 +10,3 @@ export async function generateTags(imageUrl: string) {
   }
   return res.json();
 }
-
-

@@ -2,10 +2,11 @@
 # Run with: python scripts/build_data.py
 # Or inside devcontainer terminal
 
-from pathlib import Path
+
 from src.data.config import DataConfig
 from src.data.downloader import DataDownloader
 from src.data.toy_sample_generator import ToySampleGenerator
+
 
 def main():
     # 1) Config and ensure directories
@@ -23,11 +24,11 @@ def main():
     generator = ToySampleGenerator(cfg)
     print("[STEP] Generating toy sample ...")
     toy_sample = generator.generate_and_save_sample(
-        products,
-        output_path=cfg.processed_data_dir / "toy_sample.json"
+        products, output_path=cfg.processed_data_dir / "toy_sample.json"
     )
     print(f"[OK] Toy sample size: {len(toy_sample)}")
     print(f"[DONE] Saved to: {cfg.processed_data_dir / 'toy_sample.json'}")
+
 
 if __name__ == "__main__":
     main()

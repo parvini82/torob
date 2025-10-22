@@ -1,11 +1,11 @@
-from typing import Dict, Any
 import base64
+from typing import Any, Dict
 
 from langgraph.graph import StateGraph
 
 from .image_to_tags import image_to_tags_node
-from .translate_tags import translate_tags_node
 from .merge_results import merge_results_node
+from .translate_tags import translate_tags_node
 
 
 def _compile_workflow() -> StateGraph:
@@ -47,4 +47,3 @@ def run_langgraph_on_url(image_url: str) -> Dict[str, Any]:
         "english": final_state.get("image_tags_en", {}),
         "persian": final_state.get("final_output", {}),
     }
-

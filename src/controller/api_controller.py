@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Body
-from fastapi.middleware.cors import CORSMiddleware
-from src.service.langgraph.langgraph_service import run_langgraph_on_url
 from dotenv import load_dotenv
+from fastapi import Body, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
+
 from src.service.database.database import save_request_response
+from src.service.langgraph.langgraph_service import run_langgraph_on_url
+
 # Load environment variables from .env at project root if present
 load_dotenv()
 
@@ -13,10 +15,7 @@ app = FastAPI(title="Image Tagging API")
 Instrumentator().instrument(app).expose(app)
 
 # Enable CORS
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
-]
+origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
 app.add_middleware(
     CORSMiddleware,

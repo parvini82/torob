@@ -9,9 +9,9 @@ import requests
 from .config import (
     OPENROUTER_API_KEY,
     OPENROUTER_BASE_URL,
-    REQUEST_TIMEOUT,
-    OPENROUTER_SITE_URL,
     OPENROUTER_SITE_TITLE,
+    OPENROUTER_SITE_URL,
+    REQUEST_TIMEOUT,
 )
 
 
@@ -59,7 +59,9 @@ def extract_json_from_text(text: str) -> Tuple[Optional[dict], Optional[str]]:
 
 
 class OpenRouterClient:
-    def __init__(self, base_url: str = OPENROUTER_BASE_URL, timeout: int = REQUEST_TIMEOUT):
+    def __init__(
+        self, base_url: str = OPENROUTER_BASE_URL, timeout: int = REQUEST_TIMEOUT
+    ):
         self.base_url = base_url
         self.timeout = timeout
 
@@ -131,4 +133,3 @@ class OpenRouterClient:
             "raw": out.get("raw"),
             "fallback_raw_text": raw,
         }
-

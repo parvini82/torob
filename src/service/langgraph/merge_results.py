@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def merge_results_node(state: Dict[str, Any]) -> Dict[str, Any]:
@@ -7,4 +7,3 @@ def merge_results_node(state: Dict[str, Any]) -> Dict[str, Any]:
         raise ValueError("merge_results_node: 'image_tags_fa' is missing in state")
 
     return {"final_output": image_tags_fa}
-

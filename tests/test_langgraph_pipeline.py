@@ -4,14 +4,14 @@ These tests mock model client calls to verify pipeline behavior, node integratio
 and error handling without making external API requests.
 """
 
-from typing import Dict, Any
 from unittest.mock import patch
+
 import pytest
 
 from src.service.langgraph.langgraph_service import (
     ImageProcessingPipeline,
-    run_langgraph_on_url,
     run_langgraph_on_bytes,
+    run_langgraph_on_url,
 )
 
 
@@ -29,16 +29,19 @@ def test_pipeline_process_image_url(mock_call_json, pipeline: ImageProcessingPip
         "json": {
             "entities": [
                 {"name": "product_type", "values": ["t-shirt"]},
-                {"name": "color", "values": ["blue"]}
+                {"name": "color", "values": ["blue"]},
             ]
         },
-        "text": "{...}"
+        "text": "{...}",
     }
 
     result = pipeline.process_image_url("https://example.com/image.jpg")
     assert "english" in result and isinstance(result["english"], dict)
     assert "persian" in result and isinstance(result["persian"], dict)
-    assert "metadata" in result and result["metadata"]["processing_success"] in [True, False]
+    assert "metadata" in result and result["metadata"]["processing_success"] in [
+        True,
+        False,
+    ]
 
 
 @patch("src.service.langgraph.model_client.OpenRouterClient.call_json")

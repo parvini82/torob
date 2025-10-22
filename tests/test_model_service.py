@@ -4,9 +4,10 @@ These tests mock network calls to OpenRouter and validate request building,
 error handling, JSON parsing, and retry behavior without making real HTTP calls.
 """
 
-from typing import Dict, Any
-from unittest.mock import patch, MagicMock
 import json
+from typing import Any, Dict
+from unittest.mock import MagicMock, patch
+
 import pytest
 
 from src.service.model_service import ImageProcessor, ModelServiceError
@@ -18,13 +19,19 @@ def processor() -> ImageProcessor:
     return ImageProcessor()
 
 
-def _make_response(status: int = 200, json_body: Dict[str, Any] | None = None, text: str = ""):
+def _make_response(
+    status: int = 200, json_body: Dict[str, Any] | None = None, text: str = ""
+):
     resp = MagicMock()
     resp.status_code = status
     resp.text = text
     resp.elapsed.total_seconds.return_value = 0.123
     if json_body is None:
-        json_body = {"choices": [{"message": {"content": json.dumps({"english": {}, "persian": {}})}}]}
+        json_body = {
+            "choices": [
+                {"message": {"content": json.dumps({"english": {}, "persian": {}})}}
+            ]
+        }
     resp.json.return_value = json_body
     return resp
 
@@ -35,8 +42,7 @@ def test_predict_tags_success(mock_post, processor: ImageProcessor):
     # Build a valid chat.completions-like body
     content = json.dumps({"english": {"entities": []}, "persian": {"entities": []}})
     mock_post.return_value = _make_response(
-        200,
-        {"choices": [{"message": {"content": content}}]}
+        200, {"choices": [{"message": {"content": content}}]}
     )
 
     out = processor.predict_tags(b"fake-bytes")
@@ -57,8 +63,7 @@ def test_predict_tags_http_error(mock_post, processor: ImageProcessor):
 def test_predict_tags_malformed_json_content(mock_post, processor: ImageProcessor):
     """Malformed JSON in model content should return structured parse error info."""
     mock_post.return_value = _make_response(
-        200,
-        {"choices": [{"message": {"content": "<<<not-json>>>"}}]}
+        200, {"choices": [{"message": {"content": "<<<not-json>>>"}}]}
     )
 
     out = processor.predict_tags(b"x")

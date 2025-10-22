@@ -1,5 +1,7 @@
-from typing import Dict, Any
+from typing import Any, Dict
+
 from model_client import OpenRouterClient, make_text_part
+
 from config import TRANSLATE_MODEL
 
 

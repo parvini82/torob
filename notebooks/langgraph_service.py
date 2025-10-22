@@ -1,9 +1,9 @@
-from langgraph.graph import StateGraph, END
-from typing import Dict, Any
+from typing import Any, Dict
 
 from image_to_tags import image_to_tags_node
-from translate_tags import translate_tags_node
+from langgraph.graph import StateGraph
 from merge_results import merge_results_node
+from translate_tags import translate_tags_node
 
 
 def create_langgraph_workflow():

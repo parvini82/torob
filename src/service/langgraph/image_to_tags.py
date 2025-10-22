@@ -12,7 +12,6 @@ def build_prompt() -> str:
     return (
         "You are an expert visual Named Entity Recognition (NER) model specialized "
         "in analyzing apparel and fashion product images.\n\n"
-        
         "Your task is to analyze the given product image and extract all relevant "
         "entities that describe the item. Focus on identifying:\n"
         "- Product type (e.g., shirt, dress, pants, shoes, bag)\n"
@@ -23,10 +22,8 @@ def build_prompt() -> str:
         "- Brand information (if clearly visible)\n"
         "- Size indicators (if visible on tags or labels)\n"
         "- Special features (e.g., pockets, buttons, zippers)\n\n"
-        
         "Return the analysis as a structured JSON object with English values only. "
         "Use concise, standardized terms for entity values.\n\n"
-        
         "Example output format:\n"
         "{\n"
         '  "entities": [\n'
@@ -37,7 +34,6 @@ def build_prompt() -> str:
         '    {"name": "sleeve_type", "values": ["short-sleeve"]}\n'
         "  ]\n"
         "}\n\n"
-        
         "IMPORTANT: Respond with valid JSON only. Do not include any explanatory "
         "text, markdown formatting, or additional commentary."
     )

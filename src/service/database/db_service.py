@@ -1,6 +1,9 @@
+from typing import Any, Dict, Optional
+
 from pymongo import MongoClient
-from src.service.database.config import DB_HOST,DB_NAME,DB_PASSWORD,DB_PORT,DB_USER
-from typing import Dict, Any, Optional
+
+from src.service.database.config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
+
 
 def get_db_client() -> MongoClient:
     """Create and return a MongoDB client."""
@@ -10,10 +13,12 @@ def get_db_client() -> MongoClient:
         db_uri = f"mongodb://{DB_HOST}:{DB_PORT}/"
     return MongoClient(db_uri)
 
+
 def get_database() -> MongoClient:
     """Get the MongoDB database instance."""
     client = get_db_client()
     return client[DB_NAME]
+
 
 def insert_document(collection_name: str, document: Dict[str, Any]) -> str:
     """Insert a new document into a collection."""
@@ -22,18 +27,25 @@ def insert_document(collection_name: str, document: Dict[str, Any]) -> str:
     result = collection.insert_one(document)
     return str(result.inserted_id)
 
-def find_document(collection_name: str, query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+
+def find_document(
+    collection_name: str, query: Dict[str, Any]
+) -> Optional[Dict[str, Any]]:
     """Find a document by query in the specified collection."""
     db = get_database()
     collection = db[collection_name]
     return collection.find_one(query)
 
-def update_document(collection_name: str, query: Dict[str, Any], update_values: Dict[str, Any]) -> bool:
+
+def update_document(
+    collection_name: str, query: Dict[str, Any], update_values: Dict[str, Any]
+) -> bool:
     """Update a document in the collection."""
     db = get_database()
     collection = db[collection_name]
     result = collection.update_one(query, {"$set": update_values})
     return result.modified_count > 0
+
 
 def delete_document(collection_name: str, query: Dict[str, Any]) -> bool:
     """Delete a document from the collection."""
@@ -41,6 +53,7 @@ def delete_document(collection_name: str, query: Dict[str, Any]) -> bool:
     collection = db[collection_name]
     result = collection.delete_one(query)
     return result.deleted_count > 0
+
 
 def count_documents(collection_name: str, query: Dict[str, Any] = {}) -> int:
     """Count the number of documents that match a query."""

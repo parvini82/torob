@@ -7,12 +7,12 @@ It focuses on structure, coverage, distribution, and basic data hygiene.
 
 from __future__ import annotations
 
-from collections import Counter
-from typing import Any, Dict, List
+import json
 import math
 import re
-import json
+from collections import Counter
 from pathlib import Path
+from typing import Any, Dict, List
 
 from .config import EvaluationConfig
 
@@ -39,7 +39,9 @@ class EvaluationMetrics:
     # ------------------------------
     # Public API
     # ------------------------------
-    def calculate_comprehensive_metrics(self, products: List[Product]) -> Dict[str, Any]:
+    def calculate_comprehensive_metrics(
+        self, products: List[Product]
+    ) -> Dict[str, Any]:
         """Compute a comprehensive set of metrics for a sample.
 
         Args:
@@ -59,13 +61,17 @@ class EvaluationMetrics:
         quality_dist = self.calculate_quality_distribution(products)
         diversity = self.calculate_sample_diversity(products)
 
-        overall = self._calculate_overall_quality_score({
-            "entity_coverage_rate": entity_cov.get("entity_coverage_rate", 0.0),
-            "url_validity_rate": image_stats.get("url_validity_rate", 0.0),
-            "group_diversity": diversity.get("group_diversity", 0.0),
-            "entity_diversity": diversity.get("entity_diversity", 0.0),
-            "overall_diversity_score": diversity.get("overall_diversity_score", 0.0),
-        })
+        overall = self._calculate_overall_quality_score(
+            {
+                "entity_coverage_rate": entity_cov.get("entity_coverage_rate", 0.0),
+                "url_validity_rate": image_stats.get("url_validity_rate", 0.0),
+                "group_diversity": diversity.get("group_diversity", 0.0),
+                "entity_diversity": diversity.get("entity_diversity", 0.0),
+                "overall_diversity_score": diversity.get(
+                    "overall_diversity_score", 0.0
+                ),
+            }
+        )
 
         return {
             "sample_size": len(products),
@@ -103,7 +109,9 @@ class EvaluationMetrics:
         with_entities = 0
         for p in products:
             ents = p.get("entities") or []
-            names = [e.get("name") for e in ents if isinstance(e, dict) and e.get("name")]
+            names = [
+                e.get("name") for e in ents if isinstance(e, dict) and e.get("name")
+            ]
             all_entities.extend(names)
             entities_per_product.append(len(names))
             if names:
@@ -201,7 +209,9 @@ class EvaluationMetrics:
             "total_products": len(products),
             "missing_quality_info": missing,
             "quality_distribution": dict(cnt),
-            "quality_percentages": {k: round(v * 100 / total, 2) for k, v in cnt.items()},
+            "quality_percentages": {
+                k: round(v * 100 / total, 2) for k, v in cnt.items()
+            },
             "weighted_quality_score": self._weighted_quality(cnt),
         }
 
@@ -215,7 +225,9 @@ class EvaluationMetrics:
             "product_type_diversity": type_div,
             "group_diversity": group_div,
             "entity_diversity": entity_div,
-            "overall_diversity_score": round((group_div + entity_div + type_div) / 3, 4),
+            "overall_diversity_score": round(
+                (group_div + entity_div + type_div) / 3, 4
+            ),
             "unique_product_types": len(type_cnt),
             "most_common_product_types": type_cnt.most_common(5),
         }
@@ -239,7 +251,10 @@ class EvaluationMetrics:
     def _weighted_quality(self, cnt: Counter) -> float:
         total = sum(cnt.values()) or 1
         w = self.config.quality_weights
-        weighted = sum(cnt.get(b, 0) * w.get(b, 1.0) for b in set(list(cnt.keys()) + list(w.keys())))
+        weighted = sum(
+            cnt.get(b, 0) * w.get(b, 1.0)
+            for b in set(list(cnt.keys()) + list(w.keys()))
+        )
         return round(weighted / total, self.config.precision_digits)
 
     def _shannon_diversity_from_counter(self, counter: Counter) -> float:
@@ -263,7 +278,9 @@ class EvaluationMetrics:
         all_names: List[str] = []
         for p in products:
             ents = p.get("entities") or []
-            all_names.extend([e.get("name") for e in ents if isinstance(e, dict) and e.get("name")])
+            all_names.extend(
+                [e.get("name") for e in ents if isinstance(e, dict) and e.get("name")]
+            )
         return self._shannon_diversity(all_names)
 
     def _calculate_overall_quality_score(self, parts: Dict[str, float]) -> float:

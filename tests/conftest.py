@@ -5,17 +5,17 @@ including a FastAPI test client and environment configuration loader.
 """
 
 import os
+
 import pytest
 from fastapi.testclient import TestClient
 
 from src.controller.api_controller import app
-from src.config import settings
 
 
 @pytest.fixture(scope="session", autouse=True)
 def load_test_env():
     """Load environment variables for tests.
-    
+
     Ensures required environment variables are set for the test session.
     Sensitive values are read from the environment; defaults are provided for
     non-sensitive configuration used by tests.

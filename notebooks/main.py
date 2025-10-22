@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, request
 import json
+
+from flask import Flask, jsonify, request
 from langgraph_service import run_langgraph
 
 app = Flask(__name__)

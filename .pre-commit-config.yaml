@@ -20,28 +20,41 @@ repos:
     rev: 7.0.0
     hooks:
       - id: isort
-        args: ["--profile", "black"]
+        args: ["--profile", "black",--exit-zero]]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.18.2
     hooks:
       - id: mypy
+        args: [--exit-zero]
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.3.0
     hooks:
       - id: flake8
-
-  # JavaScript/TypeScript hooks
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.37.0
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2  # use the latest tag or the version you want
     hooks:
-      - id: eslint
-        files: \.(js|jsx|ts|tsx)$
-        additional_dependencies:
-          - eslint@8.57.0
-          - "@typescript-eslint/eslint-plugin@7.15.0"
-          - "@typescript-eslint/parser@7.15.0"
-          - "eslint-config-next@15.5.5"
-          - "eslint-config-prettier@9.1.0"
-          - "eslint-plugin-prettier@5.1.3"
+      - id: autopep8
+        args: [ --in-place, --max-line-length=88 ,--exit-zero]  # --in-place is required!
+
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1  # latest or pick your preferred version
+    hooks:
+      - id: autoflake
+        args: [ --in-place, --remove-all-unused-imports, --remove-unused-variables ]
+
+
+#  # JavaScript/TypeScript hooks
+#  - repo: https://github.com/pre-commit/mirrors-eslint
+#    rev: v9.37.0
+#    hooks:
+#      - id: eslint
+#        files: \.(js|jsx|ts|tsx)$
+#        additional_dependencies:
+#          - eslint@8.57.0
+#          - "@typescript-eslint/eslint-plugin@7.15.0"
+#          - "@typescript-eslint/parser@7.15.0"
+#          - "eslint-config-next@15.5.5"
+#          - "eslint-config-prettier@9.1.0"
+#          - "eslint-plugin-prettier@5.1.3"

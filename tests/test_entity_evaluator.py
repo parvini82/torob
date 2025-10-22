@@ -5,10 +5,11 @@ These tests validate exact/partial matches, attribute-level metrics,
 """
 
 from unittest.mock import patch
+
 import numpy as np
 
-from src.evaluation.entity_evaluator import EntityTagEvaluator
 from src.evaluation.config import EvaluationConfig
+from src.evaluation.entity_evaluator import EntityTagEvaluator
 
 
 def _sample_pairs():
@@ -39,9 +40,9 @@ def test_partial_match_score():
     evalr = EntityTagEvaluator(cfg)
     pred, truth = _sample_pairs()
     scores = evalr.partial_match_score(pred, truth)
-    assert 0.0 <= scores['precision'] <= 1.0
-    assert 0.0 <= scores['recall'] <= 1.0
-    assert 0.0 <= scores['f1'] <= 1.0
+    assert 0.0 <= scores["precision"] <= 1.0
+    assert 0.0 <= scores["recall"] <= 1.0
+    assert 0.0 <= scores["f1"] <= 1.0
 
 
 def test_attribute_level_metrics():
@@ -49,8 +50,10 @@ def test_attribute_level_metrics():
     evalr = EntityTagEvaluator(cfg)
     pred, truth = _sample_pairs()
     metrics = evalr.attribute_level_metrics(pred, truth)
-    assert 'جنس' in metrics and 'رنگ' in metrics
-    assert set(['precision', 'recall', 'f1', 'tp', 'fp', 'fn', 'support']).issubset(metrics['رنگ'].keys())
+    assert "جنس" in metrics and "رنگ" in metrics
+    assert set(["precision", "recall", "f1", "tp", "fp", "fn", "support"]).issubset(
+        metrics["رنگ"].keys()
+    )
 
 
 def test_eighty_percent_accuracy():
@@ -61,20 +64,21 @@ def test_eighty_percent_accuracy():
     assert acc in (0.0, 1.0)
 
 
-@patch('src.evaluation.entity_evaluator.SentenceTransformer')
+@patch("src.evaluation.entity_evaluator.SentenceTransformer")
 def test_semantic_similarity_mocked(mock_st):
     """Semantic similarity should compute precision/recall/F1 using mocked embeddings."""
+
     # Create deterministic mock embeddings
     class _MockModel:
         def encode(self, values):
             # Map values to simple vectors by length to simulate similarity
             return np.array([[len(v)] for v in values], dtype=float)
-    
+
     mock_st.return_value = _MockModel()
     cfg = EvaluationConfig()
     evalr = EntityTagEvaluator(cfg)
     pred, truth = _sample_pairs()
     scores = evalr.semantic_similarity_score(pred, truth, threshold=0.5)
-    assert 0.0 <= scores['semantic_precision'] <= 1.0
-    assert 0.0 <= scores['semantic_recall'] <= 1.0
-    assert 0.0 <= scores['semantic_f1'] <= 1.0
+    assert 0.0 <= scores["semantic_precision"] <= 1.0
+    assert 0.0 <= scores["semantic_recall"] <= 1.0
+    assert 0.0 <= scores["semantic_f1"] <= 1.0

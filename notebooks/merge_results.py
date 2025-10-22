@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 def merge_results_node(state: Dict[str, Any]) -> Dict[str, Any]:
