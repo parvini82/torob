@@ -33,7 +33,7 @@ services:
       - ./frontend:/app
     environment:
       - NEXT_PUBLIC_API_URL=http://app:8000  # Use backend port environment variable
-    command: sh -c "npm ci && npm run dev"
+    command: sh -c "npm ci && npm run build && npm run start"
     networks:
       - monitor-net
 
