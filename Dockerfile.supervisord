@@ -1,9 +1,10 @@
 # Start from a Python base image
 FROM python:3.10-slim
 
-# Install Node.js and npm
+# Install Node.js, npm, and supervisord
 RUN apt-get update && apt-get install -y \
     curl \
+    supervisor \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
@@ -30,15 +31,12 @@ RUN npm run build
 # Go back to app root
 WORKDIR /app
 
+# Copy supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Expose ports
 EXPOSE 8000 3000
 
-# Create a startup script to run both services
-RUN echo '#!/bin/bash\n\
-uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000 &\n\
-cd /app/frontend && npm run build && npm start &\n\
-wait -n\n\
-exit $?' > /app/start.sh && chmod +x /app/start.sh
+# Run supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
-# Run both services
-CMD ["/app/start.sh"]
