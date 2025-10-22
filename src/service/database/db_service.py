@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from src.service.database.database_config import DB_HOST,DB_NAME,DB_PASSWORD,DB_PORT,DB_USER
+from src.service.database.config import DB_HOST,DB_NAME,DB_PASSWORD,DB_PORT,DB_USER
 from typing import Dict, Any, Optional
 
 def get_db_client() -> MongoClient:
