@@ -31,12 +31,12 @@ RUN npm run build
 WORKDIR /app
 
 # Expose ports
-EXPOSE 8000 8080
+EXPOSE 8000 3000
 
 # Create a startup script to run both services
 RUN echo '#!/bin/bash\n\
 uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000 &\n\
-cd /app/frontend && npm run build && npm start &\n\
+cd /app/frontend && npm run build && npm run start &\n\
 wait -n\n\
 exit $?' > /app/start.sh && chmod +x /app/start.sh
 
