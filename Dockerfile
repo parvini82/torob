@@ -31,7 +31,7 @@ RUN npm run build
 WORKDIR /app
 
 # Expose ports
-EXPOSE 8000 3000
+EXPOSE 8000 8080
 
 # Create a startup script to run both services
 RUN echo '#!/bin/bash\n\
