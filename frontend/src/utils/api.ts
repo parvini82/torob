@@ -1,8 +1,8 @@
+// This calls the Next.js API route which then calls the backend server-side
 export async function generateTags(imageUrl: string) {
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-  const res = await fetch(`${apiBase}/generate-tags`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const res = await fetch('/api/generate-tags', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ image_url: imageUrl }),
   });
   if (!res.ok) {

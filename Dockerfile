@@ -33,6 +33,9 @@ WORKDIR /app
 # Expose ports
 EXPOSE 8000 3000
 
+# Set environment variable for server-side API calls
+ENV API_URL=http://localhost:8000
+
 # Create a startup script to run both services
 RUN echo '#!/bin/bash\n\
 uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000 &\n\

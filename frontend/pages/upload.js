@@ -42,7 +42,7 @@ export default function UploadPage() {
         }, 100);
 
         // Use the new upload-and-tag endpoint
-        res = await fetch("http://localhost:8000/upload-and-tag", {
+        res = await fetch("/api/upload-and-tag", {
           method: "POST",
           body: formData,
         });
@@ -54,7 +54,7 @@ export default function UploadPage() {
         setUploadedImage(imageUrl);
 
         // Use the original generate-tags endpoint
-        res = await fetch("http://localhost:8000/generate-tags", {
+        res = await fetch("/api/generate-tags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image_url: imageUrl }),
