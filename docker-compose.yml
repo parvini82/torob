@@ -31,7 +31,7 @@ services:
     volumes:
       - ./frontend:/app
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=http://app:8000
     command: sh -c "npm ci && npm run dev"
     networks:
       - monitor-net
