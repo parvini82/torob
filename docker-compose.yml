@@ -6,7 +6,7 @@ services:
     container_name: image_tagging_app
     working_dir: /app
     ports:
-      - "${PORT:-8000}:8000"  # Bind Railway's dynamic port or fallback to 8000 for local dev
+      - "${PORT:-8000}:${PORT:-8000}" # Bind Railway's dynamic port or fallback to 8000 for local dev
     volumes:
       - ./src:/app/src
       - ./evaluation:/app/evaluation
