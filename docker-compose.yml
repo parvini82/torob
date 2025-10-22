@@ -6,7 +6,7 @@ services:
     container_name: image_tagging_app
     working_dir: /app
     ports:
-      - "${PORT:-8000}:${PORT:-8000}" # Bind Railway's dynamic port or fallback to 8000 for local dev
+      - "${PORT:-8000}:8000" # Bind Railway's dynamic port or fallback to 8000 for local dev
     volumes:
       - ./src:/app/src
       - ./evaluation:/app/evaluation
@@ -19,7 +19,7 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENROUTER_MODEL=${OPENROUTER_MODEL:-qwen/qwen2.5-vl-72b-instruct:free}
       - PORT=${PORT:-8000}  # Ensure PORT environment variable is set
-    command: uvicorn src.controller.api_controller:app --host 0.0.0.0 --port ${PORT}
+    command: uvicorn src.controller.api_controller:app --host 0.0.0.0 --port 8000
     networks:
       - monitor-net
 
@@ -32,7 +32,7 @@ services:
     volumes:
       - ./frontend:/app
     environment:
-      - NEXT_PUBLIC_API_URL=http://app:${PORT:-8000}  # Use backend port environment variable
+      - NEXT_PUBLIC_API_URL=http://app:8000  # Use backend port environment variable
     command: sh -c "npm ci && npm run dev"
     networks:
       - monitor-net
