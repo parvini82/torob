@@ -57,11 +57,11 @@
 
   "postCreateCommand": "pip install -r requirements.txt && pre-commit install || true",
 
-  "forwardPorts": [8000, 3000, 3001, 9090],
+  "forwardPorts": [8000, 3052, 3050, 9090],
   "portsAttributes": {
     "8000": { "label": "FastAPI" },
-    "3000": { "label": "Frontend" },
-    "3001": { "label": "Grafana" },
+    "3052": { "label": "Frontend" },
+    "3050": { "label": "Grafana" },
     "9090": { "label": "Prometheus" }
   }
 }

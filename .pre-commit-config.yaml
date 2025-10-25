@@ -14,13 +14,13 @@ repos:
     rev: 25.9.0
     hooks:
       - id: black
-        language_version: python3.9
+        language_version: python3.10
 
   - repo: https://github.com/pycqa/isort
     rev: 7.0.0
     hooks:
       - id: isort
-        args: ["--profile", "black",--exit-zero]]
+        args: ["--profile", "black","--exit-zero"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.18.2

@@ -26,8 +26,8 @@ import requests
 from src.service.langgraph.langgraph_service import run_langgraph_on_url
 
 # Import evaluation modules
-from evaluation.evaluator import ModelEvaluator
-from evaluation.config import EvaluationConfig
+from src.evaluation.evaluator import ModelEvaluator
+from src.evaluation.config import EvaluationConfig
 
 
 def setup_paths():

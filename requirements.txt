@@ -14,7 +14,7 @@ gdown>=5.0.0
 
 
 # Evaluation & embeddings
-sentence-transformers>=3.0.0
+# sentence-transformers>=3.0.0 # take long time
 scikit-learn>=1.4.0
 
 # Testing
