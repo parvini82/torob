@@ -8,6 +8,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
+# ---- Define the root of the project (absolute path) ----
+# Go up two levels: from /src/config → /src → / (project root)
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
 
 @dataclass
 class DataConfig:
@@ -21,9 +25,9 @@ class DataConfig:
     """
 
     # Data paths
-    data_dir: Path = Path("data")
-    raw_data_dir: Path = Path("data/raw")
-    processed_data_dir: Path = Path("data/processed")
+    data_dir: Path = ROOT_DIR / "data"
+    raw_data_dir: Path = data_dir / "raw"
+    processed_data_dir: Path = data_dir / "processed"
 
     # Google Drive settings
     google_drive_file_id: str = "1Coixw-ZELOorizi4K-RSBtzDnRAQ2c_g"

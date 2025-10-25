@@ -1,4 +1,4 @@
-"""Data downloading and extraction utilities.
+﻿"""Data downloading and extraction utilities.
 
 This module provides functionality to download data from Google Drive
 and extract ZIP files for processing.
