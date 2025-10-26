@@ -18,7 +18,7 @@ class MinIOService:
             minio_host,
             access_key=os.getenv("MINIO_ACCESS_KEY"),
             secret_key=os.getenv("MINIO_SECRET_KEY"),
-            secure=False  # Set to True if using HTTPS
+            secure=False,  # Set to True if using HTTPS
         )
         self.bucket_name = os.getenv("MINIO_BUCKET_NAME", "image-tagging")
         self._ensure_bucket_exists()
@@ -36,20 +36,21 @@ class MinIOService:
                             "Effect": "Allow",
                             "Principal": {"AWS": "*"},
                             "Action": ["s3:GetObject"],
-                            "Resource": [f"arn:aws:s3:::{self.bucket_name}/*"]
+                            "Resource": [f"arn:aws:s3:::{self.bucket_name}/*"],
                         }
-                    ]
+                    ],
                 }
                 import json
+
                 self.client.set_bucket_policy(self.bucket_name, json.dumps(policy))
         except S3Error as e:
             print(f"Error creating bucket: {e}")
 
     def upload_file(
-            self,
-            file_data: bytes,
-            filename: Optional[str] = None,
-            content_type: str = "image/jpeg"
+        self,
+        file_data: bytes,
+        filename: Optional[str] = None,
+        content_type: str = "image/jpeg",
     ) -> str:
         """
         Upload file to MinIO and return the URL
@@ -77,7 +78,7 @@ class MinIOService:
                 unique_filename,
                 BytesIO(file_data),
                 length=len(file_data),
-                content_type=content_type
+                content_type=content_type,
             )
 
             # Construct the URL

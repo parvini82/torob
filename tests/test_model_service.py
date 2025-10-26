@@ -9,8 +9,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.service.model_service import (
-    prepare_image_input,
     predict_tags,
+    prepare_image_input,
 )
 
 

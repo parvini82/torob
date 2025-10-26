@@ -4,7 +4,7 @@ These tests verify API endpoint behavior, request validation,
 and response formatting without making external service calls.
 """
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient

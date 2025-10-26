@@ -9,9 +9,9 @@ from unittest.mock import patch
 import pytest
 
 from src.service.langgraph.langgraph_service import (
+    _compile_workflow,
     run_langgraph_on_bytes,
     run_langgraph_on_url,
-    _compile_workflow,
 )
 
 

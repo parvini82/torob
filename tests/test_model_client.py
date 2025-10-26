@@ -12,10 +12,10 @@ import pytest
 from src.service.langgraph.model_client import (
     OpenRouterClient,
     OpenRouterError,
+    _auth_headers,
     extract_json_from_text,
     make_image_part,
     make_text_part,
-    _auth_headers,
 )
 
 
