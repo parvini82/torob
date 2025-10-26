@@ -13,4 +13,4 @@ OPENROUTER_SITE_URL: str = os.getenv("OPENROUTER_SITE_URL", "")
 OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "")
 
 VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
-TRANSLATE_MODEL: str = os.getenv("TRANSLATE_MODEL", "qwen/qwen2.5-7b-instruct:free")
+TRANSLATE_MODEL: str = os.getenv("TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free")

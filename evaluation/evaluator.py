@@ -1,397 +1,324 @@
-"""Main evaluation orchestrator for model performance assessment.
+"""Main evaluator for combining model execution and metrics calculation.
 
-This module provides a high-level interface to coordinate different types
-of evaluations including entity tagging, sample quality, and comprehensive
-reporting.
+This module provides a simple interface to run complete evaluations:
+load sample -> run model -> calculate metrics -> save results.
 """
 
 import json
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List, Dict, Any, Optional, Callable
 
 from .config import EvaluationConfig
-from .entity_evaluator import EntityTagEvaluator
-from .metrics import EvaluationMetrics
+from .model_runner import ModelRunner
+from .metrics import EntityMetrics
 
 
-class ModelEvaluator:
-    """Main evaluation orchestrator for comprehensive model assessment.
+class SimpleEvaluator:
+    """Simple evaluator combining model execution and metrics calculation.
 
-    This class coordinates different evaluation components and provides
-    a unified interface for running evaluations and generating reports.
+    This class orchestrates the complete evaluation pipeline:
+    1. Load toy sample
+    2. Run model on images
+    3. Calculate comprehensive metrics
+    4. Save results and generate reports
     """
 
-    def __init__(self, config: Optional[EvaluationConfig] = None):
+    def __init__(self, config: EvaluationConfig):
         """Initialize evaluator with configuration.
 
         Args:
-            config: EvaluationConfig instance, creates default if None
+            config: EvaluationConfig instance
         """
-        self.config = config or EvaluationConfig()
+        self.config = config
         self.config.ensure_directories()
 
-        # Initialize evaluation components
-        self.metrics_calculator = EvaluationMetrics(self.config)
-        self.entity_evaluator = EntityTagEvaluator(self.config)
+        # Initialize components
+        self.model_runner = ModelRunner(config)
+        self.metrics = EntityMetrics(config)
 
-        # Track evaluation sessions
-        self.current_session = None
-
-    def start_evaluation_session(self, session_name: Optional[str] = None) -> str:
-        """Start a new evaluation session.
-
-        Args:
-            session_name: Optional name for the session
-
-        Returns:
-            str: Session identifier
-        """
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        if session_name:
-            session_id = f"{session_name}_{timestamp}"
-        else:
-            session_id = f"evaluation_{timestamp}"
-
-        self.current_session = {
-            "session_id": session_id,
-            "start_time": time.time(),
-            "timestamp": timestamp,
-            "results": {},
-        }
-
-        print(f"Started evaluation session: {session_id}")
-        return session_id
-
-    def evaluate_toy_sample_quality(
-        self, products: List[Dict[str, Any]], session_name: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """Evaluate the quality and composition of a toy sample.
+    def run_evaluation(self,
+                       sample_path: Path,
+                       model_function: Callable[[str], List[Dict[str, Any]]],
+                       output_name: Optional[str] = None) -> Dict[str, Any]:
+        """Run complete evaluation pipeline.
 
         Args:
-            products: List of product dictionaries from toy sample
-            session_name: Optional name for this evaluation
+            sample_path: Path to toy sample JSON file
+            model_function: Function that takes image URL and returns entity predictions
+            output_name: Optional name for output files
 
         Returns:
-            Dict containing comprehensive sample quality metrics
+            Complete evaluation results
         """
-        if not self.current_session:
-            self.start_evaluation_session(session_name)
+        print("=" * 80)
+        print("COMPLETE MODEL EVALUATION PIPELINE")
+        print("=" * 80)
 
-        print(f"Evaluating toy sample quality for {len(products)} products...")
+        start_time = time.time()
 
-        # Calculate comprehensive metrics using the metrics calculator
-        quality_results = self.metrics_calculator.calculate_comprehensive_metrics(
-            products
+        # Step 1: Run model on sample
+        print("\n[STEP 1] Running model predictions...")
+        model_results = self.model_runner.run_model_on_sample(
+            sample_path=sample_path,
+            model_function=model_function
         )
 
-        # Store results in current session
-        self.current_session["results"]["sample_quality"] = quality_results
+        # Step 2: Calculate metrics
+        print("\n[STEP 2] Calculating evaluation metrics...")
+        predictions = model_results["predictions"]
+        ground_truths = model_results["ground_truths"]
 
-        return quality_results
+        metrics_results = self.metrics.evaluate_batch(predictions, ground_truths)
 
-    def evaluate_entity_extraction(
-        self,
-        predictions: List[List[Dict]],
-        ground_truths: List[List[Dict]],
-        session_name: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Evaluate entity extraction performance.
-
-        Args:
-            predictions: List of predicted entity lists (one per sample)
-            ground_truths: List of ground truth entity lists (one per sample)
-            session_name: Optional name for this evaluation
-
-        Returns:
-            Dict containing entity extraction evaluation results
-        """
-        if not self.current_session:
-            self.start_evaluation_session(session_name)
-
-        print(f"Evaluating entity extraction for {len(predictions)} samples...")
-
-        # Run comprehensive entity evaluation
-        entity_results = self.entity_evaluator.evaluate_batch(
-            predictions, ground_truths
-        )
-
-        # Calculate attribute-level summary
-        attribute_summary = self.entity_evaluator.calculate_attribute_summary(
-            entity_results
-        )
-        entity_results["attribute_summary"] = attribute_summary
-
-        # Store results in current session
-        self.current_session["results"]["entity_extraction"] = entity_results
-
-        return entity_results
-
-    def evaluate_single_entity_sample(
-        self, predicted_entities: List[Dict], true_entities: List[Dict]
-    ) -> Dict[str, Any]:
-        """Evaluate a single sample for entity extraction.
-
-        Args:
-            predicted_entities: List of predicted entity dictionaries
-            true_entities: List of ground truth entity dictionaries
-
-        Returns:
-            Dict containing single sample evaluation metrics
-        """
-        return self.entity_evaluator.evaluate_single_sample(
-            predicted_entities, true_entities
-        )
-
-    def run_comprehensive_evaluation(
-        self,
-        toy_sample: Optional[List[Dict[str, Any]]] = None,
-        entity_predictions: Optional[List[List[Dict]]] = None,
-        entity_ground_truths: Optional[List[List[Dict]]] = None,
-        session_name: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Run comprehensive evaluation including sample quality and entity extraction.
-
-        Args:
-            toy_sample: Optional toy sample for quality evaluation
-            entity_predictions: Optional entity predictions for extraction evaluation
-            entity_ground_truths: Optional entity ground truths for extraction evaluation
-            session_name: Optional name for the evaluation session
-
-        Returns:
-            Dict containing all evaluation results
-        """
-        session_id = self.start_evaluation_session(session_name)
-        results = {"session_id": session_id}
-
-        # Evaluate toy sample quality if provided
-        if toy_sample is not None:
-            print("\n" + "=" * 60)
-            print("EVALUATING TOY SAMPLE QUALITY")
-            print("=" * 60)
-            results["sample_quality"] = self.evaluate_toy_sample_quality(toy_sample)
-
-        # Evaluate entity extraction if data provided
-        if entity_predictions is not None and entity_ground_truths is not None:
-            print("\n" + "=" * 60)
-            print("EVALUATING ENTITY EXTRACTION")
-            print("=" * 60)
-            results["entity_extraction"] = self.evaluate_entity_extraction(
-                entity_predictions, entity_ground_truths
-            )
-
-        # Finalize session
-        self.current_session["end_time"] = time.time()
-        self.current_session["duration"] = (
-            self.current_session["end_time"] - self.current_session["start_time"]
-        )
-        results["session_info"] = {
-            "session_id": session_id,
-            "duration_seconds": self.current_session["duration"],
-            "timestamp": self.current_session["timestamp"],
-        }
-
-        print(f"\nCompleted evaluation session: {session_id}")
-        print(f"Duration: {self.current_session['duration']:.2f} seconds")
-
-        return results
-
-    def generate_evaluation_report(
-        self,
-        results: Dict[str, Any],
-        output_path: Optional[Path] = None,
-        include_detailed: bool = None,
-    ) -> Path:
-        """Generate comprehensive evaluation report.
-
-        Args:
-            results: Evaluation results dictionary
-            output_path: Optional path for report file
-            include_detailed: Whether to include detailed breakdown
-
-        Returns:
-            Path: Path to generated report file
-        """
-        if output_path is None:
-            session_id = results.get("session_id", "unknown")
-            output_path = (
-                self.config.reports_dir / f"evaluation_report_{session_id}.json"
-            )
-
-        if include_detailed is None:
-            include_detailed = self.config.include_detailed_breakdown
-
-        # Prepare report data
-        report = {
-            "metadata": {
-                "generated_at": datetime.now().isoformat(),
-                "evaluator_config": {
-                    "similarity_threshold": self.config.similarity_threshold,
-                    "precision_digits": self.config.precision_digits,
-                    "include_detailed_breakdown": include_detailed,
-                },
+        # Step 3: Combine results
+        evaluation_results = {
+            "evaluation_metadata": {
+                "sample_path": str(sample_path),
+                "model_name": self.config.model_name,
+                "evaluation_time": time.time() - start_time,
+                "timestamp": datetime.now().isoformat(),
+                "total_samples": len(predictions)
             },
-            "session_info": results.get("session_info", {}),
-            "summary": self._generate_summary(results),
-            "detailed_results": results if include_detailed else {},
+            "model_execution": model_results["performance"],
+            "metrics": metrics_results,
+            "detailed_predictions": {
+                "predictions": predictions,
+                "ground_truths": ground_truths
+            } if self.config.precision_digits else None
         }
 
-        # Save report
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
+        # Step 4: Save results
+        if output_name is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_name = f"evaluation_{self.config.model_name}_{timestamp}"
 
-        print(f"Generated evaluation report: {output_path}")
-        return output_path
+        results_path = self.save_evaluation_results(evaluation_results, output_name)
+        report_path = self.generate_evaluation_report(evaluation_results, output_name)
 
-    def _generate_summary(self, results: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate executive summary from evaluation results.
+        # Step 5: Print summary
+        self.print_evaluation_summary(evaluation_results)
+
+        print(f"\n✓ Evaluation completed in {evaluation_results['evaluation_metadata']['evaluation_time']:.2f} seconds")
+        print(f"📁 Results saved to: {results_path}")
+        print(f"📊 Report saved to: {report_path}")
+
+        return evaluation_results
+
+    def save_evaluation_results(self, results: Dict[str, Any], output_name: str) -> Path:
+        """Save complete evaluation results to JSON.
 
         Args:
             results: Complete evaluation results
+            output_name: Base name for output file
 
         Returns:
-            Dict: Summary statistics and key findings
+            Path where results were saved
         """
-        summary = {}
+        output_path = self.config.results_dir / f"{output_name}.json"
 
-        # Sample quality summary
-        if "sample_quality" in results:
-            sq = results["sample_quality"]
-            summary["sample_quality"] = {
-                "overall_quality_score": sq.get("overall_quality_score", 0.0),
-                "sample_size": sq.get("sample_size", 0),
-                "entity_coverage_rate": sq.get("entity_coverage", {}).get(
-                    "entity_coverage_rate", 0.0
-                ),
-                "image_validity_rate": sq.get("image_validity", {}).get(
-                    "url_validity_rate", 0.0
-                ),
-                "group_diversity_score": sq.get("diversity_metrics", {}).get(
-                    "group_diversity", 0.0
-                ),
-            }
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
 
-        # Entity extraction summary
-        if "entity_extraction" in results:
-            ee = results["entity_extraction"]
-            macro_avg = ee.get("macro_averages", {})
-            summary["entity_extraction"] = {
-                "exact_match_rate": macro_avg.get("exact_match", 0.0),
-                "partial_match_f1": macro_avg.get("partial_match_f1", 0.0),
-                "semantic_f1": macro_avg.get("semantic_f1", 0.0),
-                "eighty_percent_accuracy": macro_avg.get(
-                    "eighty_percent_accuracy", 0.0
-                ),
-                "total_samples": ee.get("summary", {}).get("total_samples", 0),
-                "success_rate": ee.get("summary", {}).get("success_rate", 0.0),
-            }
-
-            # Top performing attributes
-            if "attribute_summary" in ee:
-                attr_summary = ee["attribute_summary"]
-                top_attrs = sorted(
-                    attr_summary.items(), key=lambda x: x[1]["mean_f1"], reverse=True
-                )[:5]
-                summary["top_performing_attributes"] = {
-                    attr: {"f1": metrics["mean_f1"], "samples": metrics["num_samples"]}
-                    for attr, metrics in top_attrs
-                }
-
-        return summary
-
-    def save_session_results(self, output_path: Optional[Path] = None) -> Path:
-        """Save current session results to file.
-
-        Args:
-            output_path: Optional path for results file
-
-        Returns:
-            Path: Path to saved results file
-        """
-        if not self.current_session:
-            raise ValueError("No active evaluation session to save")
-
-        if output_path is None:
-            session_id = self.current_session["session_id"]
-            output_path = self.config.results_dir / f"session_{session_id}.json"
-
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(self.current_session, f, ensure_ascii=False, indent=2)
-
-        print(f"Saved session results: {output_path}")
         return output_path
 
-    def load_session_results(self, session_path: Path) -> Dict[str, Any]:
-        """Load previous session results from file.
+    def generate_evaluation_report(self, results: Dict[str, Any], output_name: str) -> Path:
+        """Generate human-readable evaluation report.
 
         Args:
-            session_path: Path to session results file
+            results: Complete evaluation results
+            output_name: Base name for output file
 
         Returns:
-            Dict: Loaded session results
+            Path where report was saved
         """
-        with open(session_path, "r", encoding="utf-8") as f:
-            session_data = json.load(f)
+        report_path = self.config.results_dir / f"{output_name}_report.txt"
 
-        print(f"Loaded session: {session_data.get('session_id', 'unknown')}")
-        return session_data
+        metrics = results["metrics"]
+        metadata = results["evaluation_metadata"]
+        performance = results["model_execution"]
 
-    def compare_sessions(self, session_paths: List[Path]) -> Dict[str, Any]:
-        """Compare results across multiple evaluation sessions.
+        report_lines = []
+        report_lines.append("=" * 80)
+        report_lines.append("MODEL EVALUATION REPORT")
+        report_lines.append("=" * 80)
+        report_lines.append("")
+
+        # Metadata
+        report_lines.append("EVALUATION METADATA")
+        report_lines.append("-" * 40)
+        report_lines.append(f"Model Name: {metadata['model_name']}")
+        report_lines.append(f"Sample Path: {metadata['sample_path']}")
+        report_lines.append(f"Total Samples: {metadata['total_samples']}")
+        report_lines.append(f"Evaluation Time: {metadata['evaluation_time']:.2f} seconds")
+        report_lines.append(f"Timestamp: {metadata['timestamp']}")
+        report_lines.append("")
+
+        # Model Performance
+        report_lines.append("MODEL EXECUTION PERFORMANCE")
+        report_lines.append("-" * 40)
+        report_lines.append(f"Successful Predictions: {performance['successful_predictions']}")
+        report_lines.append(f"Failed Predictions: {performance['failed_predictions']}")
+        report_lines.append(f"Average Time per Product: {performance['avg_time_per_product']:.3f}s")
+        report_lines.append("")
+
+        # Main Metrics (Research Paper Format)
+        report_lines.append("EVALUATION METRICS")
+        report_lines.append("-" * 40)
+        report_lines.append(self.metrics.format_results_table(metrics))
+        report_lines.append("")
+
+        # Detailed Metrics
+        if "detailed_metrics" in metrics:
+            detailed = metrics["detailed_metrics"]
+            report_lines.append("DETAILED METRICS")
+            report_lines.append("-" * 40)
+            report_lines.append(f"Macro Precision: {detailed['macro_precision']:.4f}")
+            report_lines.append(f"Macro Recall: {detailed['macro_recall']:.4f}")
+            report_lines.append(f"Micro Precision: {detailed['micro_precision']:.4f}")
+            report_lines.append(f"Micro Recall: {detailed['micro_recall']:.4f}")
+            report_lines.append("")
+
+        # Sample Analysis
+        if metrics["per_sample_results"]:
+            sample_results = metrics["per_sample_results"]
+
+            # Best and worst samples
+            samples_by_f1 = sorted(enumerate(sample_results),
+                                   key=lambda x: x[1]["micro_f1"]["f1"], reverse=True)
+
+            report_lines.append("SAMPLE ANALYSIS")
+            report_lines.append("-" * 40)
+            report_lines.append(
+                f"Best Sample (Micro-F1): Sample #{samples_by_f1[0][0] + 1} - {samples_by_f1[0][1]['micro_f1']['f1']:.4f}")
+            report_lines.append(
+                f"Worst Sample (Micro-F1): Sample #{samples_by_f1[-1][0] + 1} - {samples_by_f1[-1][1]['micro_f1']['f1']:.4f}")
+
+            # Distribution analysis
+            exact_matches = sum(1 for r in sample_results if r["exact_match"] == 1.0)
+            eighty_percent_matches = sum(1 for r in sample_results if r["eighty_percent_accuracy"] == 1.0)
+
+            report_lines.append(
+                f"Perfect Matches: {exact_matches}/{len(sample_results)} ({exact_matches / len(sample_results) * 100:.1f}%)")
+            report_lines.append(
+                f"80%+ Accuracy: {eighty_percent_matches}/{len(sample_results)} ({eighty_percent_matches / len(sample_results) * 100:.1f}%)")
+
+        # Save report
+        with open(report_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(report_lines))
+
+        return report_path
+
+    def print_evaluation_summary(self, results: Dict[str, Any]) -> None:
+        """Print evaluation summary to console.
 
         Args:
-            session_paths: List of paths to session result files
+            results: Complete evaluation results
+        """
+        print("\n" + "=" * 60)
+        print("EVALUATION SUMMARY")
+        print("=" * 60)
+
+        metrics = results["metrics"]
+
+        # Main metrics table
+        print("\nRESEARCH PAPER METRICS:")
+        print(self.metrics.format_results_table(metrics))
+
+        # Quick performance overview
+        performance = results["model_execution"]
+        total = performance["successful_predictions"] + performance["failed_predictions"]
+        success_rate = performance["successful_predictions"] / total * 100 if total > 0 else 0
+
+        print(f"\nMODEL EXECUTION:")
+        print(f"Success Rate: {success_rate:.1f}% ({performance['successful_predictions']}/{total})")
+        print(f"Avg Time/Product: {performance['avg_time_per_product']:.3f}s")
+
+    def compare_evaluations(self, result_files: List[Path]) -> Dict[str, Any]:
+        """Compare multiple evaluation results.
+
+        Args:
+            result_files: List of paths to evaluation result JSON files
 
         Returns:
-            Dict: Comparison analysis
+            Comparison analysis
         """
-        sessions = []
-        for path in session_paths:
+        print("=" * 60)
+        print("EVALUATION COMPARISON")
+        print("=" * 60)
+
+        evaluations = []
+
+        # Load all evaluations
+        for file_path in result_files:
             try:
-                session = self.load_session_results(path)
-                sessions.append(session)
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    evaluation = json.load(f)
+                    evaluations.append({
+                        "file": file_path.name,
+                        "model": evaluation["evaluation_metadata"]["model_name"],
+                        "metrics": evaluation["metrics"]
+                    })
+                    print(f"✓ Loaded: {file_path.name}")
             except Exception as e:
-                print(f"Warning: Could not load session from {path}: {e}")
+                print(f"✗ Failed to load {file_path.name}: {e}")
 
-        if len(sessions) < 2:
-            raise ValueError("Need at least 2 sessions to compare")
+        if len(evaluations) < 2:
+            print("Need at least 2 evaluations to compare")
+            return {}
+
+        # Create comparison table
+        comparison = {
+            "evaluations": evaluations,
+            "metric_comparison": {},
+            "ranking": {}
+        }
 
         # Extract key metrics for comparison
-        comparison = {"sessions": [], "metric_comparison": {}, "trends": {}}
+        key_metrics = ["eighty_percent_accuracy", "macro_f1", "micro_f1", "rouge_1", "exact_match_rate"]
 
-        for session in sessions:
-            session_id = session.get("session_id", "unknown")
-            results = session.get("results", {})
+        for metric in key_metrics:
+            values = []
+            for eval_data in evaluations:
+                value = eval_data["metrics"].get(metric, 0.0)
+                values.append({
+                    "model": eval_data["model"],
+                    "file": eval_data["file"],
+                    "value": value
+                })
 
-            session_summary = {"session_id": session_id}
+            # Sort by value (descending)
+            values.sort(key=lambda x: x["value"], reverse=True)
+            comparison["metric_comparison"][metric] = values
 
-            # Extract sample quality metrics if available
-            if "sample_quality" in results:
-                sq = results["sample_quality"]
-                session_summary.update(
-                    {
-                        "overall_quality_score": sq.get("overall_quality_score", 0.0),
-                        "entity_coverage_rate": sq.get("entity_coverage", {}).get(
-                            "entity_coverage_rate", 0.0
-                        ),
-                    }
-                )
+        # Overall ranking (based on macro_f1)
+        macro_f1_ranking = comparison["metric_comparison"]["macro_f1"]
+        comparison["ranking"]["by_macro_f1"] = macro_f1_ranking
 
-            # Extract entity extraction metrics if available
-            if "entity_extraction" in results:
-                ee = results["entity_extraction"]
-                macro_avg = ee.get("macro_averages", {})
-                session_summary.update(
-                    {
-                        "exact_match": macro_avg.get("exact_match", 0.0),
-                        "semantic_f1": macro_avg.get("semantic_f1", 0.0),
-                    }
-                )
+        # Print comparison table
+        print(f"\nCOMPARISON TABLE:")
+        print(f"{'Model':<20} {'80%Acc':<8} {'Macro-F1':<8} {'Micro-F1':<8} {'ROUGE-1':<8}")
+        print("-" * 60)
 
-            comparison["sessions"].append(session_summary)
+        for eval_data in evaluations:
+            m = eval_data["metrics"]
+            print(f"{eval_data['model']:<20} "
+                  f"{m.get('eighty_percent_accuracy', 0):<8.2f} "
+                  f"{m.get('macro_f1', 0):<8.2f} "
+                  f"{m.get('micro_f1', 0):<8.2f} "
+                  f"{m.get('rouge_1', 0):<8.2f}")
 
         return comparison
+
+    def load_evaluation_results(self, results_path: Path) -> Dict[str, Any]:
+        """Load evaluation results from JSON file.
+
+        Args:
+            results_path: Path to results JSON file
+
+        Returns:
+            Evaluation results dictionary
+        """
+        with open(results_path, 'r', encoding='utf-8') as f:
+            return json.load(f)

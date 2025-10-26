@@ -1,11 +1,22 @@
-"""Data processing and management module.
+"""Data processing module for Torob project.
 
-This module provides utilities for data downloading, processing,
-and toy sample generation for evaluation purposes.
+This module provides independent components for data operations:
+1. DataDownloader: Download and extract data from Google Drive
+2. ToySampleGenerator: Generate balanced toy samples from datasets
+3. HighEntitySampleGenerator: Generate samples with minimum entity requirements
+
+Each component can be used separately with its own configuration.
 """
 
-from data.config import DataConfig
-from data.downloader import DataDownloader
-from data.toy_sample_generator import ToySampleGenerator
+from .config import DownloadConfig, SampleConfig
+from .downloader import DataDownloader
+from .toy_sample_generator import ToySampleGenerator
+from .high_entity_generator import HighEntitySampleGenerator
 
-__all__ = ["DataDownloader", "ToySampleGenerator", "DataConfig"]
+__all__ = [
+    "DownloadConfig",
+    "SampleConfig",
+    "DataDownloader",
+    "ToySampleGenerator",
+    "HighEntitySampleGenerator"
+]

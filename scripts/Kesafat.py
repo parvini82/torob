@@ -1,12 +1,14 @@
 from pathlib import Path
 
 x = Path("data/processed/toy_sample.json")
-print(x.absolute())
+# print(x.absolute())
 
-project_root = Path(__file__).resolve().parent.parent
-print(project_root.absolute())
+project_root = Path(__file__).resolve().parent
+# print(project_root.absolute())
 from src.service.langgraph.langgraph_service import run_langgraph_on_url
 
 image_url = "https://image.torob.com/base/images/3H/_p/3H_p6gxOjgPpU9vv.jpg"
-output_model = run_langgraph_on_url(image_url)
-print(output_model)
+# output_model = run_langgraph_on_url(image_url)
+output_model = {'english': {}, 'persian': {'entities': [{'name': 'نوع کلی', 'values': ['پیراهن', 'شلوار']}, {'name': 'رنگ', 'values': ['مشکی']}, {'name': 'ویژگی های سبک', 'values': ['یقه بدون درز', 'آستین بلند', 'گشاد و روان']}, {'name': 'طرح', 'values': ['ساده']}, {'name': 'ویژگی های خاص', 'values': ['بند جلویی']}, {'name': 'اندازه مناسب', 'values': ['راحتی']}, {'name': 'جنس', 'values': ['پنبه']}, {'name': 'برند', 'values': ['قابل مشاهده نیست']}, {'name': 'اندازه', 'values': ['قابل مشاهده نیست']}]}}
+
+print(output_model.get('persian').get('entities'))

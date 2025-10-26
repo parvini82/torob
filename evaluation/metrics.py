@@ -1,309 +1,399 @@
-"""Comprehensive sample quality metrics for evaluation.
+"""Comprehensive metrics for entity extraction evaluation.
 
-This module implements metrics to assess the quality and diversity of a
-product sample (e.g., toy_sample) without relying on external models.
-It focuses on structure, coverage, distribution, and basic data hygiene.
+This module provides metrics commonly used in research papers for comparing
+entity extraction performance, including those from academic literature.
 """
 
-from __future__ import annotations
-
-import json
-import math
+from typing import List, Dict, Any, Set, Tuple
+from collections import defaultdict
 import re
-from collections import Counter
-from pathlib import Path
-from typing import Any, Dict, List
 
 from .config import EvaluationConfig
 
-Product = Dict[str, Any]
-MetricResult = Dict[str, Any]
 
+class EntityMetrics:
+    """Comprehensive metrics for entity extraction evaluation.
 
-class EvaluationMetrics:
-    """Calculate quality and diversity metrics for product samples.
-
-    This class provides a set of methods to evaluate a list of product dicts
-    that follow the common structure used in this project:
-      - title: str
-      - group: str (e.g., "زنانه", "مردانه", ... or "نامشخص")
-      - product: str (product type)
-      - image_url: str
-      - entities: List[Dict{name: str, values: List[str]}]
-      - quality_score or quality_band (optional)
+    Includes standard metrics and research paper metrics like:
+    - 80% Accuracy (from "Visual Zero-Shot E-Commerce Product Attribute Value Extraction")
+    - Macro-F1, Micro-F1
+    - ROUGE-1
+    - Standard precision, recall, F1
     """
 
     def __init__(self, config: EvaluationConfig):
-        self.config = config
-
-    # ------------------------------
-    # Public API
-    # ------------------------------
-    def calculate_comprehensive_metrics(
-        self, products: List[Product]
-    ) -> Dict[str, Any]:
-        """Compute a comprehensive set of metrics for a sample.
+        """Initialize metrics calculator.
 
         Args:
-            products: List of product dicts
-        Returns:
-            Dict with multiple sections and an overall quality score.
+            config: EvaluationConfig instance
         """
-        if not isinstance(products, list):
-            raise ValueError("products must be a list of dicts")
+        self.config = config
 
-        self.config.ensure_directories()
+    def normalize_text(self, text: str) -> str:
+        """Normalize text for comparison.
 
-        group_dist = self.calculate_group_distribution(products)
-        entity_cov = self.calculate_entity_coverage(products)
-        title_stats = self.calculate_title_analysis(products)
-        image_stats = self.calculate_image_validity(products)
-        quality_dist = self.calculate_quality_distribution(products)
-        diversity = self.calculate_sample_diversity(products)
+        Args:
+            text: Input text string
 
-        overall = self._calculate_overall_quality_score(
-            {
-                "entity_coverage_rate": entity_cov.get("entity_coverage_rate", 0.0),
-                "url_validity_rate": image_stats.get("url_validity_rate", 0.0),
-                "group_diversity": diversity.get("group_diversity", 0.0),
-                "entity_diversity": diversity.get("entity_diversity", 0.0),
-                "overall_diversity_score": diversity.get(
-                    "overall_diversity_score", 0.0
-                ),
-            }
-        )
+        Returns:
+            Normalized text (lowercase, stripped, no extra spaces)
+        """
+        if not text:
+            return ""
+        return re.sub(r'\s+', ' ', str(text).lower().strip())
+
+    def extract_entity_values(self, entities: List[Dict]) -> Set[str]:
+        """Extract all entity values from entity list.
+
+        Args:
+            entities: List of entity dictionaries
+
+        Returns:
+            Set of normalized entity values
+        """
+        values = set()
+        for entity in entities:
+            if isinstance(entity, dict):
+                entity_values = entity.get('values', [])
+                if isinstance(entity_values, list):
+                    for value in entity_values:
+                        normalized = self.normalize_text(str(value))
+                        if normalized:
+                            values.add(normalized)
+        return values
+
+    def extract_entity_pairs(self, entities: List[Dict]) -> Set[Tuple[str, str]]:
+        """Extract (attribute, value) pairs from entities.
+
+        Args:
+            entities: List of entity dictionaries
+
+        Returns:
+            Set of (normalized_name, normalized_value) tuples
+        """
+        pairs = set()
+        for entity in entities:
+            if isinstance(entity, dict):
+                name = self.normalize_text(entity.get('name', ''))
+                values = entity.get('values', [])
+                if isinstance(values, list):
+                    for value in values:
+                        normalized_value = self.normalize_text(str(value))
+                        if name and normalized_value:
+                            pairs.add((name, normalized_value))
+        return pairs
+
+    def exact_match(self, predicted: List[Dict], ground_truth: List[Dict]) -> float:
+        """Calculate exact match score for complete entity structure.
+
+        Args:
+            predicted: List of predicted entity dictionaries
+            ground_truth: List of ground truth entity dictionaries
+
+        Returns:
+            Exact match score (0.0 or 1.0)
+        """
+        if not ground_truth:
+            return 1.0 if not predicted else 0.0
+
+        pred_pairs = self.extract_entity_pairs(predicted)
+        true_pairs = self.extract_entity_pairs(ground_truth)
+
+        return 1.0 if pred_pairs == true_pairs else 0.0
+
+    def eighty_percent_accuracy(self, predicted: List[Dict], ground_truth: List[Dict]) -> float:
+        """Calculate 80% accuracy metric (from research paper).
+
+        This metric considers a sample correct if at least 80% of ground truth
+        entity values are correctly predicted.
+
+        Args:
+            predicted: List of predicted entity dictionaries
+            ground_truth: List of ground truth entity dictionaries
+
+        Returns:
+            1.0 if ≥80% of ground truth values are predicted, 0.0 otherwise
+        """
+        if not ground_truth:
+            return 1.0  # No ground truth to match
+
+        true_values = self.extract_entity_values(ground_truth)
+        pred_values = self.extract_entity_values(predicted)
+
+        if not true_values:
+            return 1.0
+
+        # Calculate overlap
+        correct_values = len(true_values & pred_values)
+        accuracy = correct_values / len(true_values)
+
+        return 1.0 if accuracy >= 0.8 else 0.0
+
+    def micro_f1(self, predicted: List[Dict], ground_truth: List[Dict]) -> Dict[str, float]:
+        """Calculate Micro-F1 score.
+
+        Micro-F1 aggregates contributions of all classes to compute average metric.
+
+        Args:
+            predicted: List of predicted entity dictionaries
+            ground_truth: List of ground truth entity dictionaries
+
+        Returns:
+            Dictionary with precision, recall, and F1 scores
+        """
+        true_values = self.extract_entity_values(ground_truth)
+        pred_values = self.extract_entity_values(predicted)
+
+        if not true_values and not pred_values:
+            return {"precision": 1.0, "recall": 1.0, "f1": 1.0}
+
+        true_positives = len(pred_values & true_values)
+        false_positives = len(pred_values - true_values)
+        false_negatives = len(true_values - pred_values)
+
+        precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
+        recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
+        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
 
         return {
-            "sample_size": len(products),
-            "group_distribution": group_dist,
-            "entity_coverage": entity_cov,
-            "title_analysis": title_stats,
-            "image_validity": image_stats,
-            "quality_distribution": quality_dist,
-            "diversity_metrics": diversity,
-            "overall_quality_score": overall,
+            "precision": round(precision, self.config.precision_digits),
+            "recall": round(recall, self.config.precision_digits),
+            "f1": round(f1, self.config.precision_digits)
         }
 
-    # ------------------------------
-    # Individual metric calculators
-    # ------------------------------
-    def calculate_group_distribution(self, products: List[Product]) -> MetricResult:
-        groups: List[str] = []
-        for p in products:
-            g = (p.get("group") or "").strip()
-            groups.append(g if g else "نامشخص")
-        cnt = Counter(groups)
-        total = max(len(products), 1)
-        return {
-            "total_products": len(products),
-            "unique_groups": len(cnt),
-            "group_counts": dict(cnt),
-            "group_percentages": {k: round(v * 100 / total, 2) for k, v in cnt.items()},
-            "most_common_group": cnt.most_common(1)[0] if cnt else None,
-            "group_diversity_score": self._shannon_diversity_from_counter(cnt),
-        }
+    def macro_f1(self, predicted: List[Dict], ground_truth: List[Dict]) -> Dict[str, float]:
+        """Calculate Macro-F1 score.
 
-    def calculate_entity_coverage(self, products: List[Product]) -> MetricResult:
-        all_entities: List[str] = []
-        entities_per_product: List[int] = []
-        with_entities = 0
-        for p in products:
-            ents = p.get("entities") or []
-            names = [
-                e.get("name") for e in ents if isinstance(e, dict) and e.get("name")
-            ]
-            all_entities.extend(names)
-            entities_per_product.append(len(names))
-            if names:
-                with_entities += 1
-        total = max(len(products), 1)
-        freq = Counter(all_entities)
-        return {
-            "total_products": len(products),
-            "products_with_entities": with_entities,
-            "entity_coverage_rate": round(with_entities * 100 / total, 2),
-            "unique_entities": len(freq),
-            "total_entity_occurrences": len(all_entities),
-            "avg_entities_per_product": round(sum(entities_per_product) / total, 2),
-            "entity_count_distribution": dict(Counter(entities_per_product)),
-            "most_common_entities": freq.most_common(10),
-            "entities_appearing_once": sum(1 for c in freq.values() if c == 1),
-            "entity_diversity_score": self._shannon_diversity_from_counter(freq),
-        }
+        Macro-F1 calculates metrics for each attribute separately and then averages.
 
-    def calculate_title_analysis(self, products: List[Product]) -> MetricResult:
-        lengths: List[int] = []
-        empty = 0
-        for p in products:
-            title = (p.get("title") or "").strip()
-            if not title:
-                empty += 1
-            lengths.append(len(title))
-        total = max(len(products), 1)
-        short = sum(1 for L in lengths if L < 20)
-        medium = sum(1 for L in lengths if 30 <= L <= 50)
-        long = sum(1 for L in lengths if L > 100)
-        return {
-            "total_products": len(products),
-            "empty_titles": empty,
-            "avg_title_length": round(sum(lengths) / total, 2),
-            "min_title_length": min(lengths) if lengths else 0,
-            "max_title_length": max(lengths) if lengths else 0,
-            "short_titles_count": short,
-            "medium_titles_count": medium,
-            "long_titles_count": long,
-            "short_titles_percentage": round(short * 100 / total, 2),
-            "medium_titles_percentage": round(medium * 100 / total, 2),
-            "long_titles_percentage": round(long * 100 / total, 2),
-        }
+        Args:
+            predicted: List of predicted entity dictionaries
+            ground_truth: List of ground truth entity dictionaries
 
-    def calculate_image_validity(self, products: List[Product]) -> MetricResult:
-        valid = 0
-        unique = set()
-        missing = 0
-        exts: List[str] = []
-        for p in products:
-            url = (p.get("image_url") or "").strip()
-            if not url:
-                missing += 1
-                continue
-            if url.startswith(("http://", "https://")) or url.startswith("data:"):
-                valid += 1
-                unique.add(url.lower())
-                ext = self._extract_ext(url)
-                if ext:
-                    exts.append(ext)
-        ext_cnt = Counter(exts)
-        total = max(len(products), 1)
-        valid_rate = round(valid * 100 / total, 2)
-        uniq_rate = round((len(unique) * 100 / valid), 2) if valid else 0.0
-        return {
-            "total_products": len(products),
-            "valid_image_urls": valid,
-            "unique_image_urls": len(unique),
-            "missing_image_urls": missing,
-            "url_validity_rate": valid_rate,
-            "url_uniqueness_rate": uniq_rate,
-            "duplicate_urls": max(valid - len(unique), 0),
-            "image_extension_distribution": dict(ext_cnt),
-            "most_common_extension": ext_cnt.most_common(1)[0] if ext_cnt else None,
-        }
+        Returns:
+            Dictionary with precision, recall, and F1 scores
+        """
+        # Get all unique attribute names
+        pred_pairs = self.extract_entity_pairs(predicted)
+        true_pairs = self.extract_entity_pairs(ground_truth)
 
-    def calculate_quality_distribution(self, products: List[Product]) -> MetricResult:
-        bands: List[str] = []
-        missing = 0
-        for p in products:
-            band = p.get("quality_band")
-            if band:
-                bands.append(str(band))
-                continue
-            score = p.get("quality_score")
-            if isinstance(score, (int, float)):
-                bands.append(self._score_to_band(score))
+        all_attributes = set()
+        for name, _ in pred_pairs:
+            all_attributes.add(name)
+        for name, _ in true_pairs:
+            all_attributes.add(name)
+
+        if not all_attributes:
+            return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+
+        attribute_metrics = []
+
+        for attr in all_attributes:
+            # Get values for this attribute
+            pred_attr_values = {value for name, value in pred_pairs if name == attr}
+            true_attr_values = {value for name, value in true_pairs if name == attr}
+
+            # Calculate metrics for this attribute
+            if not true_attr_values and not pred_attr_values:
+                attr_precision = attr_recall = attr_f1 = 1.0
+            elif not true_attr_values:
+                attr_precision = attr_recall = attr_f1 = 0.0
+            elif not pred_attr_values:
+                attr_precision = attr_recall = attr_f1 = 0.0
             else:
-                bands.append("Unknown")
-                missing += 1
-        cnt = Counter(bands)
-        total = max(len(products), 1)
+                tp = len(pred_attr_values & true_attr_values)
+                fp = len(pred_attr_values - true_attr_values)
+                fn = len(true_attr_values - pred_attr_values)
+
+                attr_precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+                attr_recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+                attr_f1 = 2 * attr_precision * attr_recall / (attr_precision + attr_recall) if (attr_precision + attr_recall) > 0 else 0.0
+
+            attribute_metrics.append({
+                "precision": attr_precision,
+                "recall": attr_recall,
+                "f1": attr_f1
+            })
+
+        # Average across attributes
+        avg_precision = sum(m["precision"] for m in attribute_metrics) / len(attribute_metrics)
+        avg_recall = sum(m["recall"] for m in attribute_metrics) / len(attribute_metrics)
+        avg_f1 = sum(m["f1"] for m in attribute_metrics) / len(attribute_metrics)
+
         return {
-            "total_products": len(products),
-            "missing_quality_info": missing,
-            "quality_distribution": dict(cnt),
-            "quality_percentages": {
-                k: round(v * 100 / total, 2) for k, v in cnt.items()
+            "precision": round(avg_precision, self.config.precision_digits),
+            "recall": round(avg_recall, self.config.precision_digits),
+            "f1": round(avg_f1, self.config.precision_digits)
+        }
+
+    def rouge_1(self, predicted: List[Dict], ground_truth: List[Dict]) -> float:
+        """Calculate ROUGE-1 score for entity extraction.
+
+        ROUGE-1 measures overlap of unigrams between predicted and ground truth.
+
+        Args:
+            predicted: List of predicted entity dictionaries
+            ground_truth: List of ground truth entity dictionaries
+
+        Returns:
+            ROUGE-1 F1 score
+        """
+        # Extract all text content from entities
+        pred_text = []
+        for entity in predicted:
+            if isinstance(entity, dict):
+                # Add entity name
+                name = entity.get('name', '')
+                if name:
+                    pred_text.append(str(name))
+
+                # Add entity values
+                values = entity.get('values', [])
+                if isinstance(values, list):
+                    for value in values:
+                        if value:
+                            pred_text.append(str(value))
+
+        true_text = []
+        for entity in ground_truth:
+            if isinstance(entity, dict):
+                # Add entity name
+                name = entity.get('name', '')
+                if name:
+                    true_text.append(str(name))
+
+                # Add entity values
+                values = entity.get('values', [])
+                if isinstance(values, list):
+                    for value in values:
+                        if value:
+                            true_text.append(str(value))
+
+        # Tokenize and normalize
+        pred_tokens = set()
+        for text in pred_text:
+            tokens = self.normalize_text(text).split()
+            pred_tokens.update(tokens)
+
+        true_tokens = set()
+        for text in true_text:
+            tokens = self.normalize_text(text).split()
+            true_tokens.update(tokens)
+
+        if not true_tokens:
+            return 1.0 if not pred_tokens else 0.0
+
+        if not pred_tokens:
+            return 0.0
+
+        # Calculate ROUGE-1 F1
+        overlap = len(pred_tokens & true_tokens)
+        precision = overlap / len(pred_tokens)
+        recall = overlap / len(true_tokens)
+
+        if precision + recall == 0:
+            return 0.0
+
+        rouge_f1 = 2 * precision * recall / (precision + recall)
+        return round(rouge_f1, self.config.precision_digits)
+
+    def evaluate_single_sample(self, predicted: List[Dict], ground_truth: List[Dict]) -> Dict[str, Any]:
+        """Evaluate single sample with all metrics.
+
+        Args:
+            predicted: Predicted entities for one sample
+            ground_truth: Ground truth entities for one sample
+
+        Returns:
+            Dictionary with all metric scores
+        """
+        return {
+            "exact_match": self.exact_match(predicted, ground_truth),
+            "eighty_percent_accuracy": self.eighty_percent_accuracy(predicted, ground_truth),
+            "micro_f1": self.micro_f1(predicted, ground_truth),
+            "macro_f1": self.macro_f1(predicted, ground_truth),
+            "rouge_1": self.rouge_1(predicted, ground_truth)
+        }
+
+    def evaluate_batch(self,
+                      predictions: List[List[Dict]],
+                      ground_truths: List[List[Dict]]) -> Dict[str, Any]:
+        """Evaluate batch of predictions with comprehensive metrics.
+
+        Args:
+            predictions: List of prediction lists (one per sample)
+            ground_truths: List of ground truth lists (one per sample)
+
+        Returns:
+            Dictionary with aggregated metrics and per-sample results
+        """
+        if len(predictions) != len(ground_truths):
+            raise ValueError("Predictions and ground truths must have same length")
+
+        # Calculate per-sample metrics
+        sample_results = []
+        for pred, true in zip(predictions, ground_truths):
+            sample_result = self.evaluate_single_sample(pred, true)
+            sample_results.append(sample_result)
+
+        # Aggregate results
+        num_samples = len(predictions)
+
+        # Average single-value metrics
+        exact_match_rate = sum(r["exact_match"] for r in sample_results) / num_samples
+        eighty_percent_acc = sum(r["eighty_percent_accuracy"] for r in sample_results) / num_samples
+        rouge_1_avg = sum(r["rouge_1"] for r in sample_results) / num_samples
+
+        # Average F1 metrics
+        micro_f1_scores = [r["micro_f1"]["f1"] for r in sample_results]
+        micro_precision_scores = [r["micro_f1"]["precision"] for r in sample_results]
+        micro_recall_scores = [r["micro_f1"]["recall"] for r in sample_results]
+
+        macro_f1_scores = [r["macro_f1"]["f1"] for r in sample_results]
+        macro_precision_scores = [r["macro_f1"]["precision"] for r in sample_results]
+        macro_recall_scores = [r["macro_f1"]["recall"] for r in sample_results]
+
+        # Compile final results
+        results = {
+            "total_samples": num_samples,
+
+            # Primary metrics (matching research paper format)
+            "exact_match_rate": round(exact_match_rate, self.config.precision_digits),
+            "eighty_percent_accuracy": round(eighty_percent_acc, self.config.precision_digits),
+            "macro_f1": round(sum(macro_f1_scores) / num_samples, self.config.precision_digits),
+            "micro_f1": round(sum(micro_f1_scores) / num_samples, self.config.precision_digits),
+            "rouge_1": round(rouge_1_avg, self.config.precision_digits),
+
+            # Additional detailed metrics
+            "detailed_metrics": {
+                "macro_precision": round(sum(macro_precision_scores) / num_samples, self.config.precision_digits),
+                "macro_recall": round(sum(macro_recall_scores) / num_samples, self.config.precision_digits),
+                "micro_precision": round(sum(micro_precision_scores) / num_samples, self.config.precision_digits),
+                "micro_recall": round(sum(micro_recall_scores) / num_samples, self.config.precision_digits),
             },
-            "weighted_quality_score": self._weighted_quality(cnt),
+
+            # Per-sample breakdown (for detailed analysis)
+            "per_sample_results": sample_results if self.config.precision_digits else None
         }
 
-    def calculate_sample_diversity(self, products: List[Product]) -> MetricResult:
-        types = [str((p.get("product") or "").strip()) for p in products]
-        type_cnt = Counter([t for t in types if t])
-        group_div = self._shannon_diversity([p.get("group", "") for p in products])
-        entity_div = self._entity_shannon(products)
-        type_div = self._shannon_diversity(types)
-        return {
-            "product_type_diversity": type_div,
-            "group_diversity": group_div,
-            "entity_diversity": entity_div,
-            "overall_diversity_score": round(
-                (group_div + entity_div + type_div) / 3, 4
-            ),
-            "unique_product_types": len(type_cnt),
-            "most_common_product_types": type_cnt.most_common(5),
-        }
+        return results
 
-    # ------------------------------
-    # Helpers
-    # ------------------------------
-    def _extract_ext(self, url: str) -> str:
-        m = re.search(r"\.([a-zA-Z0-9]+)(?:\?|$)", url or "")
-        return f".{m.group(1).lower()}" if m else ""
+    def format_results_table(self, results: Dict[str, Any]) -> str:
+        """Format results in research paper table format.
 
-    def _score_to_band(self, score: float) -> str:
-        if score >= 90:
-            return "Excellent"
-        if score >= 80:
-            return "Good"
-        if score >= 60:
-            return "Fair"
-        return "Poor"
+        Args:
+            results: Results from evaluate_batch
 
-    def _weighted_quality(self, cnt: Counter) -> float:
-        total = sum(cnt.values()) or 1
-        w = self.config.quality_weights
-        weighted = sum(
-            cnt.get(b, 0) * w.get(b, 1.0)
-            for b in set(list(cnt.keys()) + list(w.keys()))
-        )
-        return round(weighted / total, self.config.precision_digits)
+        Returns:
+            Formatted string table
+        """
+        table = []
+        table.append("Metric\t\tScore")
+        table.append("-" * 30)
+        table.append(f"80%Acc.\t\t{results['eighty_percent_accuracy']:.2f}")
+        table.append(f"Macro-F1\t{results['macro_f1']:.2f}")
+        table.append(f"Micro-F1\t{results['micro_f1']:.2f}")
+        table.append(f"ROUGE-1\t\t{results['rouge_1']:.2f}")
+        table.append(f"Exact Match\t{results['exact_match_rate']:.2f}")
 
-    def _shannon_diversity_from_counter(self, counter: Counter) -> float:
-        if not counter:
-            return 0.0
-        total = sum(counter.values())
-        if total == 0:
-            return 0.0
-        H = 0.0
-        for c in counter.values():
-            p = c / total
-            if p > 0:
-                H -= p * math.log(p)
-        return round(H, self.config.precision_digits)
-
-    def _shannon_diversity(self, items: List[str]) -> float:
-        cnt = Counter([i for i in items if i])
-        return self._shannon_diversity_from_counter(cnt)
-
-    def _entity_shannon(self, products: List[Product]) -> float:
-        all_names: List[str] = []
-        for p in products:
-            ents = p.get("entities") or []
-            all_names.extend(
-                [e.get("name") for e in ents if isinstance(e, dict) and e.get("name")]
-            )
-        return self._shannon_diversity(all_names)
-
-    def _calculate_overall_quality_score(self, parts: Dict[str, float]) -> float:
-        # weights similar to previous design
-        weights = {
-            "entity_coverage_rate": 0.25,
-            "url_validity_rate": 0.20,
-            "group_diversity": 0.20,
-            "entity_diversity": 0.20,
-            "overall_diversity_score": 0.15,
-        }
-        score = 0.0
-        for k, w in weights.items():
-            v = parts.get(k, 0.0)
-            # Normalize percentages if needed
-            norm = (v / 100.0) if v > 1 else v
-            score += norm * w
-        return round(score, self.config.precision_digits)
-
-    # ------------------------------
-    # Persistence helpers
-    # ------------------------------
-    def save_metrics_report(self, metrics: Dict[str, Any], output_path: Path) -> None:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(metrics, f, ensure_ascii=False, indent=2)
+        return "\n".join(table)
