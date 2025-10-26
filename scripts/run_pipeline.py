@@ -20,7 +20,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import requests
 
 # Import the langgraph service
 from src.service.langgraph.langgraph_service import run_langgraph_on_url
@@ -29,10 +28,11 @@ from src.service.langgraph.langgraph_service import run_langgraph_on_url
 from src.evaluation.evaluator import ModelEvaluator
 from src.evaluation.config import EvaluationConfig
 
+project_root = Path(__file__).resolve().parent.parent
+
 
 def setup_paths():
     """Setup project paths and add src to Python path."""
-    project_root = Path(__file__).parent.parent
     src_path = project_root / "src"
 
     if str(src_path) not in sys.path:
@@ -56,7 +56,7 @@ def build_data() -> bool:
     print("[STEP 1] Building data and generating toy sample...")
 
     # Check if toy sample already exists
-    toy_sample_path = Path("data/processed/toy_sample.json")
+    toy_sample_path = project_root / "data/processed/toy_sample.json"
     if check_file_exists(toy_sample_path):
         print(f"[INFO] Toy sample already exists at {toy_sample_path}")
         return True
@@ -64,10 +64,10 @@ def build_data() -> bool:
     try:
         # Run the build_data script
         result = subprocess.run(
-            [sys.executable, "scripts/build_data.py"],
+            [sys.executable, "build_data.py"],
             capture_output=True,
             text=True,
-            timeout=300  # 5 minute timeout
+            timeout=300,  # 5 minute timeout
         )
 
         if result.returncode == 0:
@@ -96,7 +96,7 @@ def load_toy_sample(toy_sample_path: Path) -> Optional[List[Dict[str, Any]]]:
         List of toy sample data or None if failed
     """
     try:
-        with open(toy_sample_path, 'r', encoding='utf-8') as f:
+        with open(toy_sample_path, "r", encoding="utf-8") as f:
             toy_sample = json.load(f)
 
         print(f"[OK] Loaded toy sample with {len(toy_sample)} items")
@@ -107,7 +107,9 @@ def load_toy_sample(toy_sample_path: Path) -> Optional[List[Dict[str, Any]]]:
         return None
 
 
-def run_model_service(toy_sample: List[Dict[str, Any]]) -> Optional[List[Dict[str, Any]]]:
+def run_model_service(
+    toy_sample: List[Dict[str, Any]],
+) -> Optional[List[Dict[str, Any]]]:
     """
     Send toy sample images to model service API and get predictions.
 
@@ -128,23 +130,25 @@ def run_model_service(toy_sample: List[Dict[str, Any]]) -> Optional[List[Dict[st
         for i, sample in enumerate(toy_sample):
             try:
                 # Get image URL from sample
-                image_url = sample.get('image_url')
+                image_url = sample.get("image_url")
                 if not image_url:
                     print(f"[WARNING] Sample {i} has no image_url, skipping...")
-                    predictions.append({
-                        'sample_index': i,
-                        'random_key': sample.get('random_key', ''),
-                        'error': 'No image_url provided',
-                        'entities': []
-                    })
+                    predictions.append(
+                        {
+                            "sample_index": i,
+                            "random_key": sample.get("random_key", ""),
+                            "error": "No image_url provided",
+                            "entities": [],
+                        }
+                    )
                     continue
 
                 # Call the LangGraph service
                 result = run_langgraph_on_url(image_url)
 
                 # Extract Persian entities from result
-                persian_output = result.get('persian', {})
-                entities = persian_output.get('entities', [])
+                persian_output = result.get("persian", {})
+                entities = persian_output.get("entities", [])
 
                 # Ensure entities are in the expected format
                 if isinstance(entities, dict):
@@ -158,12 +162,12 @@ def run_model_service(toy_sample: List[Dict[str, Any]]) -> Optional[List[Dict[st
 
                 # Create prediction in expected format
                 prediction = {
-                    'sample_index': i,
-                    'random_key': sample.get('random_key', ''),
-                    'entities': entities,
-                    'english_tags': result.get('english', {}),
-                    'persian_tags': result.get('persian', {}),
-                    'source_image_url': image_url
+                    "sample_index": i,
+                    "random_key": sample.get("random_key", ""),
+                    "entities": entities,
+                    "english_tags": result.get("english", {}),
+                    "persian_tags": result.get("persian", {}),
+                    "source_image_url": image_url,
                 }
 
                 predictions.append(prediction)
@@ -177,13 +181,15 @@ def run_model_service(toy_sample: List[Dict[str, Any]]) -> Optional[List[Dict[st
             except Exception as e:
                 print(f"[WARNING] Failed to process sample {i}: {e}")
                 # Add empty prediction to maintain alignment
-                predictions.append({
-                    'sample_index': i,
-                    'random_key': sample.get('random_key', ''),
-                    'error': str(e),
-                    'entities': [],
-                    'source_image_url': sample.get('image_url', '')
-                })
+                predictions.append(
+                    {
+                        "sample_index": i,
+                        "random_key": sample.get("random_key", ""),
+                        "error": str(e),
+                        "entities": [],
+                        "source_image_url": sample.get("image_url", ""),
+                    }
+                )
 
         print(f"[OK] Model service completed. Generated {len(predictions)} predictions")
         return predictions
@@ -196,7 +202,9 @@ def run_model_service(toy_sample: List[Dict[str, Any]]) -> Optional[List[Dict[st
         return None
 
 
-def save_predictions(predictions: List[Dict[str, Any]], output_dir: Path) -> Optional[Path]:
+def save_predictions(
+    predictions: List[Dict[str, Any]], output_dir: Path
+) -> Optional[Path]:
     """
     Save model predictions to JSON file.
 
@@ -218,7 +226,7 @@ def save_predictions(predictions: List[Dict[str, Any]], output_dir: Path) -> Opt
         predictions_path = output_dir / f"model_predictions_{timestamp}.json"
 
         # Save predictions
-        with open(predictions_path, 'w', encoding='utf-8') as f:
+        with open(predictions_path, "w", encoding="utf-8") as f:
             json.dump(predictions, f, ensure_ascii=False, indent=2)
 
         print(f"[OK] Predictions saved to {predictions_path}")
@@ -230,9 +238,9 @@ def save_predictions(predictions: List[Dict[str, Any]], output_dir: Path) -> Opt
 
 
 def run_evaluation(
-        toy_sample: List[Dict[str, Any]],
-        predictions: List[Dict[str, Any]],
-        output_dir: Path
+    toy_sample: List[Dict[str, Any]],
+    predictions: List[Dict[str, Any]],
+    output_dir: Path,
 ) -> Optional[Dict[str, Any]]:
     """
     Run evaluation module on toy sample and predictions.
@@ -262,11 +270,11 @@ def run_evaluation(
 
         for i, (sample, prediction) in enumerate(zip(toy_sample, predictions)):
             # Extract ground truth entities
-            gt_entities = sample.get('entities', [])
+            gt_entities = sample.get("entities", [])
             ground_truth_entities.append(gt_entities)
 
             # Extract predicted entities
-            pred_entities = prediction.get('entities', [])
+            pred_entities = prediction.get("entities", [])
             if isinstance(pred_entities, dict):
                 # Convert dict format to list format if needed
                 pred_entities = [
@@ -284,13 +292,12 @@ def run_evaluation(
             toy_sample=toy_sample,
             entity_predictions=predicted_entities,
             entity_ground_truths=ground_truth_entities,
-            session_name=session_name
+            session_name=session_name,
         )
 
         # Generate evaluation report
         report_path = evaluator.generate_evaluation_report(
-            results,
-            include_detailed=True
+            results, include_detailed=True
         )
 
         print(f"[OK] Evaluation completed. Report saved to {report_path}")
@@ -304,7 +311,9 @@ def run_evaluation(
         return None
 
 
-def save_evaluation_results(results: Dict[str, Any], output_dir: Path) -> Optional[Path]:
+def save_evaluation_results(
+    results: Dict[str, Any], output_dir: Path
+) -> Optional[Path]:
     """
     Save evaluation results to JSON file.
 
@@ -320,11 +329,11 @@ def save_evaluation_results(results: Dict[str, Any], output_dir: Path) -> Option
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate filename with session info
-        session_id = results.get('session_info', {}).get('session_id', 'unknown')
+        session_id = results.get("session_info", {}).get("session_id", "unknown")
         results_path = output_dir / f"pipeline_results_{session_id}.json"
 
         # Save results
-        with open(results_path, 'w', encoding='utf-8') as f:
+        with open(results_path, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
 
         print(f"[OK] Pipeline results saved to {results_path}")
@@ -342,28 +351,28 @@ def print_summary(results: Dict[str, Any]):
     print("=" * 60)
 
     # Session info
-    session_info = results.get('session_info', {})
+    session_info = results.get("session_info", {})
     print(f"Session ID: {session_info.get('session_id', 'N/A')}")
     print(f"Duration: {session_info.get('duration_seconds', 0):.2f} seconds")
 
     # Sample quality summary
-    if 'sample_quality' in results:
-        sq = results['sample_quality']
+    if "sample_quality" in results:
+        sq = results["sample_quality"]
         print(f"\nSample Quality Score: {sq.get('overall_quality_score', 0):.2f}")
         print(f"Sample Size: {sq.get('sample_size', 0)}")
 
         # Entity coverage
-        entity_cov = sq.get('entity_coverage', {})
+        entity_cov = sq.get("entity_coverage", {})
         print(f"Entity Coverage Rate: {entity_cov.get('entity_coverage_rate', 0):.2%}")
 
         # Image validity
-        img_val = sq.get('image_validity', {})
+        img_val = sq.get("image_validity", {})
         print(f"Image Validity Rate: {img_val.get('url_validity_rate', 0):.2%}")
 
     # Entity extraction summary
-    if 'entity_extraction' in results:
-        ee = results['entity_extraction']
-        macro_avg = ee.get('macro_averages', {})
+    if "entity_extraction" in results:
+        ee = results["entity_extraction"]
+        macro_avg = ee.get("macro_averages", {})
         print(f"\nEntity Extraction Performance:")
         print(f"Exact Match Rate: {macro_avg.get('exact_match', 0):.2%}")
         print(f"Partial Match F1: {macro_avg.get('partial_match_f1', 0):.3f}")
