@@ -3,9 +3,7 @@
 # Or inside devcontainer terminal
 
 
-from src.data.config import DataConfig
-from src.data.downloader import DataDownloader
-from src.data.toy_sample_generator import ToySampleGenerator
+from data import DataConfig, DataDownloader, ToySampleGenerator
 
 
 def main():

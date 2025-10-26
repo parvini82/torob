@@ -8,8 +8,8 @@ from unittest.mock import patch
 
 import numpy as np
 
-from src.evaluation.config import EvaluationConfig
-from src.evaluation.entity_evaluator import EntityTagEvaluator
+from evaluation import EntityTagEvaluator
+from evaluation.config import EvaluationConfig
 
 
 def _sample_pairs():

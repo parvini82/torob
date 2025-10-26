@@ -20,13 +20,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from evaluation.config import EvaluationConfig
+
+# Import evaluation modules
+from evaluation.evaluator import ModelEvaluator
 
 # Import the langgraph service
 from src.service.langgraph.langgraph_service import run_langgraph_on_url
-
-# Import evaluation modules
-from src.evaluation.evaluator import ModelEvaluator
-from src.evaluation.config import EvaluationConfig
 
 project_root = Path(__file__).resolve().parent.parent
 
