@@ -11,6 +11,7 @@ from data import ToySampleGenerator, SampleConfig
 
 project_root = Path(__file__).resolve().parent.parent
 
+
 def load_products():
     """Load products from processed data directory."""
     # Try to find existing downloaded data
@@ -26,7 +27,7 @@ def load_products():
             products = []
             for json_file in json_files:
                 try:
-                    with open(json_file, 'r', encoding='utf-8') as f:
+                    with open(json_file, "r", encoding="utf-8") as f:
                         data = json.load(f)
                         if isinstance(data, list):
                             products.extend(data)
@@ -63,7 +64,7 @@ def main():
         sample = generator.generate_and_save(
             products=products,
             output_path=Path(project_root / "data/processed/toy_sample_standard.json"),
-            seed=42
+            seed=42,
         )
         print(f"\n🎉 Success! Generated toy sample with {len(sample)} products")
         print(f"📁 Saved to:{project_root}/data/processed/toy_sample_standard.json")

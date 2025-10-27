@@ -38,7 +38,7 @@ def load_products():
             products = []
             for json_file in json_files:
                 try:
-                    with open(json_file, 'r', encoding='utf-8') as f:
+                    with open(json_file, "r", encoding="utf-8") as f:
                         data = json.load(f)
                         if isinstance(data, list):
                             products.extend(data)
@@ -73,7 +73,7 @@ def main():
 
     config = SampleConfig(
         target_sample_size=TARGET_SIZE,
-        processed_data_dir=project_root / "data" / "processed"
+        processed_data_dir=project_root / "data" / "processed",
     )
 
     # Generate sample
@@ -84,22 +84,26 @@ def main():
         sample = generator.generate_and_save(
             products=products,
             output_path=config.processed_data_dir / output_filename,
-            seed=42
+            seed=42,
         )
 
         if sample:
-            print(f"\n🎉 Success! Generated high-entity sample with {len(sample)} products")
+            print(
+                f"\n🎉 Success! Generated high-entity sample with {len(sample)} products"
+            )
             print(f"📁 Saved to: data/processed/{output_filename}")
 
             # Show some examples
             print(f"\n📋 Sample preview (first 3 products):")
             for i, product in enumerate(sample[:3]):
                 entity_count = generator._count_entities(product)
-                title = (product.get('title', 'No title'))[:50] + "..."
+                title = (product.get("title", "No title"))[:50] + "..."
                 print(f"   {i + 1}. [{entity_count:2d} entities] {title}")
 
         else:
-            print(f"\n❌ No sample generated - not enough products with ≥{MIN_ENTITIES} entities")
+            print(
+                f"\n❌ No sample generated - not enough products with ≥{MIN_ENTITIES} entities"
+            )
 
     except Exception as e:
         print(f"\n❌ Error generating sample: {e}")

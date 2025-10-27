@@ -6,11 +6,10 @@ operating independently from the standard toy sample generator.
 
 import hashlib
 import json
-import math
 import random
 import re
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Set
+from typing import Dict, List, Any, Optional
 
 from .config import SampleConfig
 
@@ -99,7 +98,9 @@ class HighEntitySampleGenerator:
         return hashlib.md5(url.encode("utf-8")).hexdigest() if url else ""
 
     # Core filtering and analysis methods
-    def filter_by_entity_count(self, products: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def filter_by_entity_count(
+        self, products: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Filter products by minimum entity count requirement.
 
         Args:
@@ -110,7 +111,9 @@ class HighEntitySampleGenerator:
         """
         return [p for p in products if self._count_entities(p) >= self.min_entities]
 
-    def filter_valid_images(self, products: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def filter_valid_images(
+        self, products: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Filter products with valid image URLs.
 
         Args:
@@ -121,7 +124,9 @@ class HighEntitySampleGenerator:
         """
         return [p for p in products if self._is_image_url_valid(p)]
 
-    def deduplicate_by_image(self, products: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def deduplicate_by_image(
+        self, products: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Remove products with duplicate image URLs.
 
         Args:
@@ -151,7 +156,9 @@ class HighEntitySampleGenerator:
                 result.append(product)
         return result
 
-    def analyze_entity_distribution(self, products: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def analyze_entity_distribution(
+        self, products: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Analyze entity count distribution in product dataset.
 
         Args:
@@ -171,7 +178,9 @@ class HighEntitySampleGenerator:
             "min_entities": min(entity_counts),
             "max_entities": max(entity_counts),
             "avg_entities": sum(entity_counts) / len(entity_counts),
-            "products_with_min_requirement": sum(1 for c in entity_counts if c >= self.min_entities)
+            "products_with_min_requirement": sum(
+                1 for c in entity_counts if c >= self.min_entities
+            ),
         }
 
         # Calculate percentiles
@@ -199,7 +208,7 @@ class HighEntitySampleGenerator:
         validation_result = {
             "valid_products": [],
             "invalid_products": [],
-            "statistics": {}
+            "statistics": {},
         }
 
         for product in sample:
@@ -207,7 +216,7 @@ class HighEntitySampleGenerator:
             product_info = {
                 "title": (product.get("title") or "No title")[:50],
                 "entity_count": entity_count,
-                "product_id": self._get_product_id(product)
+                "product_id": self._get_product_id(product),
             }
 
             if entity_count >= self.min_entities:
@@ -224,13 +233,15 @@ class HighEntitySampleGenerator:
                 "min_entities": min(valid_counts),
                 "max_entities": max(valid_counts),
                 "avg_entities": sum(valid_counts) / len(valid_counts),
-                "validation_rate": len(valid_counts) / len(sample) if sample else 0
+                "validation_rate": len(valid_counts) / len(sample) if sample else 0,
             }
 
         return validation_result
 
     # Main generation method
-    def generate(self, products: List[Dict[str, Any]], seed: int = 42) -> List[Dict[str, Any]]:
+    def generate(
+        self, products: List[Dict[str, Any]], seed: int = 42
+    ) -> List[Dict[str, Any]]:
         """Generate toy sample with high entity count requirement.
 
         Args:
@@ -259,23 +270,31 @@ class HighEntitySampleGenerator:
 
         # Filter by entity count
         high_entity_products = self.filter_by_entity_count(unique_products)
-        print(f"High entity products (≥{self.min_entities}): {len(high_entity_products)} products")
+        print(
+            f"High entity products (≥{self.min_entities}): {len(high_entity_products)} products"
+        )
 
         if not high_entity_products:
-            print(f"❌ No products meet minimum entity requirement ({self.min_entities})")
+            print(
+                f"❌ No products meet minimum entity requirement ({self.min_entities})"
+            )
             return []
 
         # Step 2: Analyze distribution
         distribution = self.analyze_entity_distribution(high_entity_products)
         if "error" not in distribution:
             print(f"Entity distribution in filtered set:")
-            print(f"  Min: {distribution['min_entities']}, Max: {distribution['max_entities']}")
+            print(
+                f"  Min: {distribution['min_entities']}, Max: {distribution['max_entities']}"
+            )
             print(f"  Average: {distribution['avg_entities']:.1f}")
 
         # Step 3: Determine sample size
         target_size = min(self.config.target_sample_size, len(high_entity_products))
         if target_size < self.config.target_sample_size:
-            print(f"⚠️  Adjusting target size from {self.config.target_sample_size} to {target_size}")
+            print(
+                f"⚠️  Adjusting target size from {self.config.target_sample_size} to {target_size}"
+            )
 
         # Step 4: Random sampling
         sample = rng.sample(high_entity_products, target_size)
@@ -309,10 +328,12 @@ class HighEntitySampleGenerator:
 
         print(f"✓ Saved sample to: {output_path}")
 
-    def generate_and_save(self,
-                         products: List[Dict[str, Any]],
-                         output_path: Optional[Path] = None,
-                         seed: int = 42) -> List[Dict[str, Any]]:
+    def generate_and_save(
+        self,
+        products: List[Dict[str, Any]],
+        output_path: Optional[Path] = None,
+        seed: int = 42,
+    ) -> List[Dict[str, Any]]:
         """Complete pipeline for high entity sample generation and saving.
 
         Args:

@@ -52,74 +52,75 @@ class SampleConfig:
     target_sample_size: int = 300
 
     # Group composition targets (must sum to 1.0)
-    group_composition: Dict[str, float] = field(default_factory=lambda: {
-        "defined": 0.30,
-        "rare": 0.30,
-        "unknown": 0.40
-    })
+    group_composition: Dict[str, float] = field(
+        default_factory=lambda: {"defined": 0.30, "rare": 0.30, "unknown": 0.40}
+    )
 
     # Entity settings
-    core_entities: Set[str] = field(default_factory=lambda: {
-        "نوع کلی", "رنگ", "جنس", "طرح", "ویژگی‌ها"
-    })
+    core_entities: Set[str] = field(
+        default_factory=lambda: {"نوع کلی", "رنگ", "جنس", "طرح", "ویژگی‌ها"}
+    )
 
-    rare_entity_names: Set[str] = field(default_factory=lambda: {
-        "نوع یقه", "فصل", "نوع بسته شدن", "نوع آستین"
-    })
+    rare_entity_names: Set[str] = field(
+        default_factory=lambda: {"نوع یقه", "فصل", "نوع بسته شدن", "نوع آستین"}
+    )
 
-    noisy_entity_names: Set[str] = field(default_factory=lambda: {
-        "مدل سازگار", "tipo de manga", "Estilo", "سبک"
-    })
+    noisy_entity_names: Set[str] = field(
+        default_factory=lambda: {"مدل سازگار", "tipo de manga", "Estilo", "سبک"}
+    )
 
     # Group definitions
-    defined_groups: Set[str] = field(default_factory=lambda: {
-        "زنانه", "مردانه", "دخترانه", "پسرانه"
-    })
+    defined_groups: Set[str] = field(
+        default_factory=lambda: {"زنانه", "مردانه", "دخترانه", "پسرانه"}
+    )
 
-    rare_groups: Set[str] = field(default_factory=lambda: {
-        "بچگانه", "لوازم خانگی", "لوازم دیجیتال"
-    })
+    rare_groups: Set[str] = field(
+        default_factory=lambda: {"بچگانه", "لوازم خانگی", "لوازم دیجیتال"}
+    )
 
     # Title length configuration
-    title_length_config: Dict[str, Any] = field(default_factory=lambda: {
-        "short_ratio": 0.20,
-        "medium_ratio": 0.45,
-        "long_ratio": 0.10,
-        "short_max": 20,
-        "medium_range": (30, 50),
-        "long_min": 100,
-    })
+    title_length_config: Dict[str, Any] = field(
+        default_factory=lambda: {
+            "short_ratio": 0.20,
+            "medium_ratio": 0.45,
+            "long_ratio": 0.10,
+            "short_max": 20,
+            "medium_range": (30, 50),
+            "long_min": 100,
+        }
+    )
 
     # Quality score mapping
-    quality_score_bands: List[Tuple[str, int, int]] = field(default_factory=lambda: [
-        ("Poor", 0, 59),
-        ("Fair", 60, 79),
-        ("Good", 80, 89),
-        ("Excellent", 90, 100),
-    ])
+    quality_score_bands: List[Tuple[str, int, int]] = field(
+        default_factory=lambda: [
+            ("Poor", 0, 59),
+            ("Fair", 60, 79),
+            ("Good", 80, 89),
+            ("Excellent", 90, 100),
+        ]
+    )
 
     # Product variety
-    head_products: Set[str] = field(default_factory=lambda: {
-        "پیراهن", "تیشرت", "کفش", "ساعت مچی", "مانتو"
-    })
+    head_products: Set[str] = field(
+        default_factory=lambda: {"پیراهن", "تیشرت", "کفش", "ساعت مچی", "مانتو"}
+    )
 
-    tail_products: Set[str] = field(default_factory=lambda: {
-        "جاکلیدی", "آینه تاشو", "نیم‌ست", "کیف پول"
-    })
+    tail_products: Set[str] = field(
+        default_factory=lambda: {"جاکلیدی", "آینه تاشو", "نیم‌ست", "کیف پول"}
+    )
 
     # Image processing
-    allowed_image_formats: Set[str] = field(default_factory=lambda: {
-        ".jpg", ".jpeg", ".png", ".webp"
-    })
+    allowed_image_formats: Set[str] = field(
+        default_factory=lambda: {".jpg", ".jpeg", ".png", ".webp"}
+    )
 
     dedupe_by_content_hash: bool = True
 
     # Outlier detection
     outlier_ratio: float = 0.05
-    outlier_rules: Dict[str, int] = field(default_factory=lambda: {
-        "min_title_length": 140,
-        "min_entity_count": 6
-    })
+    outlier_rules: Dict[str, int] = field(
+        default_factory=lambda: {"min_title_length": 140, "min_entity_count": 6}
+    )
 
     # Output directory
     processed_data_dir: Path = Path(project_root / "data/processed")

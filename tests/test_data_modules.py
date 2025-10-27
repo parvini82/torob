@@ -10,7 +10,13 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from data import DownloadConfig, SampleConfig, DataDownloader, ToySampleGenerator, HighEntitySampleGenerator
+from data import (
+    DownloadConfig,
+    SampleConfig,
+    DataDownloader,
+    ToySampleGenerator,
+    HighEntitySampleGenerator,
+)
 
 
 class TestDownloadConfig:
@@ -18,10 +24,7 @@ class TestDownloadConfig:
 
     def test_default_config(self):
         """Test default configuration values."""
-        config = DownloadConfig(
-            drive_file_id="test-id",
-            data_dir=Path("/tmp/test")
-        )
+        config = DownloadConfig(drive_file_id="test-id", data_dir=Path("/tmp/test"))
 
         assert config.drive_file_id == "test-id"
         assert config.data_dir == Path("/tmp/test")
@@ -32,10 +35,7 @@ class TestDownloadConfig:
         """Test directory creation."""
         with tempfile.TemporaryDirectory() as temp_dir:
             data_dir = Path(temp_dir) / "test_data"
-            config = DownloadConfig(
-                drive_file_id="test-id",
-                data_dir=data_dir
-            )
+            config = DownloadConfig(drive_file_id="test-id", data_dir=data_dir)
 
             assert not data_dir.exists()
             config.ensure_directories()
@@ -60,8 +60,7 @@ class TestSampleConfig:
         """Test custom configuration values."""
         custom_composition = {"a": 0.5, "b": 0.5}
         config = SampleConfig(
-            target_sample_size=100,
-            group_composition=custom_composition
+            target_sample_size=100, group_composition=custom_composition
         )
 
         assert config.target_sample_size == 100
@@ -77,7 +76,7 @@ class TestToySampleGenerator:
         with tempfile.TemporaryDirectory() as temp_dir:
             yield SampleConfig(
                 target_sample_size=50,  # Small for testing
-                processed_data_dir=Path(temp_dir)
+                processed_data_dir=Path(temp_dir),
             )
 
     @pytest.fixture
@@ -97,8 +96,8 @@ class TestToySampleGenerator:
                 "entities": [
                     {"name": "رنگ", "values": ["آبی"]},
                     {"name": "جنس", "values": ["پنبه"]},
-                    {"name": "نوع کلی", "values": ["پیراهن"]}
-                ]
+                    {"name": "نوع کلی", "values": ["پیراهن"]},
+                ],
             },
             {
                 "title": "کفش ورزشی زنانه",
@@ -108,8 +107,8 @@ class TestToySampleGenerator:
                 "entities": [
                     {"name": "رنگ", "values": ["مشکی"]},
                     {"name": "نوع کلی", "values": ["کفش"]},
-                    {"name": "کاربری", "values": ["ورزشی"]}
-                ]
+                    {"name": "کاربری", "values": ["ورزشی"]},
+                ],
             },
             {
                 "title": "ساعت طلایی",
@@ -119,9 +118,9 @@ class TestToySampleGenerator:
                 "entities": [
                     {"name": "رنگ", "values": ["طلایی"]},
                     {"name": "جنس", "values": ["فلز"]},
-                    {"name": "نوع کلی", "values": ["ساعت"]}
-                ]
-            }
+                    {"name": "نوع کلی", "values": ["ساعت"]},
+                ],
+            },
         ] * 20  # Repeat to have enough samples
 
     def test_utility_methods(self, generator, sample_products):
@@ -164,7 +163,7 @@ class TestToySampleGenerator:
         """Test sample saving functionality."""
         sample_data = [{"test": "data"}]
 
-        with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
             output_path = Path(f.name)
 
         try:
@@ -173,7 +172,7 @@ class TestToySampleGenerator:
             assert output_path.exists()
 
             # Verify content
-            with open(output_path, 'r', encoding='utf-8') as f:
+            with open(output_path, "r", encoding="utf-8") as f:
                 saved_data = json.load(f)
 
             assert saved_data == sample_data
@@ -192,7 +191,7 @@ class TestHighEntitySampleGenerator:
         with tempfile.TemporaryDirectory() as temp_dir:
             yield SampleConfig(
                 target_sample_size=20,  # Small for testing
-                processed_data_dir=Path(temp_dir)
+                processed_data_dir=Path(temp_dir),
             )
 
     @pytest.fixture
@@ -207,26 +206,28 @@ class TestHighEntitySampleGenerator:
 
         # Products with many entities
         for i in range(10):
-            products.append({
-                "title": f"محصول {i}",
-                "image_url": f"https://example.com/image{i}.jpg",
-                "entities": [
-                    {"name": "رنگ", "values": ["آبی"]},
-                    {"name": "جنس", "values": ["پنبه"]},
-                    {"name": "نوع", "values": ["لباس"]},
-                    {"name": "سایز", "values": ["لارج"]},
-                ]
-            })
+            products.append(
+                {
+                    "title": f"محصول {i}",
+                    "image_url": f"https://example.com/image{i}.jpg",
+                    "entities": [
+                        {"name": "رنگ", "values": ["آبی"]},
+                        {"name": "جنس", "values": ["پنبه"]},
+                        {"name": "نوع", "values": ["لباس"]},
+                        {"name": "سایز", "values": ["لارج"]},
+                    ],
+                }
+            )
 
         # Products with few entities
         for i in range(5):
-            products.append({
-                "title": f"محصول کم {i}",
-                "image_url": f"https://example.com/low{i}.jpg",
-                "entities": [
-                    {"name": "رنگ", "values": ["قرمز"]}
-                ]
-            })
+            products.append(
+                {
+                    "title": f"محصول کم {i}",
+                    "image_url": f"https://example.com/low{i}.jpg",
+                    "entities": [{"name": "رنگ", "values": ["قرمز"]}],
+                }
+            )
 
         return products
 
@@ -270,10 +271,7 @@ class TestDataDownloader:
     def config(self):
         """Provide test configuration."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            yield DownloadConfig(
-                drive_file_id="test-id",
-                data_dir=Path(temp_dir)
-            )
+            yield DownloadConfig(drive_file_id="test-id", data_dir=Path(temp_dir))
 
     @pytest.fixture
     def downloader(self, config):
@@ -286,14 +284,14 @@ class TestDataDownloader:
         assert config.data_dir.exists()
         assert config.raw_data_dir.exists()
 
-    @patch('data.downloader.subprocess.check_call')
+    @patch("data.downloader.subprocess.check_call")
     def test_install_gdown_success(self, mock_subprocess, downloader):
         """Test successful gdown installation."""
         # Mock successful installation
         mock_subprocess.return_value = None
 
         # Mock ImportError for initial import, then success
-        with patch('builtins.__import__', side_effect=[ImportError, MagicMock()]):
+        with patch("builtins.__import__", side_effect=[ImportError, MagicMock()]):
             result = downloader._install_gdown()
             assert result is True
 
@@ -313,12 +311,12 @@ class TestDataDownloader:
             # Create some JSON files
             (temp_path / "test1.json").write_text('{"test": 1}')
             (temp_path / "test2.json").write_text('{"test": 2}')
-            (temp_path / "not_json.txt").write_text('not json')
+            (temp_path / "not_json.txt").write_text("not json")
 
             json_files = downloader._discover_json_files(temp_path)
 
             assert len(json_files) == 2
-            assert all(f.suffix == '.json' for f in json_files)
+            assert all(f.suffix == ".json" for f in json_files)
 
     def test_load_json_data(self, downloader):
         """Test JSON data loading."""
@@ -332,10 +330,10 @@ class TestDataDownloader:
             json_file1 = temp_path / "data1.json"
             json_file2 = temp_path / "data2.json"
 
-            with open(json_file1, 'w', encoding='utf-8') as f:
+            with open(json_file1, "w", encoding="utf-8") as f:
                 json.dump(test_data1, f)
 
-            with open(json_file2, 'w', encoding='utf-8') as f:
+            with open(json_file2, "w", encoding="utf-8") as f:
                 json.dump(test_data2, f)
 
             json_files = [json_file1, json_file2]

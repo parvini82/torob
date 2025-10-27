@@ -29,8 +29,8 @@ def create_dummy_sample_data() -> List[Dict[str, Any]]:
             "entities": [
                 {"name": "رنگ", "values": ["آبی"]},
                 {"name": "جنس", "values": ["پنبه"]},
-                {"name": "نوع کلی", "values": ["پیراهن"]}
-            ]
+                {"name": "نوع کلی", "values": ["پیراهن"]},
+            ],
         },
         {
             "title": "کفش ورزشی زنانه",
@@ -38,8 +38,8 @@ def create_dummy_sample_data() -> List[Dict[str, Any]]:
             "entities": [
                 {"name": "رنگ", "values": ["مشکی", "سفید"]},
                 {"name": "نوع کلی", "values": ["کفش"]},
-                {"name": "کاربری", "values": ["ورزشی"]}
-            ]
+                {"name": "کاربری", "values": ["ورزشی"]},
+            ],
         },
         {
             "title": "ساعت مچی طلایی",
@@ -47,9 +47,9 @@ def create_dummy_sample_data() -> List[Dict[str, Any]]:
             "entities": [
                 {"name": "رنگ", "values": ["طلایی"]},
                 {"name": "جنس", "values": ["فلز"]},
-                {"name": "نوع کلی", "values": ["ساعت مچی"]}
-            ]
-        }
+                {"name": "نوع کلی", "values": ["ساعت مچی"]},
+            ],
+        },
     ]
 
 
@@ -69,18 +69,18 @@ def dummy_model_function(image_url: str) -> List[Dict[str, Any]]:
         return [
             {"name": "رنگ", "values": ["آبی"]},  # Perfect match
             {"name": "جنس", "values": ["پنبه"]},  # Perfect match
-            {"name": "نوع کلی", "values": ["لباس"]}  # Different value
+            {"name": "نوع کلی", "values": ["لباس"]},  # Different value
         ]
     elif "image2" in image_url:
         return [
             {"name": "رنگ", "values": ["مشکی"]},  # Partial match (missing سفید)
             {"name": "نوع کلی", "values": ["کفش"]},  # Perfect match
-            {"name": "برند", "values": ["نایک"]}  # Extra entity
+            {"name": "برند", "values": ["نایک"]},  # Extra entity
         ]
     elif "image3" in image_url:
         return [
             {"name": "رنگ", "values": ["نقره‌ای"]},  # Wrong value
-            {"name": "نوع کلی", "values": ["ساعت مچی"]}  # Perfect match
+            {"name": "نوع کلی", "values": ["ساعت مچی"]},  # Perfect match
             # Missing جنس entity
         ]
     else:
@@ -99,7 +99,7 @@ def test_entity_metrics():
     # Test data
     ground_truth = [
         {"name": "رنگ", "values": ["آبی"]},
-        {"name": "جنس", "values": ["پنبه"]}
+        {"name": "جنس", "values": ["پنبه"]},
     ]
 
     # Test cases
@@ -108,34 +108,36 @@ def test_entity_metrics():
             "name": "Perfect Match",
             "predicted": [
                 {"name": "رنگ", "values": ["آبی"]},
-                {"name": "جنس", "values": ["پنبه"]}
-            ]
+                {"name": "جنس", "values": ["پنبه"]},
+            ],
         },
         {
             "name": "Partial Match",
             "predicted": [
                 {"name": "رنگ", "values": ["آبی"]},
-                {"name": "سایز", "values": ["لارج"]}  # Wrong entity
-            ]
+                {"name": "سایز", "values": ["لارج"]},  # Wrong entity
+            ],
         },
         {
             "name": "No Match",
             "predicted": [
                 {"name": "برند", "values": ["نایک"]},
-                {"name": "قیمت", "values": ["گران"]}
-            ]
-        }
+                {"name": "قیمت", "values": ["گران"]},
+            ],
+        },
     ]
 
     for test_case in test_cases:
         print(f"\nTest Case: {test_case['name']}")
 
         # Test individual metrics
-        exact_match = metrics.exact_match(test_case['predicted'], ground_truth)
-        eighty_percent = metrics.eighty_percent_accuracy(test_case['predicted'], ground_truth)
-        micro_f1 = metrics.micro_f1(test_case['predicted'], ground_truth)
-        macro_f1 = metrics.macro_f1(test_case['predicted'], ground_truth)
-        rouge_1 = metrics.rouge_1(test_case['predicted'], ground_truth)
+        exact_match = metrics.exact_match(test_case["predicted"], ground_truth)
+        eighty_percent = metrics.eighty_percent_accuracy(
+            test_case["predicted"], ground_truth
+        )
+        micro_f1 = metrics.micro_f1(test_case["predicted"], ground_truth)
+        macro_f1 = metrics.macro_f1(test_case["predicted"], ground_truth)
+        rouge_1 = metrics.rouge_1(test_case["predicted"], ground_truth)
 
         print(f"  Exact Match: {exact_match}")
         print(f"  80% Accuracy: {eighty_percent}")
@@ -155,7 +157,9 @@ def test_model_runner():
     # Create temporary sample file
     sample_data = create_dummy_sample_data()
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".json", delete=False, encoding="utf-8"
+    ) as f:
         json.dump(sample_data, f, ensure_ascii=False, indent=2)
         sample_path = Path(f.name)
 
@@ -174,12 +178,13 @@ def test_model_runner():
 
         print("Testing model execution...")
         results = runner.run_model_on_sample(
-            sample_path=sample_path,
-            model_function=dummy_model_function
+            sample_path=sample_path, model_function=dummy_model_function
         )
 
         print(f"✓ Model execution completed")
-        print(f"  Successful predictions: {results['performance']['successful_predictions']}")
+        print(
+            f"  Successful predictions: {results['performance']['successful_predictions']}"
+        )
         print(f"  Failed predictions: {results['performance']['failed_predictions']}")
 
     finally:
@@ -198,7 +203,9 @@ def test_simple_evaluator():
     # Create temporary sample file
     sample_data = create_dummy_sample_data()
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".json", delete=False, encoding="utf-8"
+    ) as f:
         json.dump(sample_data, f, ensure_ascii=False, indent=2)
         sample_path = Path(f.name)
 
@@ -208,10 +215,7 @@ def test_simple_evaluator():
 
         try:
             # Test SimpleEvaluator
-            config = EvaluationConfig(
-                results_dir=results_dir,
-                model_name="test_model"
-            )
+            config = EvaluationConfig(results_dir=results_dir, model_name="test_model")
 
             evaluator = SimpleEvaluator(config)
 
@@ -219,7 +223,7 @@ def test_simple_evaluator():
             results = evaluator.run_evaluation(
                 sample_path=sample_path,
                 model_function=dummy_model_function,
-                output_name="test_evaluation"
+                output_name="test_evaluation",
             )
 
             print(f"✓ Evaluation completed")
@@ -269,13 +273,13 @@ def test_batch_metrics():
     predictions = [
         [{"name": "رنگ", "values": ["آبی"]}, {"name": "جنس", "values": ["پنبه"]}],
         [{"name": "رنگ", "values": ["قرمز"]}],
-        []  # Empty prediction
+        [],  # Empty prediction
     ]
 
     ground_truths = [
         [{"name": "رنگ", "values": ["آبی"]}, {"name": "جنس", "values": ["پنبه"]}],
         [{"name": "رنگ", "values": ["قرمز"]}, {"name": "سایز", "values": ["متوسط"]}],
-        [{"name": "برند", "values": ["سامسونگ"]}]
+        [{"name": "برند", "values": ["سامسونگ"]}],
     ]
 
     print("Testing batch evaluation...")
@@ -319,6 +323,7 @@ def main():
     except Exception as e:
         print(f"\n❌ TEST FAILED: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

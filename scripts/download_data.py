@@ -10,13 +10,14 @@ from data import DataDownloader, DownloadConfig
 
 project_root = Path(__file__).resolve().parent.parent
 
+
 def main():
     """Download and extract dataset from Google Drive."""
 
     # Configuration
     config = DownloadConfig(
         drive_file_id="1Coixw-ZELOorizi4K-RSBtzDnRAQ2c_g",  # Your existing file ID
-        data_dir=Path(project_root / "data")
+        data_dir=Path(project_root / "data"),
     )
 
     # Download

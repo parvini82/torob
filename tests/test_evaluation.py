@@ -8,7 +8,6 @@ import json
 import tempfile
 from pathlib import Path
 from typing import List, Dict, Any
-from unittest.mock import patch, MagicMock
 
 import pytest
 
@@ -31,16 +30,13 @@ class TestEntityMetrics:
     @pytest.fixture
     def sample_ground_truth(self):
         """Provide sample ground truth data."""
-        return [
-            {"name": "رنگ", "values": ["آبی"]},
-            {"name": "جنس", "values": ["پنبه"]}
-        ]
+        return [{"name": "رنگ", "values": ["آبی"]}, {"name": "جنس", "values": ["پنبه"]}]
 
     def test_exact_match_perfect(self, metrics, sample_ground_truth):
         """Test exact match with perfect prediction."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "جنس", "values": ["پنبه"]}
+            {"name": "جنس", "values": ["پنبه"]},
         ]
         result = metrics.exact_match(predicted, sample_ground_truth)
         assert result == 1.0
@@ -49,7 +45,7 @@ class TestEntityMetrics:
         """Test exact match with partial prediction."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "سایز", "values": ["لارج"]}
+            {"name": "سایز", "values": ["لارج"]},
         ]
         result = metrics.exact_match(predicted, sample_ground_truth)
         assert result == 0.0
@@ -65,16 +61,14 @@ class TestEntityMetrics:
         """Test 80% accuracy with passing case."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "جنس", "values": ["پنبه"]}
+            {"name": "جنس", "values": ["پنبه"]},
         ]
         result = metrics.eighty_percent_accuracy(predicted, sample_ground_truth)
         assert result == 1.0
 
     def test_eighty_percent_accuracy_fail(self, metrics, sample_ground_truth):
         """Test 80% accuracy with failing case."""
-        predicted = [
-            {"name": "برند", "values": ["نایک"]}
-        ]
+        predicted = [{"name": "برند", "values": ["نایک"]}]
         result = metrics.eighty_percent_accuracy(predicted, sample_ground_truth)
         assert result == 0.0
 
@@ -91,7 +85,7 @@ class TestEntityMetrics:
         """Test Micro-F1 with partial prediction."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "برند", "values": ["نایک"]}
+            {"name": "برند", "values": ["نایک"]},
         ]
         result = metrics.micro_f1(predicted, sample_ground_truth)
 
@@ -103,7 +97,7 @@ class TestEntityMetrics:
         """Test Macro-F1 calculation."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "سایز", "values": ["متوسط"]}
+            {"name": "سایز", "values": ["متوسط"]},
         ]
         result = metrics.macro_f1(predicted, sample_ground_truth)
 
@@ -116,7 +110,7 @@ class TestEntityMetrics:
         """Test ROUGE-1 calculation."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "جنس", "values": ["نخ"]}
+            {"name": "جنس", "values": ["نخ"]},
         ]
         result = metrics.rouge_1(predicted, sample_ground_truth)
 
@@ -126,11 +120,17 @@ class TestEntityMetrics:
         """Test single sample evaluation."""
         predicted = [
             {"name": "رنگ", "values": ["آبی"]},
-            {"name": "جنس", "values": ["پنبه"]}
+            {"name": "جنس", "values": ["پنبه"]},
         ]
         result = metrics.evaluate_single_sample(predicted, sample_ground_truth)
 
-        expected_keys = ["exact_match", "eighty_percent_accuracy", "micro_f1", "macro_f1", "rouge_1"]
+        expected_keys = [
+            "exact_match",
+            "eighty_percent_accuracy",
+            "micro_f1",
+            "macro_f1",
+            "rouge_1",
+        ]
         assert all(key in result for key in expected_keys)
 
     def test_evaluate_batch(self, metrics):
@@ -138,12 +138,12 @@ class TestEntityMetrics:
         predictions = [
             [{"name": "رنگ", "values": ["آبی"]}],
             [{"name": "جنس", "values": ["پنبه"]}],
-            []
+            [],
         ]
         ground_truths = [
             [{"name": "رنگ", "values": ["آبی"]}],
             [{"name": "جنس", "values": ["پنبه"]}],
-            [{"name": "برند", "values": ["نایک"]}]
+            [{"name": "برند", "values": ["نایک"]}],
         ]
 
         result = metrics.evaluate_batch(predictions, ground_truths)
@@ -162,7 +162,7 @@ class TestEntityMetrics:
             "macro_f1": 0.65,
             "micro_f1": 0.70,
             "rouge_1": 0.60,
-            "exact_match_rate": 0.50
+            "exact_match_rate": 0.50,
         }
 
         table = metrics.format_results_table(sample_results)
@@ -197,22 +197,24 @@ class TestModelRunner:
                 "image_url": "https://example.com/image1.jpg",
                 "entities": [
                     {"name": "رنگ", "values": ["آبی"]},
-                    {"name": "جنس", "values": ["پنبه"]}
-                ]
+                    {"name": "جنس", "values": ["پنبه"]},
+                ],
             },
             {
                 "title": "کفش ورزشی",
                 "image_url": "https://example.com/image2.jpg",
                 "entities": [
                     {"name": "نوع", "values": ["کفش"]},
-                    {"name": "کاربری", "values": ["ورزشی"]}
-                ]
-            }
+                    {"name": "کاربری", "values": ["ورزشی"]},
+                ],
+            },
         ]
 
     def test_load_sample(self, runner, sample_data):
         """Test sample loading from file."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             json.dump(sample_data, f, ensure_ascii=False)
             sample_path = Path(f.name)
 
@@ -236,7 +238,7 @@ class TestModelRunner:
         sample_data = [
             {"title": "Test", "image_url": "invalid-url"},
             {"title": "Test2", "image_url": "https://valid.com/img.jpg"},
-            {"title": "Test3"}  # No image_url
+            {"title": "Test3"},  # No image_url
         ]
 
         image_urls = runner.extract_images(sample_data)
@@ -254,10 +256,7 @@ class TestSimpleEvaluator:
     def config(self):
         """Provide test configuration."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            yield EvaluationConfig(
-                results_dir=Path(temp_dir),
-                model_name="test_model"
-            )
+            yield EvaluationConfig(results_dir=Path(temp_dir), model_name="test_model")
 
     @pytest.fixture
     def evaluator(self, config):
@@ -273,8 +272,8 @@ class TestSimpleEvaluator:
                 "image_url": "https://example.com/test.jpg",
                 "entities": [
                     {"name": "رنگ", "values": ["قرمز"]},
-                    {"name": "جنس", "values": ["پلاستیک"]}
-                ]
+                    {"name": "جنس", "values": ["پلاستیک"]},
+                ],
             }
         ]
 
@@ -282,12 +281,14 @@ class TestSimpleEvaluator:
         """Dummy model for testing."""
         return [
             {"name": "رنگ", "values": ["قرمز"]},
-            {"name": "جنس", "values": ["پلاستیک"]}
+            {"name": "جنس", "values": ["پلاستیک"]},
         ]
 
     def test_run_evaluation(self, evaluator, sample_data):
         """Test complete evaluation pipeline."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             json.dump(sample_data, f, ensure_ascii=False)
             sample_path = Path(f.name)
 
@@ -295,7 +296,7 @@ class TestSimpleEvaluator:
             results = evaluator.run_evaluation(
                 sample_path=sample_path,
                 model_function=self.dummy_model_function,
-                output_name="test_run"
+                output_name="test_run",
             )
 
             # Check result structure
@@ -321,7 +322,7 @@ class TestSimpleEvaluator:
         """Test saving evaluation results."""
         test_results = {
             "evaluation_metadata": {"model_name": "test"},
-            "metrics": {"macro_f1": 0.85}
+            "metrics": {"macro_f1": 0.85},
         }
 
         results_path = evaluator.save_evaluation_results(test_results, "test_save")
@@ -330,7 +331,7 @@ class TestSimpleEvaluator:
         assert results_path.name == "test_save.json"
 
         # Verify content
-        with open(results_path, 'r', encoding='utf-8') as f:
+        with open(results_path, "r", encoding="utf-8") as f:
             saved_data = json.load(f)
 
         assert saved_data["evaluation_metadata"]["model_name"] == "test"
@@ -354,9 +355,7 @@ class TestEvaluationConfig:
         """Test custom configuration values."""
         custom_dir = Path("/tmp/custom_results")
         config = EvaluationConfig(
-            results_dir=custom_dir,
-            model_name="custom_model",
-            precision_digits=2
+            results_dir=custom_dir, model_name="custom_model", precision_digits=2
         )
 
         assert config.results_dir == custom_dir
@@ -387,35 +386,34 @@ class TestEvaluationIntegration:
                 "image_url": "https://example.com/test.jpg",
                 "entities": [
                     {"name": "رنگ", "values": ["آبی"]},
-                    {"name": "جنس", "values": ["پنبه"]}
-                ]
+                    {"name": "جنس", "values": ["پنبه"]},
+                ],
             }
         ]
 
         def test_model(image_url: str) -> List[Dict[str, Any]]:
             return [
                 {"name": "رنگ", "values": ["آبی"]},
-                {"name": "جنس", "values": ["نخ"]}  # Slightly different
+                {"name": "جنس", "values": ["نخ"]},  # Slightly different
             ]
 
         with tempfile.TemporaryDirectory() as temp_dir:
             # Setup
             config = EvaluationConfig(
-                results_dir=Path(temp_dir),
-                model_name="integration_test"
+                results_dir=Path(temp_dir), model_name="integration_test"
             )
             evaluator = SimpleEvaluator(config)
 
             # Create sample file
             sample_path = Path(temp_dir) / "test_sample.json"
-            with open(sample_path, 'w', encoding='utf-8') as f:
+            with open(sample_path, "w", encoding="utf-8") as f:
                 json.dump(sample_data, f, ensure_ascii=False)
 
             # Run evaluation
             results = evaluator.run_evaluation(
                 sample_path=sample_path,
                 model_function=test_model,
-                output_name="integration_test"
+                output_name="integration_test",
             )
 
             # Verify results

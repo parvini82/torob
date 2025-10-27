@@ -60,9 +60,7 @@ def main():
     script_dir = Path(__file__).parent
     project_root = script_dir.parent
 
-    config = EvaluationConfig(
-        results_dir=project_root / "evaluation" / "results"
-    )
+    config = EvaluationConfig(results_dir=project_root / "evaluation" / "results")
 
     evaluator = SimpleEvaluator(config)
 
@@ -74,9 +72,14 @@ def main():
             print(f"\n✓ Comparison completed!")
 
             # Show top performer
-            if "ranking" in comparison_results and "by_macro_f1" in comparison_results["ranking"]:
+            if (
+                "ranking" in comparison_results
+                and "by_macro_f1" in comparison_results["ranking"]
+            ):
                 top_performer = comparison_results["ranking"]["by_macro_f1"][0]
-                print(f"\n🏆 Top Performer (by Macro-F1): {top_performer['model']} ({top_performer['value']:.4f})")
+                print(
+                    f"\n🏆 Top Performer (by Macro-F1): {top_performer['model']} ({top_performer['value']:.4f})"
+                )
 
             return True
         else:

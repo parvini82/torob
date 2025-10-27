@@ -5,7 +5,6 @@ entity extraction performance, including those from academic literature.
 """
 
 from typing import List, Dict, Any, Set, Tuple
-from collections import defaultdict
 import re
 
 from .config import EvaluationConfig
@@ -40,7 +39,7 @@ class EntityMetrics:
         """
         if not text:
             return ""
-        return re.sub(r'\s+', ' ', str(text).lower().strip())
+        return re.sub(r"\s+", " ", str(text).lower().strip())
 
     def extract_entity_values(self, entities: List[Dict]) -> Set[str]:
         """Extract all entity values from entity list.
@@ -54,7 +53,7 @@ class EntityMetrics:
         values = set()
         for entity in entities:
             if isinstance(entity, dict):
-                entity_values = entity.get('values', [])
+                entity_values = entity.get("values", [])
                 if isinstance(entity_values, list):
                     for value in entity_values:
                         normalized = self.normalize_text(str(value))
@@ -74,8 +73,8 @@ class EntityMetrics:
         pairs = set()
         for entity in entities:
             if isinstance(entity, dict):
-                name = self.normalize_text(entity.get('name', ''))
-                values = entity.get('values', [])
+                name = self.normalize_text(entity.get("name", ""))
+                values = entity.get("values", [])
                 if isinstance(values, list):
                     for value in values:
                         normalized_value = self.normalize_text(str(value))
@@ -101,7 +100,9 @@ class EntityMetrics:
 
         return 1.0 if pred_pairs == true_pairs else 0.0
 
-    def eighty_percent_accuracy(self, predicted: List[Dict], ground_truth: List[Dict]) -> float:
+    def eighty_percent_accuracy(
+        self, predicted: List[Dict], ground_truth: List[Dict]
+    ) -> float:
         """Calculate 80% accuracy metric (from research paper).
 
         This metric considers a sample correct if at least 80% of ground truth
@@ -129,7 +130,9 @@ class EntityMetrics:
 
         return 1.0 if accuracy >= 0.8 else 0.0
 
-    def micro_f1(self, predicted: List[Dict], ground_truth: List[Dict]) -> Dict[str, float]:
+    def micro_f1(
+        self, predicted: List[Dict], ground_truth: List[Dict]
+    ) -> Dict[str, float]:
         """Calculate Micro-F1 score.
 
         Micro-F1 aggregates contributions of all classes to compute average metric.
@@ -151,17 +154,31 @@ class EntityMetrics:
         false_positives = len(pred_values - true_values)
         false_negatives = len(true_values - pred_values)
 
-        precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
-        recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
-        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+        precision = (
+            true_positives / (true_positives + false_positives)
+            if (true_positives + false_positives) > 0
+            else 0.0
+        )
+        recall = (
+            true_positives / (true_positives + false_negatives)
+            if (true_positives + false_negatives) > 0
+            else 0.0
+        )
+        f1 = (
+            2 * precision * recall / (precision + recall)
+            if (precision + recall) > 0
+            else 0.0
+        )
 
         return {
             "precision": round(precision, self.config.precision_digits),
             "recall": round(recall, self.config.precision_digits),
-            "f1": round(f1, self.config.precision_digits)
+            "f1": round(f1, self.config.precision_digits),
         }
 
-    def macro_f1(self, predicted: List[Dict], ground_truth: List[Dict]) -> Dict[str, float]:
+    def macro_f1(
+        self, predicted: List[Dict], ground_truth: List[Dict]
+    ) -> Dict[str, float]:
         """Calculate Macro-F1 score.
 
         Macro-F1 calculates metrics for each attribute separately and then averages.
@@ -207,23 +224,29 @@ class EntityMetrics:
 
                 attr_precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
                 attr_recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-                attr_f1 = 2 * attr_precision * attr_recall / (attr_precision + attr_recall) if (attr_precision + attr_recall) > 0 else 0.0
+                attr_f1 = (
+                    2 * attr_precision * attr_recall / (attr_precision + attr_recall)
+                    if (attr_precision + attr_recall) > 0
+                    else 0.0
+                )
 
-            attribute_metrics.append({
-                "precision": attr_precision,
-                "recall": attr_recall,
-                "f1": attr_f1
-            })
+            attribute_metrics.append(
+                {"precision": attr_precision, "recall": attr_recall, "f1": attr_f1}
+            )
 
         # Average across attributes
-        avg_precision = sum(m["precision"] for m in attribute_metrics) / len(attribute_metrics)
-        avg_recall = sum(m["recall"] for m in attribute_metrics) / len(attribute_metrics)
+        avg_precision = sum(m["precision"] for m in attribute_metrics) / len(
+            attribute_metrics
+        )
+        avg_recall = sum(m["recall"] for m in attribute_metrics) / len(
+            attribute_metrics
+        )
         avg_f1 = sum(m["f1"] for m in attribute_metrics) / len(attribute_metrics)
 
         return {
             "precision": round(avg_precision, self.config.precision_digits),
             "recall": round(avg_recall, self.config.precision_digits),
-            "f1": round(avg_f1, self.config.precision_digits)
+            "f1": round(avg_f1, self.config.precision_digits),
         }
 
     def rouge_1(self, predicted: List[Dict], ground_truth: List[Dict]) -> float:
@@ -243,12 +266,12 @@ class EntityMetrics:
         for entity in predicted:
             if isinstance(entity, dict):
                 # Add entity name
-                name = entity.get('name', '')
+                name = entity.get("name", "")
                 if name:
                     pred_text.append(str(name))
 
                 # Add entity values
-                values = entity.get('values', [])
+                values = entity.get("values", [])
                 if isinstance(values, list):
                     for value in values:
                         if value:
@@ -258,12 +281,12 @@ class EntityMetrics:
         for entity in ground_truth:
             if isinstance(entity, dict):
                 # Add entity name
-                name = entity.get('name', '')
+                name = entity.get("name", "")
                 if name:
                     true_text.append(str(name))
 
                 # Add entity values
-                values = entity.get('values', [])
+                values = entity.get("values", [])
                 if isinstance(values, list):
                     for value in values:
                         if value:
@@ -297,7 +320,9 @@ class EntityMetrics:
         rouge_f1 = 2 * precision * recall / (precision + recall)
         return round(rouge_f1, self.config.precision_digits)
 
-    def evaluate_single_sample(self, predicted: List[Dict], ground_truth: List[Dict]) -> Dict[str, Any]:
+    def evaluate_single_sample(
+        self, predicted: List[Dict], ground_truth: List[Dict]
+    ) -> Dict[str, Any]:
         """Evaluate single sample with all metrics.
 
         Args:
@@ -309,15 +334,17 @@ class EntityMetrics:
         """
         return {
             "exact_match": self.exact_match(predicted, ground_truth),
-            "eighty_percent_accuracy": self.eighty_percent_accuracy(predicted, ground_truth),
+            "eighty_percent_accuracy": self.eighty_percent_accuracy(
+                predicted, ground_truth
+            ),
             "micro_f1": self.micro_f1(predicted, ground_truth),
             "macro_f1": self.macro_f1(predicted, ground_truth),
-            "rouge_1": self.rouge_1(predicted, ground_truth)
+            "rouge_1": self.rouge_1(predicted, ground_truth),
         }
 
-    def evaluate_batch(self,
-                      predictions: List[List[Dict]],
-                      ground_truths: List[List[Dict]]) -> Dict[str, Any]:
+    def evaluate_batch(
+        self, predictions: List[List[Dict]], ground_truths: List[List[Dict]]
+    ) -> Dict[str, Any]:
         """Evaluate batch of predictions with comprehensive metrics.
 
         Args:
@@ -341,7 +368,9 @@ class EntityMetrics:
 
         # Average single-value metrics
         exact_match_rate = sum(r["exact_match"] for r in sample_results) / num_samples
-        eighty_percent_acc = sum(r["eighty_percent_accuracy"] for r in sample_results) / num_samples
+        eighty_percent_acc = (
+            sum(r["eighty_percent_accuracy"] for r in sample_results) / num_samples
+        )
         rouge_1_avg = sum(r["rouge_1"] for r in sample_results) / num_samples
 
         # Average F1 metrics
@@ -356,24 +385,39 @@ class EntityMetrics:
         # Compile final results
         results = {
             "total_samples": num_samples,
-
             # Primary metrics (matching research paper format)
             "exact_match_rate": round(exact_match_rate, self.config.precision_digits),
-            "eighty_percent_accuracy": round(eighty_percent_acc, self.config.precision_digits),
-            "macro_f1": round(sum(macro_f1_scores) / num_samples, self.config.precision_digits),
-            "micro_f1": round(sum(micro_f1_scores) / num_samples, self.config.precision_digits),
+            "eighty_percent_accuracy": round(
+                eighty_percent_acc, self.config.precision_digits
+            ),
+            "macro_f1": round(
+                sum(macro_f1_scores) / num_samples, self.config.precision_digits
+            ),
+            "micro_f1": round(
+                sum(micro_f1_scores) / num_samples, self.config.precision_digits
+            ),
             "rouge_1": round(rouge_1_avg, self.config.precision_digits),
-
             # Additional detailed metrics
             "detailed_metrics": {
-                "macro_precision": round(sum(macro_precision_scores) / num_samples, self.config.precision_digits),
-                "macro_recall": round(sum(macro_recall_scores) / num_samples, self.config.precision_digits),
-                "micro_precision": round(sum(micro_precision_scores) / num_samples, self.config.precision_digits),
-                "micro_recall": round(sum(micro_recall_scores) / num_samples, self.config.precision_digits),
+                "macro_precision": round(
+                    sum(macro_precision_scores) / num_samples,
+                    self.config.precision_digits,
+                ),
+                "macro_recall": round(
+                    sum(macro_recall_scores) / num_samples, self.config.precision_digits
+                ),
+                "micro_precision": round(
+                    sum(micro_precision_scores) / num_samples,
+                    self.config.precision_digits,
+                ),
+                "micro_recall": round(
+                    sum(micro_recall_scores) / num_samples, self.config.precision_digits
+                ),
             },
-
             # Per-sample breakdown (for detailed analysis)
-            "per_sample_results": sample_results if self.config.precision_digits else None
+            "per_sample_results": (
+                sample_results if self.config.precision_digits else None
+            ),
         }
 
         return results

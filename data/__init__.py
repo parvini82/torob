@@ -18,5 +18,5 @@ __all__ = [
     "SampleConfig",
     "DataDownloader",
     "ToySampleGenerator",
-    "HighEntitySampleGenerator"
+    "HighEntitySampleGenerator",
 ]

@@ -41,7 +41,7 @@ class ModelRunner:
         """
         print(f"Loading sample from: {sample_path}")
 
-        with open(sample_path, 'r', encoding='utf-8') as f:
+        with open(sample_path, "r", encoding="utf-8") as f:
             products = json.load(f)
 
         print(f"✓ Loaded {len(products)} products")
@@ -69,10 +69,12 @@ class ModelRunner:
 
         return image_urls
 
-    def run_model_on_sample(self,
-                            sample_path: Path,
-                            model_function: callable,
-                            output_path: Optional[Path] = None) -> Dict[str, Any]:
+    def run_model_on_sample(
+        self,
+        sample_path: Path,
+        model_function: callable,
+        output_path: Optional[Path] = None,
+    ) -> Dict[str, Any]:
         """Run model on a complete sample and save results.
 
         Args:
@@ -138,7 +140,7 @@ class ModelRunner:
                 "successful_predictions": sum(1 for p in predictions if p),
                 "failed_predictions": sum(1 for p in predictions if not p),
                 "avg_time_per_product": duration / len(products) if products else 0,
-            }
+            },
         }
 
         # Save results
@@ -163,7 +165,7 @@ class ModelRunner:
         """
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
 
         print(f"✓ Saved results to: {output_path}")

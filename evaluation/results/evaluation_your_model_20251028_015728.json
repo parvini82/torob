@@ -1,0 +1,187 @@
+{
+  "evaluation_metadata": {
+    "prediction_file": "/home/peyma/projects/torob/evaluation/predictions/predictions_your_model_Ground_Truth_first10.json",
+    "model_name": "your_model",
+    "evaluation_timestamp": "2025-10-28T01:57:28.849732",
+    "total_samples": 10
+  },
+  "prediction_metadata": {
+    "model_name": "your_model",
+    "sample_path": "/home/peyma/projects/torob/data/processed/Ground_Truth_first10.json",
+    "sample_size": 10,
+    "execution_time": 367.9323992729187,
+    "timestamp": "2025-10-28T01:50:59.396953"
+  },
+  "model_performance": {
+    "total_products": 10,
+    "successful_predictions": 10,
+    "failed_predictions": 0,
+    "avg_time_per_product": 36.79323992729187
+  },
+  "metrics": {
+    "total_samples": 10,
+    "exact_match_rate": 0.0,
+    "eighty_percent_accuracy": 0.1,
+    "macro_f1": 0.3641,
+    "micro_f1": 0.3993,
+    "rouge_1": 0.608,
+    "detailed_metrics": {
+      "macro_precision": 0.3613,
+      "macro_recall": 0.3696,
+      "micro_precision": 0.3891,
+      "micro_recall": 0.4124
+    },
+    "per_sample_results": [
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.625,
+          "recall": 0.625,
+          "f1": 0.625
+        },
+        "macro_f1": {
+          "precision": 0.5238,
+          "recall": 0.5238,
+          "f1": 0.5238
+        },
+        "rouge_1": 0.6471
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.375,
+          "recall": 0.375,
+          "f1": 0.375
+        },
+        "macro_f1": {
+          "precision": 0.3571,
+          "recall": 0.3571,
+          "f1": 0.3571
+        },
+        "rouge_1": 0.7429
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.6,
+          "recall": 0.6,
+          "f1": 0.6
+        },
+        "macro_f1": {
+          "precision": 0.5476,
+          "recall": 0.5476,
+          "f1": 0.5476
+        },
+        "rouge_1": 0.7222
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.6667,
+          "recall": 0.7143,
+          "f1": 0.6897
+        },
+        "macro_f1": {
+          "precision": 0.5714,
+          "recall": 0.5714,
+          "f1": 0.5714
+        },
+        "rouge_1": 0.8
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.2727,
+          "recall": 0.3333,
+          "f1": 0.3
+        },
+        "macro_f1": {
+          "precision": 0.4167,
+          "recall": 0.5,
+          "f1": 0.4444
+        },
+        "rouge_1": 0.6341
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.25,
+          "recall": 0.3333,
+          "f1": 0.2857
+        },
+        "macro_f1": {
+          "precision": 0.2857,
+          "recall": 0.2857,
+          "f1": 0.2857
+        },
+        "rouge_1": 0.5806
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 1.0,
+        "micro_f1": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "macro_f1": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "rouge_1": 0.0
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.625,
+          "recall": 0.7143,
+          "f1": 0.6667
+        },
+        "macro_f1": {
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5
+        },
+        "rouge_1": 0.7586
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.3333,
+          "recall": 0.2857,
+          "f1": 0.3077
+        },
+        "macro_f1": {
+          "precision": 0.2857,
+          "recall": 0.2857,
+          "f1": 0.2857
+        },
+        "rouge_1": 0.6
+      },
+      {
+        "exact_match": 0.0,
+        "eighty_percent_accuracy": 0.0,
+        "micro_f1": {
+          "precision": 0.1429,
+          "recall": 0.1429,
+          "f1": 0.1429
+        },
+        "macro_f1": {
+          "precision": 0.125,
+          "recall": 0.125,
+          "f1": 0.125
+        },
+        "rouge_1": 0.5946
+      }
+    ]
+  }
+}

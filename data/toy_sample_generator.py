@@ -72,8 +72,7 @@ class ToySampleGenerator:
         """
         entities = product.get("entities") or []
         return {
-            e.get("name") for e in entities
-            if isinstance(e, dict) and e.get("name")
+            e.get("name") for e in entities if isinstance(e, dict) and e.get("name")
         }
 
     def _get_group_name(self, product: Dict[str, Any]) -> str:
@@ -167,11 +166,13 @@ class ToySampleGenerator:
         """
         rules = self.config.outlier_rules
         return (
-                self._get_title_length(product) >= rules["min_title_length"]
-                or self._count_entities(product) >= rules["min_entity_count"]
+            self._get_title_length(product) >= rules["min_title_length"]
+            or self._count_entities(product) >= rules["min_entity_count"]
         )
 
-    def _contains_any_entity(self, product: Dict[str, Any], entity_names: Set[str]) -> bool:
+    def _contains_any_entity(
+        self, product: Dict[str, Any], entity_names: Set[str]
+    ) -> bool:
         """Check if product contains any of the specified entities.
 
         Args:
@@ -204,7 +205,9 @@ class ToySampleGenerator:
         return hashlib.md5(key_string.encode("utf-8")).hexdigest()
 
     # Indexing and filtering
-    def _index_products(self, products: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+    def _index_products(
+        self, products: List[Dict[str, Any]]
+    ) -> Dict[str, List[Dict[str, Any]]]:
         """Create indices for efficient sampling by different criteria.
 
         Args:
@@ -333,7 +336,9 @@ class ToySampleGenerator:
                 result.append(product)
         return result
 
-    def _proportional_quota(self, count: int, ratios: Dict[str, float]) -> Dict[str, int]:
+    def _proportional_quota(
+        self, count: int, ratios: Dict[str, float]
+    ) -> Dict[str, int]:
         """Convert ratios to integer quotas that sum to count.
 
         Args:
@@ -367,7 +372,9 @@ class ToySampleGenerator:
         return base_allocations
 
     # Main generation methods
-    def generate(self, products: List[Dict[str, Any]], seed: int = 42) -> List[Dict[str, Any]]:
+    def generate(
+        self, products: List[Dict[str, Any]], seed: int = 42
+    ) -> List[Dict[str, Any]]:
         """Generate balanced toy sample from product list.
 
         Args:
@@ -399,10 +406,14 @@ class ToySampleGenerator:
         used_ids = set()
         target_size = self.config.target_sample_size
 
-        def add_products_to_sample(candidates: List[Dict[str, Any]], quota: int) -> None:
+        def add_products_to_sample(
+            candidates: List[Dict[str, Any]], quota: int
+        ) -> None:
             """Add products to sample while avoiding duplicates."""
             added = 0
-            available = [p for p in candidates if self._get_product_id(p) not in used_ids]
+            available = [
+                p for p in candidates if self._get_product_id(p) not in used_ids
+            ]
 
             for product in rng.sample(available, min(quota, len(available))):
                 product_id = self._get_product_id(product)
@@ -414,7 +425,9 @@ class ToySampleGenerator:
                         break
 
         # Apply sampling strategy
-        group_quotas = self._proportional_quota(target_size, self.config.group_composition)
+        group_quotas = self._proportional_quota(
+            target_size, self.config.group_composition
+        )
         add_products_to_sample(indices["by_group_defined"], group_quotas["defined"])
         add_products_to_sample(indices["by_group_rare"], group_quotas["rare"])
         add_products_to_sample(indices["by_group_unknown"], group_quotas["unknown"])
@@ -431,15 +444,18 @@ class ToySampleGenerator:
         # Other quotas
         add_products_to_sample(indices["zero_entities"], int(target_size * 0.05))
         add_products_to_sample(indices["four_plus_entities"], int(target_size * 0.20))
-        add_products_to_sample(indices["outliers"], int(target_size * self.config.outlier_ratio))
+        add_products_to_sample(
+            indices["outliers"], int(target_size * self.config.outlier_ratio)
+        )
         add_products_to_sample(indices["has_rare_entities"], int(target_size * 0.10))
-        add_products_to_sample(indices["noisy_entities"], max(5, int(target_size * 0.02)))
+        add_products_to_sample(
+            indices["noisy_entities"], max(5, int(target_size * 0.02))
+        )
 
         # Fill remaining slots
         while len(sample) < target_size:
             remaining_candidates = [
-                p for p in unique_products
-                if self._get_product_id(p) not in used_ids
+                p for p in unique_products if self._get_product_id(p) not in used_ids
             ]
             if not remaining_candidates:
                 break
@@ -465,10 +481,9 @@ class ToySampleGenerator:
 
         print(f"✓ Saved toy sample to {output_path}")
 
-    def generate_and_save(self,
-                          products: List[Dict[str, Any]],
-                          output_path: Path = None,
-                          seed: int = 42) -> List[Dict[str, Any]]:
+    def generate_and_save(
+        self, products: List[Dict[str, Any]], output_path: Path = None, seed: int = 42
+    ) -> List[Dict[str, Any]]:
         """Complete pipeline to generate and save toy sample.
 
         Args:

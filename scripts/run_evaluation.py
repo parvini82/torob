@@ -26,10 +26,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
-TRANSLATE_MODEL: str = os.getenv("TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free")
+TRANSLATE_MODEL: str = os.getenv(
+    "TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free"
+)
 
 
 from src.service.langgraph.langgraph_service import run_langgraph_on_url
+
 
 def example_model_function(image_url: str) -> List[Dict[str, Any]]:
     """Example model function - replace with your actual model.
@@ -51,7 +54,7 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
     # ]
     output_model = run_langgraph_on_url(image_url)
 
-    return output_model.get('persian').get('entities')
+    return output_model.get("persian").get("entities")
 
 
 def find_toy_sample():
@@ -73,7 +76,7 @@ def find_toy_sample():
     sample_names = [
         "toy_sample_high_entity.json",
         "toy_sample_standard.json",
-        "toy_sample_min_10_entities.json"
+        "toy_sample_min_10_entities.json",
     ]
 
     for sample_name in sample_names:
@@ -110,7 +113,7 @@ def main():
 
     # Load sample to check size
     try:
-        with open(sample_path, 'r', encoding='utf-8') as f:
+        with open(sample_path, "r", encoding="utf-8") as f:
             sample_data = json.load(f)
         print(f"Sample size: {len(sample_data)} products")
     except Exception as e:
@@ -124,7 +127,7 @@ def main():
     config = EvaluationConfig(
         results_dir=project_root / "evaluation" / "results",
         model_name=VISION_MODEL,  # Change this to your model name
-        precision_digits=4
+        precision_digits=4,
     )
 
     # Create evaluator
@@ -138,7 +141,7 @@ def main():
         results = evaluator.run_evaluation(
             sample_path=sample_path,
             model_function=example_model_function,
-            output_name=f"evaluation_{sample_path.stem}"
+            output_name=f"evaluation_{sample_path.stem}",
         )
 
         print("\n🎉 Evaluation completed successfully!")

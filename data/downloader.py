@@ -41,7 +41,8 @@ class DataDownloader:
             bool: True if installation successful or already installed
         """
         try:
-            import gdown
+            pass
+
             print("✓ gdown is already installed")
             return True
         except ImportError:
