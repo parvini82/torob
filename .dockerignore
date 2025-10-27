@@ -1,0 +1,18 @@
+## Ignore Python cache
+#__pycache__
+#*.pyc
+#*.pyo
+#*.pyd
+#
+## Ignore local environment
+#.env
+#*.env
+#
+## Ignore Node.js dependencies
+#frontend/node_modules
+#node_modules
+#**/node_modules
+#
+## Ignore IDE files
+#.vscode
+#.idea

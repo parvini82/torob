@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 .env
-data/
+data/raw
 models/model_weights/
 notebooks/.ipynb_checkpoints/
 .idea

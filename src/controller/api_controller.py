@@ -1,10 +1,13 @@
 from dotenv import load_dotenv
-from fastapi import Body, FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi import BackgroundTasks, Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.service.database.database import save_request_response
-from src.service.langgraph.langgraph_service import run_langgraph_on_url, run_langgraph_on_bytes
+from src.service.langgraph.langgraph_service import (
+    run_langgraph_on_bytes,
+    run_langgraph_on_url,
+)
 from src.service.minio.minio_service import get_minio_service
 
 # Load environment variables from .env at project root if present
@@ -33,7 +36,9 @@ async def health():
 
 
 @app.post("/generate-tags")
-async def generate_tags(payload: dict = Body(...), background_tasks: BackgroundTasks = None):
+async def generate_tags(
+    payload: dict = Body(...), background_tasks: BackgroundTasks = None
+):
     """
     Generate tags from an image URL
 
@@ -62,7 +67,9 @@ async def generate_tags(payload: dict = Body(...), background_tasks: BackgroundT
 
 
 @app.post("/upload-and-tag")
-async def upload_and_tag(file: UploadFile = File(...), background_tasks: BackgroundTasks = None):
+async def upload_and_tag(
+    file: UploadFile = File(...), background_tasks: BackgroundTasks = None
+):
     """
     Upload an image file, save to MinIO, and generate tags
 
@@ -75,10 +82,7 @@ async def upload_and_tag(file: UploadFile = File(...), background_tasks: Backgro
     try:
         # Validate file type
         if not file.content_type or not file.content_type.startswith("image/"):
-            raise HTTPException(
-                status_code=400,
-                detail="Only image files are allowed"
-            )
+            raise HTTPException(status_code=400, detail="Only image files are allowed")
 
         # Read file content
         file_content = await file.read()
@@ -91,7 +95,7 @@ async def upload_and_tag(file: UploadFile = File(...), background_tasks: Backgro
         image_url = minio_service.upload_file(
             file_data=file_content,
             filename=file.filename,
-            content_type=file.content_type
+            content_type=file.content_type,
         )
 
         # Process with LangGraph using BYTES (not URL)
@@ -112,4 +116,6 @@ async def upload_and_tag(file: UploadFile = File(...), background_tasks: Backgro
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing upload: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error processing upload: {str(e)}"
+        )

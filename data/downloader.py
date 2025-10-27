@@ -1,7 +1,8 @@
 """Data downloading and extraction utilities.
 
 This module provides functionality to download data from Google Drive
-and extract ZIP files for processing.
+and extract ZIP files for processing. Operates independently from
+sample generation.
 """
 
 import json
@@ -11,11 +12,11 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, List
 
-from .config import DataConfig
+from .config import DownloadConfig
 
 
 class DataDownloader:
-    """Handles downloading and extraction of dataset files.
+    """Handles downloading and extraction of dataset files from Google Drive.
 
     This class provides methods to:
     - Install required dependencies (gdown)
@@ -24,24 +25,23 @@ class DataDownloader:
     - Load and validate JSON data
     """
 
-    def __init__(self, config: DataConfig):
+    def __init__(self, config: DownloadConfig):
         """Initialize downloader with configuration.
 
         Args:
-            config: DataConfig instance with paths and settings
+            config: DownloadConfig instance with paths and settings
         """
         self.config = config
         self.config.ensure_directories()
 
-    def install_gdown(self) -> bool:
+    def _install_gdown(self) -> bool:
         """Install gdown package if not already available.
 
         Returns:
             bool: True if installation successful or already installed
         """
         try:
-            pass
-
+            import gdown
             print("✓ gdown is already installed")
             return True
         except ImportError:
@@ -54,7 +54,7 @@ class DataDownloader:
                 print(f"✗ Failed to install gdown: {e}")
                 return False
 
-    def download_from_drive(self, output_path: Path) -> bool:
+    def _download_from_drive(self, output_path: Path) -> bool:
         """Download file from Google Drive.
 
         Args:
@@ -63,7 +63,7 @@ class DataDownloader:
         Returns:
             bool: True if download successful
         """
-        if not self.install_gdown():
+        if not self._install_gdown():
             return False
 
         try:
@@ -87,7 +87,7 @@ class DataDownloader:
             print(f"✗ Error downloading file: {e}")
             return False
 
-    def extract_zip(self, zip_path: Path, extract_to: Path) -> bool:
+    def _extract_zip(self, zip_path: Path, extract_to: Path) -> bool:
         """Extract ZIP file to specified directory.
 
         Args:
@@ -113,7 +113,7 @@ class DataDownloader:
             print(f"✗ Error extracting ZIP: {e}")
             return False
 
-    def discover_json_files(self, directory: Path) -> List[Path]:
+    def _discover_json_files(self, directory: Path) -> List[Path]:
         """Find all JSON files in directory and subdirectories.
 
         Args:
@@ -131,7 +131,7 @@ class DataDownloader:
 
         return json_files
 
-    def load_json_data(self, json_files: List[Path]) -> List[Dict[str, Any]]:
+    def _load_json_data(self, json_files: List[Path]) -> List[Dict[str, Any]]:
         """Load data from multiple JSON files.
 
         Args:
@@ -141,7 +141,6 @@ class DataDownloader:
             List of product dictionaries from all files
         """
         all_products = []
-        file_product_counts = {}
 
         for json_file in json_files:
             try:
@@ -157,7 +156,6 @@ class DataDownloader:
                     print(f"  ⚠ Unexpected data type in {json_file.name}: {type(data)}")
                     continue
 
-                file_product_counts[json_file.name] = len(products)
                 all_products.extend(products)
                 print(f"  ✓ Loaded {len(products)} products from {json_file.name}")
 
@@ -167,15 +165,18 @@ class DataDownloader:
         print(f"\n✓ Total products loaded: {len(all_products)}")
         return all_products
 
-    def download_and_extract_dataset(self) -> List[Dict[str, Any]]:
+    def download(self) -> List[Dict[str, Any]]:
         """Complete pipeline to download, extract and load dataset.
 
         Returns:
             List of product dictionaries
+
+        Raises:
+            RuntimeError: If any step of the download process fails
         """
-        print("=" * 80)
-        print("TOROB DATASET - DOWNLOAD AND EXTRACTION PIPELINE")
-        print("=" * 80)
+        print("=" * 60)
+        print("DATA DOWNLOAD PIPELINE")
+        print("=" * 60)
 
         # Define paths
         zip_file_path = self.config.raw_data_dir / "dataset.zip"
@@ -183,26 +184,27 @@ class DataDownloader:
 
         # Step 1: Download from Google Drive
         print("\n[STEP 1] Downloading dataset from Google Drive...")
-        if not self.download_from_drive(zip_file_path):
+        if not self._download_from_drive(zip_file_path):
             raise RuntimeError("Failed to download dataset")
 
         # Step 2: Extract ZIP file
         print("\n[STEP 2] Extracting ZIP file...")
-        if not self.extract_zip(zip_file_path, extract_dir):
+        if not self._extract_zip(zip_file_path, extract_dir):
             raise RuntimeError("Failed to extract dataset")
 
         # Step 3: Discover JSON files
         print("\n[STEP 3] Discovering JSON files...")
-        json_files = self.discover_json_files(extract_dir)
+        json_files = self._discover_json_files(extract_dir)
 
         if not json_files:
             raise RuntimeError("No JSON files found in extracted data")
 
         # Step 4: Load JSON data
         print("\n[STEP 4] Loading JSON data...")
-        all_products = self.load_json_data(json_files)
+        all_products = self._load_json_data(json_files)
 
         if not all_products:
             raise RuntimeError("No products loaded from JSON files")
 
+        print(f"✓ Download completed: {len(all_products)} products ready")
         return all_products
