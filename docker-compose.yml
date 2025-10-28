@@ -34,7 +34,7 @@ services:
     container_name: image_tagging_frontend
     working_dir: /app
     ports:
-      - "3052:3000"
+      - "3000:3000"
     volumes:
       - ./frontend:/app
     environment:
@@ -61,7 +61,7 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3050:3000"
+      - "3001:3001"
     volumes:
       - grafana-storage:/var/lib/grafana
     depends_on:

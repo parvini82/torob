@@ -3,6 +3,7 @@ from fastapi import BackgroundTasks, Body, FastAPI, File, HTTPException, UploadF
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from src.service.caching.redis_cache_service import RedisCacheService, get_cache_service
 from src.service.database.database import save_request_response
 from src.service.langgraph.langgraph_service import (
     run_langgraph_on_bytes,
@@ -40,7 +41,7 @@ async def generate_tags(
     payload: dict = Body(...), background_tasks: BackgroundTasks = None
 ):
     """
-    Generate tags from an image URL
+    Generate tags from an image URL with Redis caching
 
     Request body:
         {
@@ -51,15 +52,28 @@ async def generate_tags(
     if not image_url:
         return {"error": "image_url is required"}
 
+    # Generate the image hash for caching
+    image_hash = RedisCacheService.generate_image_hash(image_url.encode('utf-8'))
+
+    # Check if the tags are already cached
+    cache_service = get_cache_service()
+    cached_tags = await cache_service.get_cached_tags(image_hash)
+
+    if cached_tags:
+        # If tags are cached, return them directly
+        return cached_tags
+
     try:
-        # Call the LangGraph service to process the URL and get the response
+        # If not cached, call the LangGraph service to process the URL and get the response
         result = run_langgraph_on_url(image_url)
+
+        # Store the generated tags in the Redis cache
+        await cache_service.set_cached_tags(image_hash, result.get("persian", {}))
 
         # Queue database save as background task (non-blocking)
         if background_tasks:
             background_tasks.add_task(save_request_response, image_url, result)
 
-        # Return only Persian JSON immediately without waiting for DB save
         return result.get("persian", {})
 
     except Exception as e:
@@ -71,7 +85,7 @@ async def upload_and_tag(
     file: UploadFile = File(...), background_tasks: BackgroundTasks = None
 ):
     """
-    Upload an image file, save to MinIO, and generate tags
+    Upload an image file, save to MinIO, and generate tags with Redis caching
 
     Args:
         file: The uploaded image file
@@ -90,6 +104,17 @@ async def upload_and_tag(
         if len(file_content) == 0:
             raise HTTPException(status_code=400, detail="Empty file uploaded")
 
+        # Generate the image hash for caching
+        image_hash = RedisCacheService.generate_image_hash(file_content)
+
+        # Check if the tags are already cached
+        cache_service = get_cache_service()
+        cached_tags = await cache_service.get_cached_tags(image_hash)
+
+        if cached_tags:
+            # If tags are cached, return them directly
+            return {"image_url": "cached", "tags": cached_tags}
+
         # Upload to MinIO first (for storage/record keeping)
         minio_service = get_minio_service()
         image_url = minio_service.upload_file(
@@ -99,15 +124,15 @@ async def upload_and_tag(
         )
 
         # Process with LangGraph using BYTES (not URL)
-        # This converts to base64 data URI which OpenRouter can access
         result = run_langgraph_on_bytes(file_content)
 
+        # Store the generated tags in the Redis cache
+        await cache_service.set_cached_tags(image_hash, result.get("persian", {}))
+
         # Queue database save as background task (non-blocking)
-        # This keeps the API response fast
         if background_tasks:
             background_tasks.add_task(save_request_response, image_url, result)
 
-        # Return Persian tags along with the MinIO URL immediately
         return {
             "image_url": image_url,
             "tags": result.get("persian", {}),
