@@ -1,15 +1,13 @@
-from dotenv import load_dotenv
-from fastapi import BackgroundTasks, Body, FastAPI, File, HTTPException, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
-from prometheus_fastapi_instrumentator import Instrumentator
-
+from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile
+from src.service.ratelimit.rate_limit_service import RateLimitService
 from src.service.caching.redis_cache_service import RedisCacheService, get_cache_service
 from src.service.database.database import save_request_response
-from src.service.langgraph.langgraph_service import (
-    run_langgraph_on_bytes,
-    run_langgraph_on_url,
-)
+from src.service.langgraph.langgraph_service import run_langgraph_on_bytes, run_langgraph_on_url
 from src.service.minio.minio_service import get_minio_service
+from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
+from redis import Redis
+from dotenv import load_dotenv
 
 # Load environment variables from .env at project root if present
 load_dotenv()
@@ -30,24 +28,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize Redis client (ensure it's correctly configured)
+redis_client = Redis(host="redis", port=6379, db=0)  # Adjust as needed
+rate_limit_service = RateLimitService(redis_client=redis_client, limit=10, window_seconds=60)
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 
+# Rate Limit check
+async def check_rate_limit(request: Request):
+    ip = request.client.host
+    if rate_limit_service.is_rate_limited(ip):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Please try again later.")
 
 @app.post("/generate-tags")
 async def generate_tags(
-    payload: dict = Body(...), background_tasks: BackgroundTasks = None
+    payload: dict = Body(...),
+    background_tasks: BackgroundTasks = None,
+    request: Request = None  # Added request dependency for IP check
 ):
-    """
-    Generate tags from an image URL with Redis caching
+    await check_rate_limit(request)  # Check rate limit
 
-    Request body:
-        {
-            "image_url": "http://example.com/image.jpg"
-        }
-    """
     image_url = payload.get("image_url")
     if not image_url:
         return {"error": "image_url is required"}
@@ -82,17 +84,12 @@ async def generate_tags(
 
 @app.post("/upload-and-tag")
 async def upload_and_tag(
-    file: UploadFile = File(...), background_tasks: BackgroundTasks = None
+    file: UploadFile = File(...),
+    background_tasks: BackgroundTasks = None,
+    request: Request = None  # Added request dependency for IP check
 ):
-    """
-    Upload an image file, save to MinIO, and generate tags with Redis caching
+    await check_rate_limit(request)  # Check rate limit
 
-    Args:
-        file: The uploaded image file
-
-    Returns:
-        Persian tags and the MinIO URL
-    """
     try:
         # Validate file type
         if not file.content_type or not file.content_type.startswith("image/"):
