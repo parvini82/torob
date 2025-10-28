@@ -1,154 +1,159 @@
-# Torob - AI-Powered Product Discovery
+# 🔍 Torob - AI-Powered Product Discovery
 
-A full-stack application for AI-powered product discovery and recommendation using image analysis and natural language processing.
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Next.js](https://img.shields.io/badge/Next.js-latest-black)](https://nextjs.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## 🚀 Quick Start
+An intelligent product discovery platform that uses AI to analyze product images and generate multilingual tags for improved search and categorization. The system processes images using advanced vision models and provides results in both English and Persian.
+
+## ✨ Key Features
+
+- 🖼️ AI-powered image analysis for product categorization
+- 🌐 Multilingual tag generation (English/Persian)
+- ⚡ Fast API backend with Python
+- 🎯 Modern Next.js frontend interface
+- 📊 Comaaluation pipeline
+- 🔄 Flexible workflow using LangGraph
+- 📦 Docker support for easy deployment
+
+## 🚀 Installation & Setup
 
 ### Prerequisites
 
-- Python 3.9+
-- Node.js 18+
-- npm or yarn
+- Python 3.10+
+- Node.js (Latest LTS version)
+- Docker (optional)
 
-### Installation
+### Backend Setup
 
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd torob
-   ```
-
-2. **Run the automated setup script**
-
-   ```bash
-   ./setup-dev-tools.sh
-   ```
-
-   This script will:
-
-   - Install Python dependencies
-   - Set up pre-commit hooks
-   - Install frontend dependencies
-   - Configure Husky for frontend pre-commit hooks
-
-### Manual Setup
-
-If you prefer manual setup or the automated script fails:
-
-#### Backend Setup
-
+1. Clone the repository:
 ```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Install pre-commit hooks
-pre-commit install
+git clone https://github.com/parvini82/torob.git
+cd torob
 ```
 
-#### Frontend Setup
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+```
 
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Set up environment variables:
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
 ```bash
 cd frontend
+```
 
-# Install dependencies
+2. Install dependencies:
+```bash
 npm install
-
-# Setup Husky
-npm run prepare
+# or
+yarn install
 ```
 
-## 🛠️ Development Tools
+## 💻 Usage
 
-This project includes comprehensive code quality tools to ensure consistent, high-quality code across the team.
+### Running the Backend
 
-### Frontend Tools (Next.js + TypeScript)
+Start the FastAPI server:
+```bash
+python src/main.py
+```
 
-#### Type Checking
+The API will be available at `http://localhost:8000`
 
-- **TypeScript**: Static type checking for JavaScript/React code
-- **Command**: `npm run type-check`
+### Running the Frontend
 
-#### Code Formatting
+In the frontend directory:
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-- **Prettier**: Automatic code formatting
-- **Commands**:
-  - `npm run format` - Format all files
-  - `npm run format:check` - Check formatting without fixing
+Visit `http://localhost:3000` in your browser.
 
-#### Linting
+### Using Docker
 
-- **ESLint**: Code quality and style enforcement
-- **Commands**:
-  - `npm run lint` - Run linting
-  - `npm run lint:fix` - Run linting with auto-fix
+Build and run the container:
+```bash
+docker build -t torob .
+docker run -p 8000:8000 torob
+```
 
-#### Configuration Files
+## 🔧 Development
 
-- `tsconfig.json` - TypeScript configuration
-- `.eslintrc.json` - ESLint rules and plugins
-- `.prettierrc` - Prettier formatting rules
-- `.prettierignore` - Files to ignore for formatting
+### Code Quality Tools
 
-### Backend Tools (Python)
+#### Backend (Python)
+- **Black**: Code formatting (`black .`)
+- **isort**: Import sorting (`isort .`)
+- **mypy**: Type checking (`mypy .`)
+- **flake8**: Linting (`flake8 .`)
 
-#### Code Formatting
+#### Frontend (Next.js + TypeScript)
+- ESLint
+- Prettier
+- TypeScript
 
-- **Black**: Automatic Python code formatting
-- **Command**: `black .`
-
-#### Import Sorting
-
-- **isort**: Automatic import sorting and organization
-- **Command**: `isort .`
-
-#### Type Checking
-
-- **mypy**: Static type checking for Python
-- **Command**: `mypy .`
-
-#### Linting
-
-- **flake8**: Code style and error checking
-- **Command**: `flake8 .`
-
-#### Configuration Files
-
-- `pyproject.toml` - Black, isort, and mypy configuration
-- `.flake8` - flake8 configuration
-- `mypy.ini` - mypy type checking configuration
-
-## 🔗 Pre-commit Hooks
-
-Pre-commit hooks automatically run code quality checks before each commit, ensuring consistent code quality across the team.
-
-### Features
-
-- **Automatic formatting** with Black and Prettier
-- **Import sorting** with isort
-- **Type checking** with mypy and TypeScript
-- **Linting** with flake8 and ESLint
-- **File validation** (YAML, large files, merge conflicts)
-
-### Setup
-
-Pre-commit hooks are automatically installed when you run `./setup-dev-tools.sh` or manually with:
+### Running Tests
 
 ```bash
-pre-commit install
+# Backend tests
+python -m pytest
+
+# Generate test data
+python scripts/generate_toy_sample.py
+
+# Run evaluation
+python scripts/run_evaluation.py
 ```
 
-### Manual Execution
+## 📖 Documentation
 
-```bash
-# Run on all files
-pre-commit run --all-files
+- API Documentation: Available at `http://localhost:8000/docs` when the server is running
+- Frontend Documentation: See `frontend/README.md`
+- Evaluation Results: Check `evaluation/results/` after running evaluations
 
-# Run on staged files only
-pre-commit run
-```
+## 🤝 Contributing
 
-## 📁 Project Structure
+1. Fork the repository
+2. Create your feature branch:
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. Run the pre-commit hooks:
+   ```bash
+   pre-commit install
+   ```
+4. Commit your changes and push
+5. Open a Pull Request
+
+Please ensure your code passes all tests and follows the project's coding standards.
+
+## 📄 License
+
+[MIT License](LICENSE) - See the LICENSE file for details
+
+## 🆘 Support
+
+- 📫 **Issues**: Use the [GitHub Issues](https://github.com/parvini82/torob/issues) page
+- 📝 **Documentation**: Check the `docs/` directory for detailed guides
+- 💬 **Questions**: Start a [Discussion](https://github.com/parvini82/torob/discussions)
+
+## 🛠️ Project Structure
 
 ```
 torob/
@@ -156,9 +161,6 @@ torob/
 │   ├── pages/               # Next.js pages
 │   ├── src/                 # Source code
 │   ├── public/              # Static assets
-│   ├── .eslintrc.json       # ESLint configuration
-│   ├── .prettierrc          # Prettier configuration
-│   ├── tsconfig.json        # TypeScript configuration
 │   └── package.json         # Frontend dependencies
 ├── src/                     # Python backend
 │   ├── controller/          # API controllers
@@ -167,49 +169,6 @@ torob/
 │   └── utils/               # Utility functions
 ├── notebooks/               # Jupyter notebooks for analysis
 ├── tests/                   # Test files
-├── .pre-commit-config.yaml  # Pre-commit hooks configuration
-├── pyproject.toml          # Python tool configurations
-├── requirements.txt        # Python dependencies
-└── setup-dev-tools.sh     # Development setup script
+├── scripts/                 # Utility scripts
+└── evaluation/             # Evaluation results and configs
 ```
-
-## 🚦 Development Workflow
-
-1. **Before starting work**: Ensure all tools are set up with `./setup-dev-tools.sh`
-2. **During development**:
-   - Use your IDE's integration with these tools for real-time feedback
-   - Run `npm run type-check` and `mypy .` periodically for type checking
-3. **Before committing**: Pre-commit hooks will automatically run all checks
-4. **If hooks fail**: Fix the issues and commit again
-
-## 🔧 IDE Integration
-
-### VS Code
-
-Install these extensions for optimal experience:
-
-- **Python**: Official Python extension with Black, isort, and mypy integration
-- **ESLint**: ESLint extension for JavaScript/TypeScript
-- **Prettier**: Prettier extension for code formatting
-- **TypeScript**: Built-in TypeScript support
-
-### PyCharm
-
-- Enable Black, isort, and mypy in Settings → Tools → External Tools
-- Configure ESLint and Prettier for frontend files
-
-## 🤝 Contributing
-
-1. Follow the code style enforced by our tools
-2. Ensure all pre-commit hooks pass
-3. Write type hints for new Python functions
-4. Use TypeScript for new frontend code
-5. Run tests before submitting PRs
-
-## 📚 Additional Resources
-
-- [Black Documentation](https://black.readthedocs.io/)
-- [ESLint Documentation](https://eslint.org/)
-- [Prettier Documentation](https://prettier.io/)
-- [mypy Documentation](https://mypy.readthedocs.io/)
-- [Pre-commit Documentation](https://pre-commit.com/)
