@@ -1,36 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function UploadPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [file, setFile] = useState(null);
-  const [tagGroups, setTagGroups] = useState([]);
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [animateTags, setAnimateTags] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [minioImageUrl, setMinioImageUrl] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setTagGroups([]);
+    setTags([]);
     setAnimateTags(false);
     setUploadedImage(null);
-    setMinioImageUrl("");
     setProgress(0);
     setLoading(true);
 
     try {
       let res;
-
-      // Case 1: User uploaded a file
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
-
-        // Show preview of uploaded file
         setUploadedImage(URL.createObjectURL(file));
 
         // Simulate progress bar
@@ -41,62 +35,29 @@ export default function UploadPage() {
           setProgress(prog);
         }, 100);
 
-        // Use the new upload-and-tag endpoint
-        res = await fetch("/api/upload-and-tag", {
+        res = await fetch("http://localhost:8000/generate-tags", {
           method: "POST",
           body: formData,
         });
-
-        clearInterval(interval);
-      }
-      // Case 2: User provided an image URL
-      else if (imageUrl) {
+      } else if (imageUrl) {
         setUploadedImage(imageUrl);
-
-        // Use the original generate-tags endpoint
-        res = await fetch("/api/generate-tags", {
+        res = await fetch("http://localhost:8000/generate-tags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image_url: imageUrl }),
         });
-      }
-      // Case 3: No input provided
-      else {
+      } else {
         throw new Error("لطفاً URL یا فایل تصویر انتخاب کنید.");
       }
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.detail || `خطا از سرور: ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`خطا از سرور: ${res.status}`);
 
       const data = await res.json();
-
-      // If file was uploaded, we get back image_url
-      if (file && data.image_url) {
-        setMinioImageUrl(data.image_url);
-      }
-
-      // Extract tag groups from the response
-      let groups = [];
-
-      // Try different response structures
-      if (data.tags && data.tags.entities) {
-        groups = data.tags.entities;
-      } else if (data.entities) {
-        groups = data.entities;
-      } else if (data.tags && data.tags["ویژگی‌ها"]) {
-        groups = data.tags["ویژگی‌ها"];
-      } else if (data["ویژگی‌ها"]) {
-        groups = data["ویژگی‌ها"];
-      }
-
-      // Keep the full structure: [{نام: "...", مقادیر: [...]}]
-      setTagGroups(groups);
+      const extractedTags = data.entities?.flatMap((e) => e.مقادیر || []) || [];
+      setTags(extractedTags);
       setAnimateTags(true);
       setProgress(100);
     } catch (err) {
-      console.error("Error:", err);
       setError(err.message || "خطا در ارتباط با سرور.");
       setProgress(0);
     } finally {
@@ -104,48 +65,31 @@ export default function UploadPage() {
     }
   };
 
-  const categoryStyle = {
-    marginBottom: "20px",
-    padding: "15px",
-    borderRadius: "12px",
-    background: darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.7)",
-    backdropFilter: "blur(10px)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-  };
-
-  const categoryTitleStyle = {
-    fontSize: "16px",
-    fontWeight: "600",
-    marginBottom: "10px",
-    color: darkMode ? "#fff" : "#333",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-  };
-
   const tagStyle = {
-    display: "inline-block",
-    padding: "6px 12px",
-    margin: "4px",
-    borderRadius: "16px",
+    padding: "8px 16px",
+    borderRadius: "20px",
     color: "#fff",
     fontWeight: "500",
-    fontSize: "14px",
+    cursor: "pointer",
     background: "linear-gradient(45deg, #6a11cb, #2575fc)",
     backgroundSize: "200% 200%",
-    transition: "all 0.3s ease",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
-    cursor: "pointer",
+    transition: "all 0.4s ease",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+    fontSize: "1rem",
+    margin: "5px 4px",
+    minWidth: "65px",
+    textAlign: "center",
+    flex: "0 0 auto",
   };
 
   const skeletonStyle = {
-    width: "100%",
-    height: "60px",
-    borderRadius: "12px",
+    width: "70px",
+    height: "28px",
+    borderRadius: "20px",
     background: "linear-gradient(90deg, #e0e0e0 25%, #f7f7f7 50%, #e0e0e0 75%)",
     backgroundSize: "200% 100%",
     animation: "loading 1.5s infinite",
-    margin: "10px 0",
+    margin: "5px",
   };
 
   const progressBarStyle = {
@@ -177,8 +121,8 @@ export default function UploadPage() {
         onClick={() => setDarkMode(!darkMode)}
         style={{
           position: "absolute",
-          top: "20px",
-          left: "20px",
+          top: "18px",
+          left: "18px",
           padding: "8px 16px",
           borderRadius: "20px",
           border: "none",
@@ -186,33 +130,90 @@ export default function UploadPage() {
           background: darkMode ? "#fff" : "#333",
           color: darkMode ? "#333" : "#fff",
           transition: "all 0.3s ease",
+          fontWeight: "600"
         }}
       >
         {darkMode ? "Light Mode" : "Dark Mode"}
       </button>
 
       <img
-        src="https://tmooty.com/wp-content/uploads/2023/09/download-1-1.png"
+        src="https://rahnemacollege.com/blog/wp-content/uploads/2023/02/rc-logo.png"
         alt="Logo"
         style={{
           position: "absolute",
-          top: "20px",
-          right: "20px",
-          width: "400px",
+          top: "18px",
+          right: "18px",
+          maxWidth: "32vw",
+          width: "350px",
+          minWidth: "140px",
           height: "auto",
           opacity: 0.9,
         }}
       />
 
-      <h1 style={{ marginBottom: "20px", color: darkMode ? "#f7f7f7" : "#333" }}>
-        Welcome to Image Tagging
+      <h1 style={{
+        marginBottom: "18px",
+        fontSize: "2.2rem",
+        fontWeight: 700,
+        color: darkMode ? "#f7f7f7" : "#333",
+        textAlign: "center",
+        lineHeight: "1.15"
+      }}>
+        Welcome to <span className="gashtal">Gashtal</span> Image Tagging
       </h1>
 
-      <form onSubmit={handleSubmit} style={{ width: "100%", maxWidth: "400px" }}>
-        <p style={{ color: darkMode ? "#f7f7f7" : "#333" }}>آدرس تصویر (URL):</p>
+      <style jsx>{`
+        .gashtal {
+          background: linear-gradient(90deg, #6a11cb, #2575fc, #6a11cb);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-size: 200% 100%;
+          animation: gradientMove 3s infinite linear;
+        }
+        @keyframes gradientMove {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 100% 50%; }
+        }
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        @media only screen and (max-width: 600px) {
+          h1 {
+            font-size: 1.25rem !important;
+          }
+          img[alt="Logo"] {
+            max-width: 120px !important;
+            width:90vw !important;
+            right: 10px !important;
+            top: 15px !important;
+          }
+        }
+        @media only screen and (max-width: 420px) {
+          div, form {
+            padding: 0px !important;
+          }
+        }
+      `}</style>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          width: "100%",
+          maxWidth: "430px",
+          margin: "0 auto",
+          boxSizing: "border-box"
+        }}
+      >
+        <p style={{
+          color: darkMode ? "#f7f7f7" : "#333",
+          fontSize: "1rem"
+        }}>
+          :آدرس تصویر (URL)
+        </p>
         <input
           type="text"
-          placeholder="Enter image URL..."
+          placeholder="...آدرس تصویر خود را اینجا قرار دهید"
           value={imageUrl}
           onChange={(e) => {
             setImageUrl(e.target.value);
@@ -221,15 +222,19 @@ export default function UploadPage() {
           style={{
             width: "100%",
             padding: "10px",
-            fontSize: "16px",
+            fontSize: "15px",
             marginBottom: "10px",
             borderRadius: "8px",
-            border: "1px solid #ddd",
+            border: "1px solid #999",
+            boxSizing: "border-box",
           }}
         />
 
-        <p style={{ color: darkMode ? "#f7f7f7" : "#333" }}>
-          یا فایل تصویر از سیستم خود انتخاب کنید:
+        <p style={{
+          color: darkMode ? "#f7f7f7" : "#333",
+          fontSize: "1rem"
+        }}>
+          :یا فایل تصویر از سیستم خود انتخاب کنید
         </p>
         <input
           type="file"
@@ -241,8 +246,7 @@ export default function UploadPage() {
           style={{
             width: "100%",
             marginBottom: "10px",
-            padding: "8px",
-            color: darkMode ? "#f7f7f7" : "#333",
+            padding: "5px 0",
           }}
         />
 
@@ -250,21 +254,21 @@ export default function UploadPage() {
           type="submit"
           style={{
             width: "100%",
-            padding: "12px",
-            fontSize: "16px",
-            borderRadius: "8px",
-            border: "none",
-            background: loading
-              ? "#ccc"
-              : "linear-gradient(45deg, #6a11cb, #2575fc)",
-            color: "#fff",
-            cursor: loading ? "not-allowed" : "pointer",
-            transition: "all 0.3s ease",
+            padding: "10px",
+            fontSize: "1.1rem",
+            borderRadius: "12px",
+            marginTop: "8px",
             fontWeight: "600",
+            color: "#fff",
+            background: "linear-gradient(90deg, #6a11cb, #2575fc)",
+            border: "none",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.75 : 1,
+            transition: "opacity 0.2s",
           }}
           disabled={loading}
         >
-          {loading ? "Processing..." : "Generate Tags"}
+          {loading ? "در حال پردازش..." : "نمایش تگ ها"}
         </button>
       </form>
 
@@ -272,11 +276,10 @@ export default function UploadPage() {
         <div
           style={{
             width: "100%",
-            maxWidth: "400px",
+            maxWidth: "430px",
             marginTop: "10px",
             background: "#ddd",
             borderRadius: "3px",
-            overflow: "hidden",
           }}
         >
           <div style={progressBarStyle}></div>
@@ -284,119 +287,93 @@ export default function UploadPage() {
       )}
 
       {error && (
-        <p
-          style={{
-            color: "crimson",
-            marginTop: "10px",
-            padding: "10px",
-            background: darkMode ? "#fff1f0" : "#ffe6e6",
-            borderRadius: "8px",
-            maxWidth: "400px",
-          }}
-        >
+        <p style={{
+          color: "crimson",
+          marginTop: "10px",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}>
           {error}
         </p>
       )}
 
       {uploadedImage && (
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
-          <img
-            src={uploadedImage}
-            alt="Uploaded"
-            style={{
-              maxWidth: "500px",
-              maxHeight: "400px",
-              borderRadius: "8px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              objectFit: "contain",
-            }}
-          />
-          {minioImageUrl && (
-            <p
-              style={{
-                marginTop: "10px",
-                fontSize: "12px",
-                color: darkMode ? "#bbb" : "#666",
-                wordBreak: "break-all",
-              }}
-            >
-              تصویر ذخیره شده: {minioImageUrl}
-            </p>
-          )}
-        </div>
+        <img
+          src={uploadedImage}
+          alt="Uploaded"
+          style={{
+            marginTop: "18px",
+            maxWidth: "430px",
+            width: "100vw",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            display: "block"
+          }}
+        />
       )}
 
-      {loading && (
+      {loading && !file && (
         <div
           style={{
-            marginTop: "20px",
+            marginTop: "16px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            justifyContent: "center",
             width: "100%",
-            maxWidth: "700px",
+            maxWidth: "430px",
+            minHeight: "32px"
           }}
         >
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} style={skeletonStyle}></div>
           ))}
         </div>
       )}
 
-      {tagGroups.length > 0 && (
+      {tags.length > 0 && (
         <div
           style={{
-            marginTop: "30px",
+            marginTop: "18px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
+            justifyContent: "center",
             width: "100%",
-            maxWidth: "700px",
+            maxWidth: "430px",
           }}
         >
-          {tagGroups.map((group, i) => (
-            <div
+          {tags.map((tag, i) => (
+            <span
               key={i}
               style={{
-                ...categoryStyle,
+                ...tagStyle,
                 opacity: animateTags ? 1 : 0,
-                transform: animateTags ? "translateY(0)" : "translateY(20px)",
-                transition: `all 0.5s ease ${i * 0.1}s`,
+                transform: animateTags
+                  ? "translateY(0)"
+                  : "translateY(24px)",
+                transition: `all 0.5s ease ${i * 0.07}s`,
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundPosition = "100% 0";
+                e.target.style.transform =
+                  "scale(1.13) translateY(0)";
+                e.target.style.boxShadow =
+                  "0 6px 16px rgba(0,0,0,0.23)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundPosition = "0 0";
+                e.target.style.transform =
+                  "scale(1) translateY(0)";
+                e.target.style.boxShadow =
+                  "0 2px 6px rgba(0,0,0,0.15)";
               }}
             >
-              <div style={categoryTitleStyle}>
-                <span style={{ fontSize: "20px" }}>🏷️</span>
-                <span>{group.نام || group.name}</span>
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                {(group.مقادیر || group.values || []).map((value, j) => (
-                  <span
-                    key={j}
-                    style={tagStyle}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundPosition = "100% 0";
-                      e.target.style.transform = "scale(1.1)";
-                      e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.25)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundPosition = "0 0";
-                      e.target.style.transform = "scale(1)";
-                      e.target.style.boxShadow = "0 2px 4px rgba(0,0,0,0.15)";
-                    }}
-                  >
-                    {value}
-                  </span>
-                ))}
-              </div>
-            </div>
+              {tag}
+            </span>
           ))}
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes loading {
-          0% {
-            background-position: 200% 0;
-          }
-          100% {
-            background-position: -200% 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
