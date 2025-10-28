@@ -278,7 +278,53 @@
   {
     "index": 7,
     "image_url": "https://image.torob.com/base/images/be/5o/be5ohjwwQfN856Xu.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کفش ورزشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم",
+          "مصنوعی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "برنده با فینگر کش",
+          "نوک گرد"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "نیو بالانس"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "زیره متناوب",
+          "لوگوی برند"
+        ]
+      }
+    ]
   },
   {
     "index": 8,
@@ -665,7 +711,42 @@
   {
     "index": 16,
     "image_url": "https://image.torob.com/base/images/C-/Mp/C-MpZKUqAfFaMlli.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تزئینات در قالب ستاره"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سفید",
+          "مشکی",
+          "آبی",
+          "صورتی",
+          "قرمز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلاستیک"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "ساده"
+        ]
+      },
+      {
+        "name": "ویژگی های خاص",
+        "values": [
+          "تصویر چاپ شده"
+        ]
+      }
+    ]
   },
   {
     "index": 17,
@@ -1464,7 +1545,45 @@
   {
     "index": 33,
     "image_url": "https://image.torob.com/base/images/hM/AR/hMARW4EgYtztVMFb.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کفش"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "بدون بند",
+          "سوراخدار"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "کفش بهزاد"
+        ]
+      }
+    ]
   },
   {
     "index": 34,
@@ -1851,7 +1970,42 @@
   {
     "index": 42,
     "image_url": "https://image.torob.com/base/images/-o/P2/-oP25P_sFMUIk0eO.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "دکمه"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "عاجی",
+          "سیاه",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "صداگیر",
+          "فلزی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "طبیعی"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "دو رنگ",
+          "شکل ارگانیک"
+        ]
+      }
+    ]
   },
   {
     "index": 43,
@@ -2113,7 +2267,46 @@
   {
     "index": 49,
     "image_url": "https://image.torob.com/base/images/9A/SK/9ASKJg-aozCSYCW6.webp",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دیواری"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلی‌استر"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "آدیداس"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "زیپ‌دار",
+          "جیب‌دار"
+        ]
+      }
+    ]
   },
   {
     "index": 50,
@@ -2206,7 +2399,42 @@
   {
     "index": 52,
     "image_url": "https://image.torob.com/base/images/bc/8s/bc8sO028hS5rkPRr.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "دونات"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "قهوه‌ای",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "شکر",
+          "شکلات"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "خال‌دار"
+        ]
+      },
+      {
+        "name": "ویژگی‌های ویژه",
+        "values": [
+          "چشم‌ها",
+          "دهان",
+          "پاها"
+        ]
+      }
+    ]
   },
   {
     "index": 53,
@@ -2809,7 +3037,44 @@
   {
     "index": 65,
     "image_url": "https://image.torob.com/base/images/XT/J0/XTJ0Xs8eazlDogGV.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تی مایو"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یک تنه"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی آستین"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "کلاسیک"
+        ]
+      }
+    ]
   },
   {
     "index": 66,
@@ -3292,7 +3557,50 @@
   {
     "index": 76,
     "image_url": "https://image.torob.com/base/images/CQ/Zb/CQZbEEpXqJeUa43q.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کوله پشتی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی",
+          "سفید",
+          "قهوه‌ای"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "کتان",
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گل‌دار",
+          "حیوانی"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "بسته‌بندی فلِیپ",
+          "بندها"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "جیب‌ها",
+          "پیچ‌های تزئینی"
+        ]
+      }
+    ]
   },
   {
     "index": 77,
@@ -4008,7 +4316,61 @@
   {
     "index": 94,
     "image_url": "https://image.torob.com/base/images/6I/Fn/6IFnW5Ifb5U47Rd-.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سفید",
+          "قرمز",
+          "سبز",
+          "آبی",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گلدار"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "آستین کوتاه"
+        ]
+      },
+      {
+        "name": "یقه",
+        "values": [
+          "بی شانه"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "شل"
+        ]
+      },
+      {
+        "name": "ویژگی های خاص",
+        "values": [
+          "پنبه ای",
+          "دوخت دکوری"
+        ]
+      }
+    ]
   },
   {
     "index": 95,
@@ -4166,7 +4528,20 @@
   {
     "index": 98,
     "image_url": "https://image.torob.com/base/images/By/Lp/ByLpty3Svj4_3L76.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "سنگ قیمتی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "زرد"
+        ]
+      }
+    ]
   },
   {
     "index": 99,
@@ -4401,7 +4776,39 @@
   {
     "index": 104,
     "image_url": "https://image.torob.com/base/images/K7/di/K7diUQm8u4nTdBBs.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "آویز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "سنگ"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "طبیعی"
+        ]
+      },
+      {
+        "name": "شکل",
+        "values": [
+          "قطرهای"
+        ]
+      }
+    ]
   },
   {
     "index": 105,
@@ -4805,7 +5212,41 @@
   {
     "index": 114,
     "image_url": "https://image.torob.com/base/images/_o/J0/_oJ0Cw3wf2vEjDbQ.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "نقاشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی",
+          "سیاه",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "هنر دیجیتال"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یک دست"
+        ]
+      },
+      {
+        "name": "سبک ویژگی ها",
+        "values": [
+          "کارتونی",
+          "انیمه"
+        ]
+      }
+    ]
   },
   {
     "index": 115,
@@ -4891,7 +5332,45 @@
   {
     "index": 117,
     "image_url": "https://image.torob.com/base/images/9l/hv/9lhvDD3krnr5tTQC.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "هندسی"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "آستین بلند"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "فاصله دهانه‌باز",
+          "یقه تزیین‌شده"
+        ]
+      }
+    ]
   },
   {
     "index": 118,
@@ -4938,7 +5417,50 @@
   {
     "index": 119,
     "image_url": "https://image.torob.com/base/images/xo/2H/xo2HVfX5fNgDP8RJ.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "چکمه"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع بسته شدن",
+        "values": [
+          "با فیتیله"
+        ]
+      },
+      {
+        "name": "نوع زیره",
+        "values": [
+          "سکو"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "برشکا"
+        ]
+      }
+    ]
   },
   {
     "index": 120,
@@ -5871,7 +6393,47 @@
   {
     "index": 140,
     "image_url": "https://image.torob.com/base/images/-t/LO/-tLOipQfBcEKVGwp.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف بغل کراس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "قرمز",
+          "حنا",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یک دست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "کریستین دیور"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "بند جدا شونده",
+          "بسته شونده فلپ"
+        ]
+      }
+    ]
   },
   {
     "index": 141,
@@ -6135,7 +6697,51 @@
   {
     "index": 147,
     "image_url": "https://image.torob.com/base/images/I6/FH/I6FHn8tZE6RYo7Br.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "پیراهن با آستین کوتاه"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی روشن"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "آستین کوتاه"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "یقه دکمه‌دار"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "دکمه‌های جلو",
+          "جیب"
+        ]
+      }
+    ]
   },
   {
     "index": 148,
@@ -7993,7 +8599,34 @@
   {
     "index": 187,
     "image_url": "https://image.torob.com/base/images/LN/be/LNbelUMJBhlvYKYB.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "عینک شنا"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلاستیک",
+          "سیلیکون"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "مقاوم در برابر مه",
+          "تسمه قابل تنظیم"
+        ]
+      }
+    ]
   },
   {
     "index": 188,
@@ -8513,7 +9146,51 @@
   {
     "index": 199,
     "image_url": "https://image.torob.com/base/images/NB/5T/NB5Thh39rVhuI5_s.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "هودی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه",
+          "پلی استر"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "آستین بلند"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "یقه گرد"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "معمولی"
+        ]
+      }
+    ]
   },
   {
     "index": 200,
@@ -8550,7 +9227,53 @@
   {
     "index": 201,
     "image_url": "https://image.torob.com/base/images/mR/Jb/mRJb8a-6LwBDeVoB.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "هودی",
+          "شلوار",
+          "صندلی ورزشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی",
+          "بژ",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه",
+          "فابریک",
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "یقه گرد",
+          "آستین بلند",
+          "جیب‌های کارگو",
+          "کمربند الاستیک"
+        ]
+      },
+      {
+        "name": "نوع کفش",
+        "values": [
+          "صندلی ورزشی"
+        ]
+      }
+    ]
   },
   {
     "index": 202,
@@ -9510,7 +10233,50 @@
   {
     "index": 223,
     "image_url": "https://image.torob.com/base/images/0r/2S/0r2SJ7bCXBEXVGde.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "منگنه"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "قرمز",
+          "صورتی",
+          "آبی",
+          "سبز",
+          "نقره ای",
+          "طلایی",
+          "بنفش",
+          "سبز دودی",
+          "نارنجی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "شیشه ای",
+          "فلزی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یک تنه",
+          "درخشان"
+        ]
+      },
+      {
+        "name": "ویژگی های خاص",
+        "values": [
+          "براق",
+          "درخشان",
+          "گرد"
+        ]
+      }
+    ]
   },
   {
     "index": 224,
@@ -9796,7 +10562,33 @@
   {
     "index": 230,
     "image_url": "https://image.torob.com/base/images/wx/-e/wx-eGn8aVmyHIm-N.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "دکمه"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلاستیک"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      }
+    ]
   },
   {
     "index": 231,
@@ -10009,7 +10801,57 @@
   {
     "index": 236,
     "image_url": "https://image.torob.com/base/images/R7/V0/R7V0-fo-3Wc7Vcwq.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "پیراهن"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیلور",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "سکان"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "درخشش"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "آستین بلند"
+        ]
+      },
+      {
+        "name": "گردنبند",
+        "values": [
+          "گردنبند V"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "سایز دقیق"
+        ]
+      },
+      {
+        "name": "طول",
+        "values": [
+          "بلند"
+        ]
+      }
+    ]
   },
   {
     "index": 237,
@@ -11049,7 +11891,27 @@
   {
     "index": 260,
     "image_url": "https://image.torob.com/base/images/SN/2h/SN2hXiqptvG6wl3G.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "رنگ",
+        "values": [
+          "زرد",
+          "نقره‌ای"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گل‌دار"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "اسات"
+        ]
+      }
+    ]
   },
   {
     "index": 261,
@@ -11534,7 +12396,51 @@
   {
     "index": 271,
     "image_url": "https://image.torob.com/base/images/KD/Iu/KDIujdZv7tomLMej.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس شنا"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی روشن",
+          "صورتی",
+          "سبز",
+          "زرد",
+          "قرمز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "نایلون",
+          "اسپندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "استوایی",
+          "گل‌دار",
+          "حیوانی"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی‌آستین"
+        ]
+      },
+      {
+        "name": "گردن",
+        "values": [
+          "هالتر"
+        ]
+      }
+    ]
   },
   {
     "index": 272,
@@ -12032,12 +12938,103 @@
   {
     "index": 282,
     "image_url": "https://image.torob.com/base/images/Ns/X0/NsX0beiOYQcZ3EA6.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "پیراهن بی‌آستین",
+          "شلوار کوتاه"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "خاکستری",
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلی‌استر",
+          "اسپاندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی‌آستین"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "نایکی"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "اسلیم"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "جذب رطوبت",
+          "کمربند الاستیکی"
+        ]
+      }
+    ]
   },
   {
     "index": 283,
     "image_url": "https://image.torob.com/base/images/l7/QJ/l7QJwc4j3TW2FxnB.jpg",
-    "entities": []
+    "entities": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تاپ تانک"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سفید",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی آستین"
+        ]
+      },
+      {
+        "name": "ویژگی های سبک",
+        "values": [
+          "رِیسِربک"
+        ]
+      }
+    ]
   },
   {
     "index": 284,

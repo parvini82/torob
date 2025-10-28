@@ -1,45 +1,23 @@
 """Simple evaluation module for model performance assessment.
 
-This module provides straightforward tools for:
+This module provides comprehensive tools for:
 1. Running models on product samples
-2. Calculating research-grade metrics
+2. Calculating research-grade metrics (multiple approaches)
 3. Generating comparative reports
 
 Components:
-- SimpleEvaluator: Main evaluation orchestrator
 - ModelRunner: Model execution interface
-- EntityMetrics: Comprehensive metrics calculator
+- MetricsAggregator: Comprehensive metrics calculator
+- EntityMetrics: Legacy interface (backward compatibility)
 """
 
 from .config import EvaluationConfig
 from .model_runner import ModelRunner
-from .metrics import EntityMetrics
-from .evaluator import SimpleEvaluator
+from .metrics import MetricsAggregator, EntityMetrics
 
-__all__ = ["EvaluationConfig", "ModelRunner", "EntityMetrics", "SimpleEvaluator"]
-
-
-
-
-
-# """Simple evaluation module for model performance assessment.
-#
-# This module provides straightforward tools for:
-# 1. Running models on product samples
-# 2. Calculating research-grade metrics
-# 3. Generating comparative reports
-#
-# Components:
-# - ModelRunner: Model execution interface
-# - EntityMetrics: Comprehensive metrics calculator
-# """
-#
-# from .config import EvaluationConfig
-# from .model_runner import ModelRunner
-# from .metrics import EntityMetrics
-#
-# __all__ = [
-#     "EvaluationConfig",
-#     "ModelRunner",
-#     "EntityMetrics"
-# ]
+__all__ = [
+    "EvaluationConfig",
+    "ModelRunner",
+    "MetricsAggregator",
+    "EntityMetrics"  # Legacy compatibility
+]

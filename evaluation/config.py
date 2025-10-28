@@ -7,6 +7,23 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+
+import os
+import time
+
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
+
+VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
+TRANSLATE_MODEL: str = os.getenv(
+    "TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free"
+)
+
+
+
+
 @dataclass
 class EvaluationConfig:
     """Simple configuration for evaluation processes."""
@@ -15,7 +32,8 @@ class EvaluationConfig:
     results_dir: Path = Path("evaluation/results")
 
     # Model settings
-    model_name: str = "default_model"
+    # Combine both model names into one descriptive string
+    model_name: str = f"{VISION_MODEL.split('/')[-1]}__{TRANSLATE_MODEL.split('/')[-1]}"
 
     # Metrics settings
     precision_digits: int = 4
