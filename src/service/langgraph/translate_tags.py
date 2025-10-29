@@ -5,32 +5,27 @@ from .model_client import OpenRouterClient, make_text_part
 
 
 def build_translation_prompt(data: Dict[str, Any]) -> str:
-    print(data)
     return (
-        "You are a product-content expert for apparel e-commerce.\n"
-        "You will receive two inputs:\n"
-        "1) `image_tags_en`: JSON tags extracted by a vision model (English)\n"
-        "2) `serpapi_results`: Raw Google Reverse Image Search results (JSON)\n\n"
-        "Your job is to CONSOLIDATE these into a refined understanding of the product and then OUTPUT ONLY the Persian JSON.\n\n"
-        "Instructions:\n"
-        "- Start from `image_tags_en` as the primary (visual) source.\n"
-        "- Use `serpapi_results` to confirm or add missing obvious facts when multiple titles/snippets agree.\n"
-        "- Resolve conflicts conservatively: prefer visual evidence; if uncertain, omit rather than guess.\n"
-        "- Keep the schema/keys consistent with `image_tags_en` where possible (product attributes only).\n"
-        "- Remove marketplace noise (seller names, prices, shipping, emojis, marketing fluff).\n"
-        "- Translate FINAL refined tags to Persian with natural retail wording.\n"
-        "- Output ONLY valid JSON with Persian keys AND Persian values. No extra text.\n\n"
-        "Input payload follows as JSON. Parse and proceed:\n\n"
+        "You are a product understanding and translation model specialized in fashion and apparel.\n\n"
+        "Inputs:\n"
+        "- image_tags_en: structured English tags from a vision model (product_type, color, material, style, etc.)\n"
+        "- serper_results: Persian search titles/snippets about the same image.\n\n"
+        "Goal:\n"
+        "Use both inputs to produce a refined Persian JSON description of the product.\n"
+        "Infer what the product is mainly from VLM tags, and learn how Persian speakers actually refer to it from Serper titles.\n\n"
+        "Rules:\n"
+        "1. Identify the product type using VLM tags as the main evidence.\n"
+        "2. Analyze the Persian titles to detect common or cultural terms used for this product.\n"
+        "3. Output only a clean Persian JSON object.\n\n"
         f"{data}\n\n"
-        "Output (Persian JSON only):"
         "Example output format:\n"
         "{\n"
         '  "entities": [\n'
         '    {"name": "", "values": ["","",...]},\n'
         "  ]\n"
         "}\n\n"
+        "Output (Persian JSON only):"
     )
-
 
 def translate_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
     image_tags_en = state.get("image_tags_en")
