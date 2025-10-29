@@ -17,7 +17,7 @@ class RedisCacheService:
             max_connections=20,
             decode_responses=True
         )
-        self.default_ttl = 60 * 60 * 24 * 7  # 7 days
+        self.default_ttl = 60 * 60  # 1 hour
 
     async def get_redis_client(self) -> Redis:
         return Redis(connection_pool=self.pool)

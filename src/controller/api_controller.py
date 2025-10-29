@@ -51,35 +51,42 @@ async def generate_tags(
     await check_rate_limit(request)  # Check rate limit
 
     image_url = payload.get("image_url")
-    if not image_url:
-        return {"error": "image_url is required"}
+    file = payload.get("file")  # Added file input handling
 
-    # Generate the image hash for caching
-    image_hash = RedisCacheService.generate_image_hash(image_url.encode('utf-8'))
+    if not image_url and not file:
+        return {"error": "Either 'image_url' or 'file' is required"}
 
-    # Check if the tags are already cached
-    cache_service = get_cache_service()
-    cached_tags = await cache_service.get_cached_tags(image_hash)
+    if image_url:
+        # Generate the image hash for caching
+        image_hash = RedisCacheService.generate_image_hash(image_url.encode('utf-8'))
 
-    if cached_tags:
-        # If tags are cached, return them directly
-        return cached_tags
+        # Check if the tags are already cached
+        cache_service = get_cache_service()
+        cached_tags = await cache_service.get_cached_tags(image_hash)
 
-    try:
-        # If not cached, call the LangGraph service to process the URL and get the response
-        result = run_langgraph_on_url(image_url)
+        if cached_tags:
+            # If tags are cached, return them directly
+            return cached_tags
 
-        # Store the generated tags in the Redis cache
-        await cache_service.set_cached_tags(image_hash, result.get("persian", {}))
+        try:
+            # If not cached, call the LangGraph service to process the URL and get the response
+            result = run_langgraph_on_url(image_url)
 
-        # Queue database save as background task (non-blocking)
-        if background_tasks:
-            background_tasks.add_task(save_request_response, image_url, result)
+            # Store the generated tags in the Redis cache
+            await cache_service.set_cached_tags(image_hash, result.get("persian", {}))
 
-        return result.get("persian", {})
+            # Queue database save as background task (non-blocking)
+            if background_tasks:
+                background_tasks.add_task(save_request_response, image_url, result)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+            return result.get("persian", {})
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+
+    elif file:
+        # Handle file upload and image processing
+        return await upload_and_tag(file, background_tasks, request)  # Delegating to file handler
 
 
 @app.post("/upload-and-tag")

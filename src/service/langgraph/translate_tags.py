@@ -4,41 +4,47 @@ from .config import TRANSLATE_MODEL
 from .model_client import OpenRouterClient, make_text_part
 
 
-def build_translation_prompt(tags_en: Dict[str, Any]) -> str:
+def build_translation_prompt(data: Dict[str, Any]) -> str:
+    print(data)
     return (
-        "You are a professional translator specialized in e-commerce and apparel products. "
-        "Your expertise includes Persian/Farsi translation of fashion and product terminology.\n\n"
-        "Task: Translate the following JSON object from English to Persian (Farsi). "
-        "Translate both entity names (keys) and their values while maintaining "
-        "the exact JSON structure.\n\n"
-        "Translation Guidelines:\n"
-        "- Maintain the original JSON structure exactly\n"
-        "- Translate entity names to appropriate Persian equivalents\n"
-        "- Translate all values to natural Persian terms\n"
-        "- Use standard Persian terminology for clothing and fashion items\n"
-        "- Preserve arrays and nested structures\n"
-        "- Ensure the output is valid JSON\n\n"
-        "Common translations for reference:\n"
-        "- color → رنگ\n"
-        "- material → جنس\n"
-        "- product_type → نوع کلی\n"
-        "- pattern → طرح\n"
-        "- size → اندازه\n"
-        "- brand → برند\n"
-        "- style → سبک\n\n"
-        f"Input JSON:\n{tags_en}\n\n"
-        "Output only the translated JSON object with Persian keys and values. "
-        "Do not include any explanatory text, markdown formatting, or comments."
+        "You are a product-content expert for apparel e-commerce.\n"
+        "You will receive two inputs:\n"
+        "1) `image_tags_en`: JSON tags extracted by a vision model (English)\n"
+        "2) `serpapi_results`: Raw Google Reverse Image Search results (JSON)\n\n"
+        "Your job is to CONSOLIDATE these into a refined understanding of the product and then OUTPUT ONLY the Persian JSON.\n\n"
+        "Instructions:\n"
+        "- Start from `image_tags_en` as the primary (visual) source.\n"
+        "- Use `serpapi_results` to confirm or add missing obvious facts when multiple titles/snippets agree.\n"
+        "- Resolve conflicts conservatively: prefer visual evidence; if uncertain, omit rather than guess.\n"
+        "- Keep the schema/keys consistent with `image_tags_en` where possible (product attributes only).\n"
+        "- Remove marketplace noise (seller names, prices, shipping, emojis, marketing fluff).\n"
+        "- Translate FINAL refined tags to Persian with natural retail wording.\n"
+        "- Output ONLY valid JSON with Persian keys AND Persian values. No extra text.\n\n"
+        "Input payload follows as JSON. Parse and proceed:\n\n"
+        f"{data}\n\n"
+        "Output (Persian JSON only):"
+        "Example output format:\n"
+        "{\n"
+        '  "entities": [\n'
+        '    {"name": "", "values": ["","",...]},\n'
+        "  ]\n"
+        "}\n\n"
     )
 
 
 def translate_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
     image_tags_en = state.get("image_tags_en")
+    serpapi_results = state.get("serpapi_results", {})
+
     if not image_tags_en:
         raise ValueError("translate_tags_node: 'image_tags_en' is missing in state")
 
     client = OpenRouterClient()
-    prompt = build_translation_prompt(image_tags_en)
+    combined_input = {
+        "image_tags_en": image_tags_en,
+        "serpapi_results": serpapi_results,
+    }
+    prompt = build_translation_prompt(combined_input)
 
     messages = [
         {
