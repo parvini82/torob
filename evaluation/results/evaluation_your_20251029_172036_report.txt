@@ -1,0 +1,31 @@
+================================================================================
+MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Model Name: your
+Predictions File: /home/mahdi/torob/evaluation/predictions/predictions_your_model_Ground_Truth_first10.json
+Ground Truth File: /home/mahdi/torob/evaluation/predictions/ground_truth_your_model_Ground_Truth_first10.json
+Total Samples: 10
+Evaluation Date: 2025-10-29T17:20:36.094890
+
+EVALUATION METRICS
+----------------------------------------
+Metric		Score
+------------------------------
+Precision	0.2593
+Recall		0.2029
+F1		0.2276
+Exact Match	0.0000
+
+SAMPLE ANALYSIS
+----------------------------------------
+Best Sample (F1): Sample #3 - 0.3333
+Worst Sample (F1): Sample #10 - 0.0000
+Perfect Matches (Exact Match=1.0): 0/10 (0.0%)
+High Quality (F1 >= 0.8): 0/10 (0.0%)
+
+EVALUATION INFO
+----------------------------------------
+Evaluation Date: 2025-10-29T17:20:36.095910

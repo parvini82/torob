@@ -1,0 +1,11 @@
+{
+  "model": "your",
+  "total_samples": 10,
+  "valid_samples": 10,
+  "precision": 0.2593,
+  "recall": 0.2029,
+  "f1": 0.2276,
+  "exact_match": 0.0,
+  "macro_f1": 0.0857,
+  "rouge_1": 0.3432
+}

@@ -94,12 +94,23 @@ class OpenRouterClient:
                     raise OpenRouterError(
                         f"OpenRouter HTTP {resp.status_code}: {resp.text[:300]}"
                     )
-                data = resp.json()
-                content = data["choices"][0]["message"]["content"]
-                return {
-                    "raw": data,
-                    "content": content,
-                }
+                try:
+                    data = resp.json()
+                except Exception:
+                    raise OpenRouterError(
+                        f"OpenRouter returned non-JSON response: {resp.text[:300]}"
+                    )
+
+                choices = data.get("choices")
+                if not choices or not isinstance(choices, list):
+                    api_error = data.get("error") or data
+                    raise OpenRouterError(
+                        f"OpenRouter response missing 'choices': {str(api_error)[:300]}"
+                    )
+
+                message = choices[0].get("message", {}) if choices else {}
+                content = message.get("content", "")
+                return {"raw": data, "content": content}
             except Exception as e:
                 last_err = e
                 if attempt < max_retries:

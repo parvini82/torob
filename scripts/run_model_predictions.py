@@ -11,6 +11,7 @@ Usage:
 import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+from datetime import datetime
 
 from evaluation import ModelRunner, EvaluationConfig
 
@@ -32,9 +33,9 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
     """
 
     # Retry configuration
-    MAX_RETRIES = 3
+    MAX_RETRIES = 5  # 6 total attempts (initial + 5 retries)
     BASE_DELAY = 20  # Base delay in seconds
-    MAX_DELAY = 120  # Maximum delay in seconds
+    MAX_DELAY = 180  # Maximum delay in seconds
 
     last_error = None
     total_wait_time = 0
@@ -97,7 +98,9 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
                 'rate exceeded', 'throttled'
             ]):
                 should_retry = True
-                wait_multiplier = 2  # Wait longer for rate limits
+                # Increase base delay more aggressively on rate limits
+                # so each subsequent attempt is spaced further apart
+                wait_multiplier = 2.5  # stronger slowdown for rate limits
                 print(f"    ⚠ Rate limit error on attempt {attempt + 1}: {error_msg}")
 
             # Network/connection errors
@@ -138,8 +141,8 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
 
             # Check if we should retry
             if attempt < MAX_RETRIES and should_retry:
-                # Adjust wait time based on error type
-                BASE_DELAY = int(BASE_DELAY * wait_multiplier)
+                # Adjust wait time based on error type; cap to prevent runaway
+                BASE_DELAY = min(int(BASE_DELAY * wait_multiplier), MAX_DELAY)
                 continue
             else:
                 # Final attempt failed or error not worth retrying
@@ -269,23 +272,40 @@ def main():
             model_function=example_model_function
         )
 
-        # Save predictions for later evaluation
-        output_filename = f"predictions_{MODEL_NAME}_{sample_path.stem}.json"
-        output_path = config.results_dir / output_filename
+        # Base name shared by outputs + unique timestamp per run
+        base_name = f"{MODEL_NAME}_{sample_path.stem}"
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        save_prediction_results(results, output_path)
+        # Combined results JSON (kept for debugging/reference)
+        combined_filename = f"results_{base_name}_{ts}.json"
+        combined_path = config.results_dir / combined_filename
+        save_prediction_results(results, combined_path)
+
+        # Separate files as requested: ground truth and predictions
+        gt_filename = f"ground_truth_{base_name}_{ts}.json"
+        preds_filename = f"predictions_{base_name}_{ts}.json"
+        gt_path = config.results_dir / gt_filename
+        preds_path = config.results_dir / preds_filename
+
+        # Write ground truths and predictions as plain lists in matching order
+        gt_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(gt_path, 'w', encoding='utf-8') as f:
+            json.dump(results["ground_truths"], f, ensure_ascii=False, indent=2)
+        with open(preds_path, 'w', encoding='utf-8') as f:
+            json.dump(results["predictions"], f, ensure_ascii=False, indent=2)
 
         print(f"\n🎉 Predictions completed successfully!")
-        print(f"📁 Results saved to: {output_path}")
-        print(f"\nNext step: Run evaluation script with these predictions")
-        print(f"  python scripts/evaluate_predictions.py {output_path}")
+        print(f"📁 Saved ground truth: {gt_path}")
+        print(f"📁 Saved predictions: {preds_path}")
+        print(f"🗂️  Saved combined (for reference): {combined_path}")
+        print(f"\nNext step: Run evaluation script (auto-detects latest pair)")
+        print(f"  python scripts/evaluate_predictions.py")
 
         return True
 
     except Exception as e:
         print(f"\n❌ Prediction failed: {e}")
         return False
-
 
 if __name__ == "__main__":
     success = main()

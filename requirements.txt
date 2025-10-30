@@ -9,25 +9,6 @@ python-dotenv~=1.0.1
 python-multipart~=0.0.9
 prometheus-fastapi-instrumentator
 
-# Download files from Google Drive
-gdown>=5.0.0
-
-
-# Evaluation & embeddings
-
-# --- GPU Support ---  # take long time
-# Using the latest supported CUDA build from PyTorch repo (e.g., cu128)
---extra-index-url https://download.pytorch.org/whl/cu128
-torch==2.9.0+cu128
-torchvision==0.24.0+cu128
-# torchaudio==2.9.0+cu128
-# --- Embedding Models ---
-sentence-transformers==5.1.2  # requires torch with GPU support
-
-
-
-scikit-learn>=1.4.0
-
 # Testing
 pytest>=8.2.0
 pytest-cov>=5.0.0
@@ -42,7 +23,7 @@ pre-commit==3.6.2
 
 # Additional
 minio==7.1.6  # For MinIO client support
-redis==4.0.2  # Redis client for Python
+redis>=4.2.0  # Redis client for Python
 rq
 pymongo==4.6.3  # MongoDB client for Python
 qdrant-client==1.9.0

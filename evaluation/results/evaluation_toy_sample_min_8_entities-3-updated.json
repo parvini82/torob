@@ -1,0 +1,282 @@
+[
+  {
+    "index": 1,
+    "image_url": "https://image.torob.com/base/images/ST/V0/STV0N9liwgLNmi27.jpg",
+    "predictions": [],
+    "prediction_time_seconds": 29.9,
+    "timestamp": "2025-10-29T11:17:21.170930",
+    "status": "success"
+  },
+  {
+    "index": 2,
+    "image_url": "https://image.torob.com/base/images/P-/f_/P-f_QMAfF6u30BQF.jpg",
+    "predictions": [
+      {
+        "نام": "نوع کلی",
+        "مقادیر": [
+          "بلوز",
+          "تاپ"
+        ]
+      },
+      {
+        "نام": "رنگ",
+        "مقادیر": [
+          "خاکستری",
+          "مشکی"
+        ]
+      },
+      {
+        "نام": "جنس",
+        "مقادیر": [
+          "ابریشم",
+          "مخلوط"
+        ]
+      },
+      {
+        "نام": "طرح",
+        "مقادیر": [
+          "ساده"
+        ]
+      },
+      {
+        "نام": "یقه",
+        "مقادیر": [
+          "یقه هفت"
+        ]
+      },
+      {
+        "نام": "نوع آستین",
+        "مقادیر": [
+          "آستین کوتاه"
+        ]
+      },
+      {
+        "نام": "نوع بست",
+        "مقادیر": [
+          "دکمه"
+        ]
+      },
+      {
+        "نام": "خصوصیات پارچه",
+        "مقادیر": [
+          "نازک",
+          "براقی ملایم"
+        ]
+      }
+    ],
+    "prediction_time_seconds": 28.12,
+    "timestamp": "2025-10-29T11:17:49.291700",
+    "status": "success"
+  },
+  {
+    "index": 3,
+    "image_url": "https://image.torob.com/base/images/Ls/z7/Lsz71VTLh8xUdBLL.jpg",
+    "predictions": [],
+    "prediction_time_seconds": 44.58,
+    "timestamp": "2025-10-29T11:18:33.874711",
+    "status": "success"
+  },
+  {
+    "index": 4,
+    "image_url": "https://image.torob.com/base/images/30/Ys/30YsoRxuA-XTNz4B.jpg",
+    "predictions": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "ساعت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "فیروزه‌ای",
+          "مشکی",
+          "قرمز",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "لاستیکی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "ساده",
+          "چندرنگ"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "NAVIFORCE"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "آنالوگ",
+          "کرنوگراف"
+        ]
+      },
+      {
+        "name": "نشانگرهای اندازه",
+        "values": [
+          "نامرئی"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "نمایش تاریخ",
+          "زیرصفحه‌های متعدد",
+          "عقربه‌های نوردار"
+        ]
+      }
+    ],
+    "prediction_time_seconds": 42.19,
+    "timestamp": "2025-10-29T11:19:16.064246",
+    "status": "success"
+  },
+  {
+    "index": 5,
+    "image_url": "https://image.torob.com/base/images/vL/0p/vL0p1KbGJsZetff_.jpg",
+    "predictions": [],
+    "prediction_time_seconds": 74.74,
+    "timestamp": "2025-10-29T11:20:30.810610",
+    "status": "success"
+  },
+  {
+    "index": 6,
+    "image_url": "https://image.torob.com/base/images/Gl/tN/GltNtC2yOfGRKI0h.jpg",
+    "predictions": [
+      {
+        "نام": "نوع کالا",
+        "مقادیر": [
+          "تیشرت"
+        ]
+      },
+      {
+        "نام": "رنگ",
+        "مقادیر": [
+          "هلو"
+        ]
+      },
+      {
+        "نام": "جنس",
+        "مقادیر": []
+      },
+      {
+        "نام": "طرح",
+        "مقادیر": [
+          "ساده",
+          "گرافیکی"
+        ]
+      },
+      {
+        "نام": "نوع آستین",
+        "مقادیر": [
+          "آستین کپ"
+        ]
+      },
+      {
+        "نام": "ویژگی‌های سبک",
+        "مقادیر": [
+          "یقه گرد"
+        ]
+      },
+      {
+        "نام": "برند",
+        "مقادیر": []
+      },
+      {
+        "نام": "اندازه",
+        "مقادیر": []
+      },
+      {
+        "نام": "ویژگی‌های خاص",
+        "مقادیر": [
+          "چاپ متن",
+          "طراحی گرافیکی"
+        ]
+      }
+    ],
+    "prediction_time_seconds": 30.72,
+    "timestamp": "2025-10-29T11:21:01.535777",
+    "status": "success"
+  },
+  {
+    "index": 7,
+    "image_url": "https://image.torob.com/base/images/be/5o/be5ohjwwQfN856Xu.jpg",
+    "predictions": [],
+    "prediction_time_seconds": 16.03,
+    "timestamp": "2025-10-29T11:21:17.573424",
+    "status": "failed",
+    "error": "OpenRouter call failed: 'choices'"
+  },
+  {
+    "index": 8,
+    "image_url": "https://image.torob.com/base/images/Xo/fu/XofuFjYa8ntWiFiQ.jpg",
+    "predictions": [
+      {
+        "نام": "نوع کلی",
+        "مقادیر": [
+          "پیراهن"
+        ]
+      },
+      {
+        "نام": "رنگ",
+        "مقادیر": [
+          "قهوه ای",
+          "مشکی"
+        ]
+      },
+      {
+        "نام": "طرح",
+        "مقادیر": [
+          "طرح پلنگی"
+        ]
+      },
+      {
+        "نام": "طول آستین",
+        "مقادیر": [
+          "آستین بلند"
+        ]
+      },
+      {
+        "نام": "نحوه تطابق",
+        "مقادیر": [
+          "گشاد"
+        ]
+      },
+      {
+        "نام": "ویژگی های خاص",
+        "مقادیر": [
+          "چین دار",
+          "روان"
+        ]
+      }
+    ],
+    "prediction_time_seconds": 28.61,
+    "timestamp": "2025-10-29T11:21:46.189487",
+    "status": "success"
+  },
+  {
+    "index": 9,
+    "image_url": "https://image.torob.com/base/images/Tn/Oc/TnOcyt0Kbulemoa2.jpg",
+    "predictions": [],
+    "prediction_time_seconds": 36.24,
+    "timestamp": "2025-10-29T11:22:22.429303",
+    "status": "success"
+  },
+  {
+    "index": 10,
+    "image_url": "https://image.torob.com/base/images/47/ZT/47ZT57zAOfQ_3-xO.jpg",
+    "predictions": [],
+    "prediction_time_seconds": 26.48,
+    "timestamp": "2025-10-29T11:22:48.909493",
+    "status": "success"
+  }
+]
