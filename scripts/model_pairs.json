@@ -1,0 +1,7 @@
+[
+  {
+    "PROVIDER": "openrouter",
+    "VISION_MODEL": "mistralai/mistral-small-3.1-24b-instruct:free",
+    "TRANSLATE_MODEL": "z-ai/glm-4.5-air:free"
+  }
+]
