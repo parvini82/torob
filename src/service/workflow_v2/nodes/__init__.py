@@ -18,5 +18,5 @@ __all__ = [
     "ImageTagExtractorNode",
     "TranslatorNode",
     "MergerNode",
-    "RefinerNode"
+    "RefinerNode",
 ]

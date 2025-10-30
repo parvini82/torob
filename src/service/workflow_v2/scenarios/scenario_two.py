@@ -47,8 +47,7 @@ class ScenarioTwo:
     def execute(self, image_url: str) -> Dict[str, Any]:
         """Execute scenario two workflow."""
         initial_state = self.state_manager.create_initial_state(
-            image_url=image_url,
-            scenario="scenario_two"
+            image_url=image_url, scenario="scenario_two"
         )
 
         final_state = self.graph.invoke(initial_state)
@@ -58,8 +57,8 @@ class ScenarioTwo:
             "results": {
                 "caption": final_state.get("caption", ""),
                 "tags": final_state.get("tags_from_caption", {}),
-                "translated_tags": final_state.get("translated_tags", {})
+                "translated_tags": final_state.get("translated_tags", {}),
             },
             "english_output": final_state.get("tags_from_caption", {}),
-            "persian_output": final_state.get("translated_tags", {})
+            "persian_output": final_state.get("translated_tags", {}),
         }

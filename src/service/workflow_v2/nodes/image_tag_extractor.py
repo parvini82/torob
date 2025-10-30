@@ -22,7 +22,9 @@ class ImageTagExtractorNode(BaseNode):
         - image_tag_raw_response: Raw model response
     """
 
-    def __init__(self, name: str = "image_tag_extractor", config: Dict[str, Any] = None):
+    def __init__(
+        self, name: str = "image_tag_extractor", config: Dict[str, Any] = None
+    ):
         """
         Initialize the image tag extractor node.
 
@@ -51,10 +53,10 @@ class ImageTagExtractorNode(BaseNode):
 
         try:
             # Import here to avoid circular imports
-            from ...langgraph.model_client import (
+            from ...workflow.model_client import (
                 OpenRouterClient,
                 make_image_part,
-                make_text_part
+                make_text_part,
             )
 
             client = OpenRouterClient()
@@ -64,8 +66,8 @@ class ImageTagExtractorNode(BaseNode):
                     "role": "user",
                     "content": [
                         make_text_part(self.custom_prompt),
-                        make_image_part(image_url)
-                    ]
+                        make_image_part(image_url),
+                    ],
                 }
             ]
 
@@ -79,7 +81,7 @@ class ImageTagExtractorNode(BaseNode):
                 **state,
                 "image_tags": tags,
                 "image_tag_raw_response": result,
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -88,7 +90,5 @@ class ImageTagExtractorNode(BaseNode):
                 **state,
                 "image_tags": {},
                 "image_tag_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
-
-

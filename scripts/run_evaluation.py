@@ -32,7 +32,7 @@
 # )
 #
 #
-# from src.service.langgraph.langgraph_service import run_langgraph_on_url
+# from src.service.workflow.langgraph_service import run_langgraph_on_url
 #
 #
 # # def example_model_function(image_url: str) -> List[Dict[str, Any]]:

@@ -16,12 +16,7 @@ MAX_RETRIES = 3
 LOG_LEVEL = "INFO"
 
 # Workflow settings
-DEFAULT_STATE_KEYS = [
-    "execution_id",
-    "step_count",
-    "image_url",
-    "errors"
-]
+DEFAULT_STATE_KEYS = ["execution_id", "step_count", "image_url", "errors"]
 
 # Prompts and templates
 CAPTION_PROMPT_TEMPLATE = """
@@ -68,10 +63,10 @@ IMPORTANT: Respond with valid JSON only.
 """
 
 IMAGE_TAG_PROMPT_TEMPLATE = """
-You are an expert visual Named Entity Recognition (NER) model specialized 
+You are an expert visual Named Entity Recognition (NER) model specialized
 in analyzing apparel and fashion product images.
 
-Your task is to analyze the given product image and extract all relevant 
+Your task is to analyze the given product image and extract all relevant
 entities that describe the item. Focus on identifying:
 - Product type (e.g., shirt, dress, pants, shoes, bag)
 - Colors (primary and secondary colors visible)
@@ -82,7 +77,7 @@ entities that describe the item. Focus on identifying:
 - Size indicators (if visible on tags or labels)
 - Special features (e.g., pockets, buttons, zippers)
 
-Return the analysis as a structured JSON object with English values only. 
+Return the analysis as a structured JSON object with English values only.
 Use concise, standardized terms for entity values.
 
 Example output format:
@@ -96,16 +91,16 @@ Example output format:
   ]
 }}
 
-IMPORTANT: Respond with valid JSON only. Do not include any explanatory 
+IMPORTANT: Respond with valid JSON only. Do not include any explanatory
 text, markdown formatting, or additional commentary.
 """
 
 TRANSLATION_PROMPT_TEMPLATE = """
-You are a professional translator specialized in e-commerce and apparel products. 
+You are a professional translator specialized in e-commerce and apparel products.
 Your expertise includes Persian/Farsi translation of fashion and product terminology.
 
-Task: Translate the following JSON object from English to Persian (Farsi). 
-Translate both entity names (keys) and their values while maintaining 
+Task: Translate the following JSON object from English to Persian (Farsi).
+Translate both entity names (keys) and their values while maintaining
 the exact JSON structure.
 
 Translation Guidelines:
@@ -128,7 +123,7 @@ Common translations for reference:
 Input JSON:
 {tags_json}
 
-Output only the translated JSON object with Persian keys and values. 
+Output only the translated JSON object with Persian keys and values.
 Do not include any explanatory text, markdown formatting, or comments.
 """
 

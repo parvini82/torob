@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.service.langgraph.translate_tags import (
+from src.service.workflow.translate_tags import (
     build_translation_prompt,
     translate_tags_node,
 )
@@ -40,7 +40,7 @@ def test_build_translation_prompt_handles_empty_entities():
     assert "translate" in prompt.lower() or "ترجمه" in prompt
 
 
-@patch("src.service.langgraph.translate_tags.OpenRouterClient")
+@patch("src.service.workflow.translate_tags.OpenRouterClient")
 def test_translate_tags_node_success(mock_client_class):
     """translate_tags_node should translate English entities to Persian."""
     # Setup mock client
@@ -88,7 +88,7 @@ def test_translate_tags_node_missing_english_tags():
         translate_tags_node(state)
 
 
-@patch("src.service.langgraph.translate_tags.OpenRouterClient")
+@patch("src.service.workflow.translate_tags.OpenRouterClient")
 def test_translate_tags_node_empty_entities(mock_client_class):
     """translate_tags_node should handle empty entities list."""
     mock_client = MagicMock()
@@ -102,7 +102,7 @@ def test_translate_tags_node_empty_entities(mock_client_class):
     assert result["translated_tags"]["entities"] == []
 
 
-@patch("src.service.langgraph.translate_tags.OpenRouterClient")
+@patch("src.service.workflow.translate_tags.OpenRouterClient")
 def test_translate_tags_node_preserves_state(mock_client_class):
     """translate_tags_node should preserve existing state fields."""
     mock_client = MagicMock()

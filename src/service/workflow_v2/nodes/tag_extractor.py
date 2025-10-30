@@ -32,7 +32,9 @@ class TagExtractorNode(BaseNode):
         """
         super().__init__(name, config)
         self.model = self.config.get("model", GENERAL_MODEL)
-        self.prompt_template = self.config.get("prompt", TAG_FROM_CAPTION_PROMPT_TEMPLATE)
+        self.prompt_template = self.config.get(
+            "prompt", TAG_FROM_CAPTION_PROMPT_TEMPLATE
+        )
 
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -51,28 +53,25 @@ class TagExtractorNode(BaseNode):
 
         try:
             # Import here to avoid circular imports
-            from ...langgraph.model_client import OpenRouterClient, make_text_part
+            from ...workflow.model_client import OpenRouterClient, make_text_part
 
             client = OpenRouterClient()
             prompt = self.prompt_template.format(caption=caption)
 
-            messages = [
-                {
-                    "role": "user",
-                    "content": [make_text_part(prompt)]
-                }
-            ]
+            messages = [{"role": "user", "content": [make_text_part(prompt)]}]
 
             result = client.call_json(model=self.model, messages=messages)
             tags = result.get("json", {})
 
-            self.log_execution(f"Extracted {len(tags.get('entities', []))} tag entities")
+            self.log_execution(
+                f"Extracted {len(tags.get('entities', []))} tag entities"
+            )
 
             return {
                 **state,
                 "tags_from_caption": tags,
                 "tag_extraction_raw": result,
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -81,5 +80,5 @@ class TagExtractorNode(BaseNode):
                 **state,
                 "tags_from_caption": {},
                 "tag_extraction_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }

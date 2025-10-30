@@ -4,7 +4,7 @@ These tests verify the final result merging and formatting
 functionality in the LangGraph workflow.
 """
 
-from src.service.langgraph.merge_results import merge_results_node
+from src.service.workflow.merge_results import merge_results_node
 
 
 def test_merge_results_node_success():

@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.service.langgraph.model_client import (
+from src.service.workflow.model_client import (
     OpenRouterClient,
     OpenRouterError,
     _auth_headers,
@@ -86,7 +86,7 @@ def test_auth_headers_without_api_key():
 
 
 @patch("requests.post")
-@patch("src.service.langgraph.model_client._auth_headers")
+@patch("src.service.workflow.model_client._auth_headers")
 def test_call_chat_success(mock_auth, mock_post, client):
     """call_chat should return parsed response on success."""
     mock_auth.return_value = {"Authorization": "Bearer test"}
@@ -100,7 +100,7 @@ def test_call_chat_success(mock_auth, mock_post, client):
 
 
 @patch("requests.post")
-@patch("src.service.langgraph.model_client._auth_headers")
+@patch("src.service.workflow.model_client._auth_headers")
 def test_call_chat_http_error(mock_auth, mock_post, client):
     """call_chat should raise OpenRouterError on HTTP error."""
     mock_auth.return_value = {"Authorization": "Bearer test"}
@@ -111,7 +111,7 @@ def test_call_chat_http_error(mock_auth, mock_post, client):
 
 
 @patch("requests.post")
-@patch("src.service.langgraph.model_client._auth_headers")
+@patch("src.service.workflow.model_client._auth_headers")
 def test_call_json_success(mock_auth, mock_post, client):
     """call_json should return parsed JSON response."""
     mock_auth.return_value = {"Authorization": "Bearer test"}
@@ -125,7 +125,7 @@ def test_call_json_success(mock_auth, mock_post, client):
 
 
 @patch("requests.post")
-@patch("src.service.langgraph.model_client._auth_headers")
+@patch("src.service.workflow.model_client._auth_headers")
 def test_call_json_invalid_json(mock_auth, mock_post, client):
     """call_json should handle invalid JSON gracefully."""
     mock_auth.return_value = {"Authorization": "Bearer test"}
@@ -138,7 +138,7 @@ def test_call_json_invalid_json(mock_auth, mock_post, client):
 
 
 @patch("requests.post")
-@patch("src.service.langgraph.model_client._auth_headers")
+@patch("src.service.workflow.model_client._auth_headers")
 def test_call_chat_with_retries(mock_auth, mock_post, client):
     """call_chat should retry on network errors."""
     mock_auth.return_value = {"Authorization": "Bearer test"}
@@ -155,7 +155,7 @@ def test_call_chat_with_retries(mock_auth, mock_post, client):
 
 
 @patch("requests.post")
-@patch("src.service.langgraph.model_client._auth_headers")
+@patch("src.service.workflow.model_client._auth_headers")
 def test_call_json_with_temperature(mock_auth, mock_post, client):
     """call_json should pass temperature parameter correctly."""
     mock_auth.return_value = {"Authorization": "Bearer test"}

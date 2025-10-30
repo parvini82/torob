@@ -75,8 +75,7 @@ class ScenarioOne:
             Final workflow results
         """
         initial_state = self.state_manager.create_initial_state(
-            image_url=image_url,
-            scenario="scenario_one"
+            image_url=image_url, scenario="scenario_one"
         )
 
         final_state = self.graph.invoke(initial_state)
@@ -90,8 +89,8 @@ class ScenarioOne:
                 "image_tags": final_state.get("image_tags", {}),
                 "merged_tags": final_state.get("merged_tags", {}),
                 "translated_tags": final_state.get("translated_tags", {}),
-                "merge_summary": final_state.get("merge_summary", {})
+                "merge_summary": final_state.get("merge_summary", {}),
             },
             "english_output": final_state.get("merged_tags", {}),
-            "persian_output": final_state.get("translated_tags", {})
+            "persian_output": final_state.get("translated_tags", {}),
         }

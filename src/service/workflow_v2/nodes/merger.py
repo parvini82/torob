@@ -32,7 +32,9 @@ class MergerNode(BaseNode):
             config: Optional configuration
         """
         super().__init__(name, config)
-        self.merge_strategy = self.config.get("strategy", "union")  # union, intersection
+        self.merge_strategy = self.config.get(
+            "strategy", "union"
+        )  # union, intersection
         self.deduplicate = self.config.get("deduplicate", True)
 
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -74,7 +76,7 @@ class MergerNode(BaseNode):
                 **state,
                 "merged_tags": {"entities": []},
                 "merge_summary": {"sources": 0, "total_entities": 0},
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         self.log_execution(f"Merging {len(tag_sources)} tag sources: {source_info}")
@@ -86,7 +88,7 @@ class MergerNode(BaseNode):
                 "sources": len(tag_sources),
                 "source_types": source_info,
                 "total_entities": len(merged_result.get("entities", [])),
-                "strategy": self.merge_strategy
+                "strategy": self.merge_strategy,
             }
 
             self.log_execution(f"Merge completed: {summary['total_entities']} entities")
@@ -96,7 +98,7 @@ class MergerNode(BaseNode):
                 "merged_tags": merged_result,
                 "final_merged_tags": merged_result,  # Alias for compatibility
                 "merge_summary": summary,
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -105,7 +107,7 @@ class MergerNode(BaseNode):
                 **state,
                 "merged_tags": {"entities": []},
                 "merge_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
     def _merge_tag_sources(self, sources: List[Dict[str, Any]]) -> Dict[str, Any]:

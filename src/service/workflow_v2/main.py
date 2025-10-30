@@ -6,8 +6,7 @@ workflow scenarios with proper logging and error handling.
 """
 
 import logging
-import json
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional
 from .scenarios.scenario_one import ScenarioOne
 from .scenarios.scenario_two import ScenarioTwo
 from .scenarios.scenario_three import ScenarioThree
@@ -15,8 +14,7 @@ from .scenarios.scenario_four import ScenarioFour
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
 
@@ -34,12 +32,16 @@ class ScenarioRunner:
             "scenario_one": ScenarioOne,
             "scenario_two": ScenarioTwo,
             "scenario_three": ScenarioThree,
-            "scenario_four": ScenarioFour
+            "scenario_four": ScenarioFour,
         }
         self.logger = logging.getLogger(__name__)
 
-    def run_scenario(self, scenario_name: str, image_url: str,
-                    config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def run_scenario(
+        self,
+        scenario_name: str,
+        image_url: str,
+        config: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
         """
         Run a specific scenario.
 
@@ -57,10 +59,14 @@ class ScenarioRunner:
         """
         if scenario_name not in self.scenarios:
             available = list(self.scenarios.keys())
-            raise ValueError(f"Unknown scenario: {scenario_name}. Available: {available}")
+            raise ValueError(
+                f"Unknown scenario: {scenario_name}. Available: {available}"
+            )
 
         self.logger.info(f"Starting execution of {scenario_name}")
-        self.logger.info(f"Image URL: {image_url[:50]}{'...' if len(image_url) > 50 else ''}")
+        self.logger.info(
+            f"Image URL: {image_url[:50]}{'...' if len(image_url) > 50 else ''}"
+        )
 
         try:
             scenario_class = self.scenarios[scenario_name]
@@ -76,8 +82,9 @@ class ScenarioRunner:
             self.logger.error(f"Error executing {scenario_name}: {str(e)}")
             raise
 
-    def run_all_scenarios(self, image_url: str,
-                         configs: Optional[Dict[str, Dict[str, Any]]] = None) -> Dict[str, Any]:
+    def run_all_scenarios(
+        self, image_url: str, configs: Optional[Dict[str, Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
         """
         Run all available scenarios on the same image.
 
@@ -104,14 +111,16 @@ class ScenarioRunner:
                 all_results[scenario_name] = {
                     "error": str(e),
                     "scenario": scenario_name,
-                    "status": "failed"
+                    "status": "failed",
                 }
 
         return {
             "image_url": image_url,
             "scenarios_run": len(all_results),
-            "successful_scenarios": len([r for r in all_results.values() if "error" not in r]),
-            "results": all_results
+            "successful_scenarios": len(
+                [r for r in all_results.values() if "error" not in r]
+            ),
+            "results": all_results,
         }
 
     def get_scenario_info(self) -> Dict[str, Any]:
@@ -125,27 +134,33 @@ class ScenarioRunner:
             "scenario_one": {
                 "name": "Caption → Tags → Image Tags → Merge → Translate",
                 "description": "Comprehensive workflow with both caption-based and direct image analysis",
-                "nodes": ["CaptionGenerator", "TagExtractor", "ImageTagExtractor", "Merger", "Translator"],
-                "use_case": "Most comprehensive analysis with multiple extraction methods"
+                "nodes": [
+                    "CaptionGenerator",
+                    "TagExtractor",
+                    "ImageTagExtractor",
+                    "Merger",
+                    "Translator",
+                ],
+                "use_case": "Most comprehensive analysis with multiple extraction methods",
             },
             "scenario_two": {
                 "name": "Caption → Tags → Translate",
                 "description": "Simple caption-based workflow",
                 "nodes": ["CaptionGenerator", "TagExtractor", "Translator"],
-                "use_case": "Fast and simple image analysis via caption generation"
+                "use_case": "Fast and simple image analysis via caption generation",
             },
             "scenario_three": {
                 "name": "Parallel Extractors → Merge → Translate",
                 "description": "Parallel processing with multiple simultaneous extractors",
                 "nodes": ["ParallelImageExtractors", "ParallelMerger", "Translator"],
-                "use_case": "High-confidence results through parallel processing"
+                "use_case": "High-confidence results through parallel processing",
             },
             "scenario_four": {
                 "name": "Extract → Iterative Refinement → Translate",
                 "description": "Conversation loop with iterative tag refinement",
                 "nodes": ["ImageTagExtractor", "ConversationRefiner", "Translator"],
-                "use_case": "Highest accuracy through iterative improvement"
-            }
+                "use_case": "Highest accuracy through iterative improvement",
+            },
         }
 
     def _log_results_summary(self, results: Dict[str, Any]) -> None:
@@ -177,8 +192,9 @@ class ScenarioRunner:
             self.logger.info(f"  Converged early: {converged}")
 
 
-def run_scenario_from_bytes(scenario_name: str, image_bytes: bytes,
-                           config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def run_scenario_from_bytes(
+    scenario_name: str, image_bytes: bytes, config: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """
     Convenience function to run scenario with image bytes.
 
@@ -200,8 +216,9 @@ def run_scenario_from_bytes(scenario_name: str, image_bytes: bytes,
     return runner.run_scenario(scenario_name, data_uri, config)
 
 
-def run_scenario_from_url(scenario_name: str, image_url: str,
-                         config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def run_scenario_from_url(
+    scenario_name: str, image_url: str, config: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """
     Convenience function to run scenario with image URL.
 
@@ -248,16 +265,12 @@ def main():
         },
         "scenario_three": {
             "num_parallel_extractors": 3,
-            "extractor_config": {
-                "model": "google/gemini-flash-1.5"
-            }
+            "extractor_config": {"model": "google/gemini-flash-1.5"},
         },
         "scenario_four": {
             "max_iterations": 2,
-            "refiner_config": {
-                "model": "google/gemini-flash-1.5"
-            }
-        }
+            "refiner_config": {"model": "google/gemini-flash-1.5"},
+        },
     }
 
     # Run individual scenarios
@@ -287,7 +300,9 @@ def main():
     print("\\n--- Running All Scenarios ---")
     try:
         all_results = runner.run_all_scenarios(test_image_url, example_configs)
-        print(f"Successfully ran {all_results['successful_scenarios']} out of {all_results['scenarios_run']} scenarios")
+        print(
+            f"Successfully ran {all_results['successful_scenarios']} out of {all_results['scenarios_run']} scenarios"
+        )
 
     except Exception as e:
         print(f"Error running all scenarios: {e}")

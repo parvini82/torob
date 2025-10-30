@@ -73,13 +73,14 @@ class ConversationStateManager:
             **state,
             "refinement_iteration": current_iteration + 1,
             "previous_tags": refined_tags,
-            "iteration_history": state.get("iteration_history", []) + [
+            "iteration_history": state.get("iteration_history", [])
+            + [
                 {
                     "iteration": current_iteration,
                     "tags": refined_tags,
-                    "summary": state.get("refinement_summary", {})
+                    "summary": state.get("refinement_summary", {}),
                 }
-            ]
+            ],
         }
 
 
@@ -91,7 +92,9 @@ class ConversationRefinerNode(RefinerNode):
     convergence detection.
     """
 
-    def __init__(self, name: str = "conversation_refiner", config: Dict[str, Any] = None):
+    def __init__(
+        self, name: str = "conversation_refiner", config: Dict[str, Any] = None
+    ):
         """
         Initialize conversation refiner node.
 
@@ -124,13 +127,17 @@ class ConversationRefinerNode(RefinerNode):
         updated_state = self.conversation_manager.update_iteration_state(refined_state)
 
         # Check if we should continue refining
-        should_continue = self.conversation_manager.should_continue_refinement(updated_state)
+        should_continue = self.conversation_manager.should_continue_refinement(
+            updated_state
+        )
         updated_state["should_continue_refinement"] = should_continue
 
         if should_continue:
             self.log_execution("Refinement will continue for another iteration")
         else:
-            self.log_execution("Refinement loop completed - converged or max iterations reached")
+            self.log_execution(
+                "Refinement loop completed - converged or max iterations reached"
+            )
 
         return updated_state
 
@@ -161,21 +168,19 @@ class ScenarioFour:
 
         # Create nodes
         initial_extractor = ImageTagExtractorNode(
-            "initial_extraction",
-            config=self.config.get("extractor_config", {})
+            "initial_extraction", config=self.config.get("extractor_config", {})
         )
 
         refiner = ConversationRefinerNode(
             "conversation_refiner",
             config={
                 "max_iterations": self.max_iterations,
-                **self.config.get("refiner_config", {})
-            }
+                **self.config.get("refiner_config", {}),
+            },
         )
 
         translator = TranslatorNode(
-            "translate_final",
-            config={"input_key": "refined_tags"}
+            "translate_final", config={"input_key": "refined_tags"}
         )
 
         # Add nodes to graph
@@ -219,7 +224,7 @@ class ScenarioFour:
             image_url=image_url,
             scenario="scenario_four",
             refinement_iteration=0,
-            max_iterations=self.max_iterations
+            max_iterations=self.max_iterations,
         )
 
         # For conversation loops, we might need to run multiple times
@@ -245,15 +250,16 @@ class ScenarioFour:
                 "iteration_history": final_state.get("iteration_history", []),
                 "final_refined_tags": final_state.get("refined_tags", {}),
                 "translated_tags": final_state.get("translated_tags", {}),
-                "total_iterations": final_state.get("refinement_iteration", 0)
+                "total_iterations": final_state.get("refinement_iteration", 0),
             },
             "english_output": final_state.get("refined_tags", {}),
             "persian_output": final_state.get("translated_tags", {}),
             "convergence_info": {
                 "iterations_used": final_state.get("refinement_iteration", 0),
                 "max_iterations": self.max_iterations,
-                "converged_early": final_state.get("refinement_iteration", 0) < self.max_iterations
-            }
+                "converged_early": final_state.get("refinement_iteration", 0)
+                < self.max_iterations,
+            },
         }
 
     def _run_initial_extraction(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -263,9 +269,9 @@ class ScenarioFour:
 
     def _run_refinement_loop(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Run the refinement loop."""
-        refiner = ConversationRefinerNode("conversation_refiner", {
-            "max_iterations": self.max_iterations
-        })
+        refiner = ConversationRefinerNode(
+            "conversation_refiner", {"max_iterations": self.max_iterations}
+        )
 
         current_state = state.copy()
         current_state["previous_tags"] = current_state.get("image_tags", {})

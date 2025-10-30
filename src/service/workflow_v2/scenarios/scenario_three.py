@@ -6,7 +6,7 @@ extract tags from the same image simultaneously, then merges
 results and translates to Persian.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any
 from ..core.graph_builder import GraphBuilder
 from ..core.state_manager import StateManager
 from ..nodes.image_tag_extractor import ImageTagExtractorNode
@@ -82,7 +82,7 @@ class ParallelMergerNode(MergerNode):
             return {
                 **state,
                 "merged_tags": {"entities": []},
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         self.log_execution(f"Merging {len(parallel_results)} parallel results")
@@ -96,17 +96,19 @@ class ParallelMergerNode(MergerNode):
                 "parallel_extractors": len(parallel_results),
                 "extractor_ids": list(parallel_results.keys()),
                 "total_entities": len(merged_result.get("entities", [])),
-                "strategy": self.merge_strategy
+                "strategy": self.merge_strategy,
             }
 
-            self.log_execution(f"Parallel merge completed: {summary['total_entities']} entities")
+            self.log_execution(
+                f"Parallel merge completed: {summary['total_entities']} entities"
+            )
 
             return {
                 **state,
                 "merged_tags": merged_result,
                 "final_merged_tags": merged_result,
                 "parallel_merge_summary": summary,
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -115,7 +117,7 @@ class ParallelMergerNode(MergerNode):
                 **state,
                 "merged_tags": {"entities": []},
                 "parallel_merge_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
 
@@ -149,7 +151,7 @@ class ScenarioThree:
             extractor = ParallelImageExtractorNode(
                 name=f"parallel_extractor_{i}",
                 extractor_id=i,
-                config=self._get_extractor_config(i)
+                config=self._get_extractor_config(i),
             )
             extractors.append(extractor)
             builder.add_node(extractor)
@@ -204,7 +206,7 @@ class ScenarioThree:
         initial_state = self.state_manager.create_initial_state(
             image_url=image_url,
             scenario="scenario_three",
-            num_parallel_extractors=self.num_extractors
+            num_parallel_extractors=self.num_extractors,
         )
 
         final_state = self.graph.invoke(initial_state)
@@ -216,9 +218,9 @@ class ScenarioThree:
                 "parallel_results": final_state.get("parallel_results", {}),
                 "merged_tags": final_state.get("merged_tags", {}),
                 "translated_tags": final_state.get("translated_tags", {}),
-                "parallel_merge_summary": final_state.get("parallel_merge_summary", {})
+                "parallel_merge_summary": final_state.get("parallel_merge_summary", {}),
             },
             "english_output": final_state.get("merged_tags", {}),
             "persian_output": final_state.get("translated_tags", {}),
-            "num_parallel_extractors": self.num_extractors
+            "num_parallel_extractors": self.num_extractors,
         }

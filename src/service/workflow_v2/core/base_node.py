@@ -30,7 +30,9 @@ class BaseNode(ABC):
         """
         self.name = name
         self.config = config or {}
-        self.logger = logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}")
+        self.logger = logging.getLogger(
+            f"{self.__class__.__module__}.{self.__class__.__name__}"
+        )
 
     @abstractmethod
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -46,7 +48,6 @@ class BaseNode(ABC):
         Raises:
             NotImplementedError: Must be implemented by subclasses
         """
-        pass
 
     def validate_inputs(self, state: Dict[str, Any], required_keys: list) -> None:
         """
@@ -75,17 +76,17 @@ class BaseNode(ABC):
         log_method(f"[{self.name}] {message}")
 
 
-'''
+"""
 
 # 2. Graph Builder
-files_content['core/graph_builder.py'] = '''"""
+files_content['core/graph_builder.py'] = """ """
 Graph builder for creating and managing LangGraph workflows.
 
 This module provides utilities for building complex workflows by connecting
 nodes in various patterns (sequential, parallel, conditional).
 """
 
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 from langgraph.graph import StateGraph
 from .base_node import BaseNode
 
@@ -113,7 +114,7 @@ class GraphBuilder:
         self.entry_point: Optional[str] = None
         self.finish_point: Optional[str] = None
 
-    def add_node(self, node: BaseNode) -> 'GraphBuilder':
+    def add_node(self, node: BaseNode) -> "GraphBuilder":
         """
         Add a node to the workflow.
 
@@ -128,7 +129,7 @@ class GraphBuilder:
         self.workflow.add_node(node.name, self._create_node_wrapper(node))
         return self
 
-    def add_sequential_edge(self, from_node: str, to_node: str) -> 'GraphBuilder':
+    def add_sequential_edge(self, from_node: str, to_node: str) -> "GraphBuilder":
         """
         Add a sequential edge between two nodes.
 
@@ -142,7 +143,7 @@ class GraphBuilder:
         self.workflow.add_edge(from_node, to_node)
         return self
 
-    def add_parallel_edges(self, from_node: str, to_nodes: List[str]) -> 'GraphBuilder':
+    def add_parallel_edges(self, from_node: str, to_nodes: List[str]) -> "GraphBuilder":
         """
         Add parallel edges from one node to multiple nodes.
 
@@ -157,7 +158,7 @@ class GraphBuilder:
             self.workflow.add_edge(from_node, to_node)
         return self
 
-    def set_entry_point(self, node_name: str) -> 'GraphBuilder':
+    def set_entry_point(self, node_name: str) -> "GraphBuilder":
         """
         Set the workflow entry point.
 
@@ -171,7 +172,7 @@ class GraphBuilder:
         self.workflow.set_entry_point(node_name)
         return self
 
-    def set_finish_point(self, node_name: str) -> 'GraphBuilder':
+    def set_finish_point(self, node_name: str) -> "GraphBuilder":
         """
         Set the workflow finish point.
 
@@ -215,9 +216,13 @@ class GraphBuilder:
 
         def wrapper(state: Dict[str, Any]) -> Dict[str, Any]:
             try:
-                node.log_execution(f"Starting execution with state keys: {list(state.keys())}")
+                node.log_execution(
+                    f"Starting execution with state keys: {list(state.keys())}"
+                )
                 result = node.run(state)
-                node.log_execution(f"Completed execution, output keys: {list(result.keys())}")
+                node.log_execution(
+                    f"Completed execution, output keys: {list(result.keys())}"
+                )
                 return result
             except Exception as e:
                 node.log_execution(f"Error during execution: {str(e)}", "error")
@@ -233,4 +238,3 @@ class GraphBuilder:
             Dictionary mapping node names to their class names
         """
         return {name: node.__class__.__name__ for name, node in self.nodes.items()}
-

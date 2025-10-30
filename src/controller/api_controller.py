@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.service.database.database import save_request_response
-from src.service.langgraph.langgraph_service import (
+from src.service.workflow.langgraph_service import (
     run_langgraph_on_bytes,
     run_langgraph_on_url,
 )

@@ -1,5 +1,6 @@
 from pathlib import Path
-from src.service.langgraph.langgraph_service import run_langgraph_on_url
+from src.service.workflow.langgraph_service import run_langgraph_on_url
+
 x = Path("data/processed/toy_sample.json")
 # print(x.absolute())
 
@@ -31,7 +32,7 @@ output_model = {
 
 
 image_url2 = "https://image.torob.com/base/images/Ls/z7/Lsz71VTLh8xUdBLL.jpg"
-from src.service.langgraph.langgraph_service import run_langgraph_on_url
+from src.service.workflow.langgraph_service import run_langgraph_on_url
 
 output_model2 = run_langgraph_on_url(image_url2)
 print(output_model2)

@@ -58,18 +58,20 @@ class RefinerNode(BaseNode):
                 **state,
                 "refined_tags": {"entities": []},
                 "refinement_error": "No previous tags found",
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         image_url = state["image_url"]
-        self.log_execution(f"Refining {len(previous_tags.get('entities', []))} entities")
+        self.log_execution(
+            f"Refining {len(previous_tags.get('entities', []))} entities"
+        )
 
         try:
             # Import here to avoid circular imports
-            from ...langgraph.model_client import (
+            from ...workflow.model_client import (
                 OpenRouterClient,
                 make_image_part,
-                make_text_part
+                make_text_part,
             )
 
             client = OpenRouterClient()
@@ -81,10 +83,7 @@ class RefinerNode(BaseNode):
             messages = [
                 {
                     "role": "user",
-                    "content": [
-                        make_text_part(prompt),
-                        make_image_part(image_url)
-                    ]
+                    "content": [make_text_part(prompt), make_image_part(image_url)],
                 }
             ]
 
@@ -94,7 +93,9 @@ class RefinerNode(BaseNode):
             # Generate refinement summary
             summary = self._generate_refinement_summary(previous_tags, refined_tags)
 
-            self.log_execution(f"Refinement completed: {summary['changes_detected']} changes")
+            self.log_execution(
+                f"Refinement completed: {summary['changes_detected']} changes"
+            )
 
             return {
                 **state,
@@ -102,7 +103,7 @@ class RefinerNode(BaseNode):
                 "refinement_raw_response": result,
                 "refinement_summary": summary,
                 "final_refined_tags": refined_tags,  # Alias for compatibility
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -111,7 +112,7 @@ class RefinerNode(BaseNode):
                 **state,
                 "refined_tags": previous_tags,  # Fallback to original
                 "refinement_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
     def _find_previous_tags(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -120,7 +121,7 @@ class RefinerNode(BaseNode):
             "previous_tags",
             "image_tags",
             "merged_tags",
-            "tags_from_caption"
+            "tags_from_caption",
         ]
 
         for key in possible_keys:
@@ -129,10 +130,16 @@ class RefinerNode(BaseNode):
 
         return {}
 
-    def _generate_refinement_summary(self, original: Dict, refined: Dict) -> Dict[str, Any]:
+    def _generate_refinement_summary(
+        self, original: Dict, refined: Dict
+    ) -> Dict[str, Any]:
         """Generate summary of refinement changes."""
-        orig_entities = {e["name"]: set(e["values"]) for e in original.get("entities", [])}
-        ref_entities = {e["name"]: set(e["values"]) for e in refined.get("entities", [])}
+        orig_entities = {
+            e["name"]: set(e["values"]) for e in original.get("entities", [])
+        }
+        ref_entities = {
+            e["name"]: set(e["values"]) for e in refined.get("entities", [])
+        }
 
         added_entities = set(ref_entities.keys()) - set(orig_entities.keys())
         removed_entities = set(orig_entities.keys()) - set(ref_entities.keys())
@@ -148,5 +155,7 @@ class RefinerNode(BaseNode):
             "added_entities": list(added_entities),
             "removed_entities": list(removed_entities),
             "modified_entities": modified_entities,
-            "changes_detected": len(added_entities) + len(removed_entities) + len(modified_entities)
+            "changes_detected": len(added_entities)
+            + len(removed_entities)
+            + len(modified_entities),
         }

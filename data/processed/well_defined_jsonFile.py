@@ -26,11 +26,6 @@
 # print(f"✅ New file saved as: {output_file}")
 
 
-
-
-
-
-
 # import json
 #
 # # Define the input file path
@@ -51,11 +46,8 @@
 # print(data[210])
 
 
-
-
-
-
 import json
+
 #
 # # Define input and output file paths
 # input_file = "Ground_Truth.json"
@@ -76,16 +68,12 @@ import json
 #
 
 
-
-
-
-
 #
 #
 #
 #
 # import json
-# from src.service.langgraph.langgraph_service import run_langgraph_on_url
+# from src.service.workflow.langgraph_service import run_langgraph_on_url
 #
 # # Define input and output file paths
 # input_file = "Ground_Truth.json"
@@ -126,8 +114,6 @@ import json
 # print(f"\n💾 Updated data saved to: {output_file}")
 
 
-
-
 import json
 
 # Define the input file path
@@ -145,22 +131,15 @@ print(f"⚠️ Found {len(empty_entities)} items with empty 'entities':")
 print(empty_entities)
 
 
-
-
-
-
-
 import json
-from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
-from evaluation import ModelRunner, EvaluationConfig
 
 import time
 import random
 from typing import List, Dict, Any
 
-from src.service.langgraph.langgraph_service import run_langgraph_on_url
+from src.service.workflow.langgraph_service import run_langgraph_on_url
 
 
 def example_model_function(image_url: str) -> List[Dict[str, Any]]:
@@ -191,7 +170,8 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
                 actual_delay = max(5, delay + jitter)  # Minimum 5 seconds
 
                 print(
-                    f"    Attempt {attempt + 1}/{MAX_RETRIES + 1} for {image_url[:50]}... (waiting {actual_delay:.1f}s)")
+                    f"    Attempt {attempt + 1}/{MAX_RETRIES + 1} for {image_url[:50]}... (waiting {actual_delay:.1f}s)"
+                )
                 time.sleep(actual_delay)
                 total_wait_time += actual_delay
             else:
@@ -207,11 +187,11 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
             if not output_model:
                 raise ValueError("Model returned empty/null result")
 
-            if 'persian' not in output_model:
+            if "persian" not in output_model:
                 raise KeyError("'persian' key not found in model output")
 
             persian_section = output_model.get("persian")
-            if not persian_section or 'entities' not in persian_section:
+            if not persian_section or "entities" not in persian_section:
                 raise KeyError("'entities' key not found in persian section")
 
             entities = persian_section.get("entities")
@@ -220,7 +200,9 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
 
             # Success! Return the entities
             if attempt > 0:
-                print(f"    ✓ Success on attempt {attempt + 1} after {total_wait_time:.1f}s total wait time")
+                print(
+                    f"    ✓ Success on attempt {attempt + 1} after {total_wait_time:.1f}s total wait time"
+                )
 
             return entities
 
@@ -234,49 +216,87 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
             wait_multiplier = 1
 
             # Rate limiting errors
-            if any(keyword in error_msg.lower() for keyword in [
-                'rate limit', 'too many requests', '429', 'quota exceeded',
-                'rate exceeded', 'throttled'
-            ]):
+            if any(
+                keyword in error_msg.lower()
+                for keyword in [
+                    "rate limit",
+                    "too many requests",
+                    "429",
+                    "quota exceeded",
+                    "rate exceeded",
+                    "throttled",
+                ]
+            ):
                 should_retry = True
                 wait_multiplier = 2  # Wait longer for rate limits
                 print(f"    ⚠ Rate limit error on attempt {attempt + 1}: {error_msg}")
 
             # Network/connection errors
-            elif any(keyword in error_msg.lower() for keyword in [
-                'connection', 'timeout', 'network', 'dns', 'unreachable',
-                'connection refused', 'connection reset', 'socket'
-            ]):
+            elif any(
+                keyword in error_msg.lower()
+                for keyword in [
+                    "connection",
+                    "timeout",
+                    "network",
+                    "dns",
+                    "unreachable",
+                    "connection refused",
+                    "connection reset",
+                    "socket",
+                ]
+            ):
                 should_retry = True
                 print(f"    ⚠ Network error on attempt {attempt + 1}: {error_msg}")
 
             # Server errors (5xx)
-            elif any(keyword in error_msg.lower() for keyword in [
-                'server error', '500', '502', '503', '504', 'bad gateway',
-                'service unavailable', 'gateway timeout', 'internal server error'
-            ]):
+            elif any(
+                keyword in error_msg.lower()
+                for keyword in [
+                    "server error",
+                    "500",
+                    "502",
+                    "503",
+                    "504",
+                    "bad gateway",
+                    "service unavailable",
+                    "gateway timeout",
+                    "internal server error",
+                ]
+            ):
                 should_retry = True
                 print(f"    ⚠ Server error on attempt {attempt + 1}: {error_msg}")
 
             # Temporary service issues
-            elif any(keyword in error_msg.lower() for keyword in [
-                'temporarily unavailable', 'service busy', 'overloaded',
-                'maintenance', 'try again later'
-            ]):
+            elif any(
+                keyword in error_msg.lower()
+                for keyword in [
+                    "temporarily unavailable",
+                    "service busy",
+                    "overloaded",
+                    "maintenance",
+                    "try again later",
+                ]
+            ):
                 should_retry = True
                 wait_multiplier = 1.5
-                print(f"    ⚠ Service temporarily unavailable on attempt {attempt + 1}: {error_msg}")
+                print(
+                    f"    ⚠ Service temporarily unavailable on attempt {attempt + 1}: {error_msg}"
+                )
 
             # Data structure issues (might be temporary)
-            elif error_type in ['KeyError', 'TypeError', 'ValueError']:
+            elif error_type in ["KeyError", "TypeError", "ValueError"]:
                 should_retry = True
-                print(f"    ⚠ Data structure error on attempt {attempt + 1}: {error_msg}")
+                print(
+                    f"    ⚠ Data structure error on attempt {attempt + 1}: {error_msg}"
+                )
 
             else:
                 # Unknown error - still try once more, but don't wait as long
                 should_retry = True
                 wait_multiplier = 0.5
-                print(f"    ⚠ Unknown error ({error_type}) on attempt {attempt + 1}: {error_msg}")
+                print(
+                    f"    ⚠ Unknown error ({error_type}) on attempt {attempt + 1}: {error_msg}"
+                )
 
             # Check if we should retry
             if attempt < MAX_RETRIES and should_retry:
@@ -291,11 +311,15 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
     error_type = type(last_error).__name__ if last_error else "Unknown"
     error_msg = str(last_error) if last_error else "Unknown error"
 
-    print(f"    ✗ Failed after {MAX_RETRIES + 1} attempts and {total_wait_time:.1f}s total wait time")
+    print(
+        f"    ✗ Failed after {MAX_RETRIES + 1} attempts and {total_wait_time:.1f}s total wait time"
+    )
     print(f"      Final error ({error_type}): {error_msg}")
     print(f"      Returning empty list for: {image_url[:60]}...")
 
     return []
+
+
 #
 #
 
@@ -320,11 +344,11 @@ for item in data:
             output_model = example_model_function(image_url)
             entities = output_model if isinstance(output_model, list) else []
             # Safely extract the Persian entities
-                # entities = (
-                #     output_model.get("persian", {}).get("entities", [])
-                #     if isinstance(output_model, dict)
-                #     else []
-                # )
+            # entities = (
+            #     output_model.get("persian", {}).get("entities", [])
+            #     if isinstance(output_model, dict)
+            #     else []
+            # )
 
             # Update the "entities" field
             item["entities"] = entities
@@ -338,7 +362,6 @@ with open(output_file, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
 
 print(f"\n💾 Updated data saved to: {output_file}")
-
 
 
 import json
@@ -356,10 +379,3 @@ empty_entities = [item["index"] for item in data if not item.get("entities")]
 # Print results
 print(f"⚠️ Found {len(empty_entities)} items with empty 'entities':")
 print(empty_entities)
-
-
-
-
-
-
-

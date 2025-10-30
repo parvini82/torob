@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.service.langgraph.langgraph_service import (
+from src.service.workflow.langgraph_service import (
     _compile_workflow,
     run_langgraph_on_bytes,
     run_langgraph_on_url,
@@ -43,7 +43,7 @@ def test_compile_workflow():
     assert hasattr(workflow, "invoke")
 
 
-@patch("src.service.langgraph.langgraph_service._workflow")
+@patch("src.service.workflow.langgraph_service._workflow")
 def test_run_langgraph_on_url_success(mock_workflow, mock_workflow_result):
     """run_langgraph_on_url should process URL and return formatted results."""
     mock_workflow.invoke.return_value = mock_workflow_result
@@ -62,7 +62,7 @@ def test_run_langgraph_on_url_success(mock_workflow, mock_workflow_result):
     )
 
 
-@patch("src.service.langgraph.langgraph_service._workflow")
+@patch("src.service.workflow.langgraph_service._workflow")
 def test_run_langgraph_on_bytes_success(mock_workflow, mock_workflow_result):
     """run_langgraph_on_bytes should process bytes and return formatted results."""
     mock_workflow.invoke.return_value = mock_workflow_result
@@ -82,7 +82,7 @@ def test_run_langgraph_on_bytes_success(mock_workflow, mock_workflow_result):
     assert call_args["image_url"].startswith("data:image/jpeg;base64,")
 
 
-@patch("src.service.langgraph.langgraph_service._workflow")
+@patch("src.service.workflow.langgraph_service._workflow")
 def test_run_langgraph_on_url_empty_results(mock_workflow):
     """Function should handle empty workflow results gracefully."""
     mock_workflow.invoke.return_value = {"image_url": "test"}
@@ -93,7 +93,7 @@ def test_run_langgraph_on_url_empty_results(mock_workflow):
     assert result["persian"] == {}
 
 
-@patch("src.service.langgraph.langgraph_service._workflow")
+@patch("src.service.workflow.langgraph_service._workflow")
 def test_run_langgraph_on_bytes_base64_encoding(mock_workflow):
     """Function should properly encode bytes to base64 data URI."""
     mock_workflow.invoke.return_value = {}
@@ -111,7 +111,7 @@ def test_run_langgraph_on_bytes_base64_encoding(mock_workflow):
 def test_run_langgraph_on_url_validates_input():
     """Function should handle invalid URLs appropriately."""
     # Test with empty string - should not crash
-    with patch("src.service.langgraph.langgraph_service._workflow") as mock_workflow:
+    with patch("src.service.workflow.langgraph_service._workflow") as mock_workflow:
         mock_workflow.invoke.return_value = {}
         result = run_langgraph_on_url("")
         assert isinstance(result, dict)
@@ -120,7 +120,7 @@ def test_run_langgraph_on_url_validates_input():
 def test_run_langgraph_on_bytes_validates_input():
     """Function should handle empty bytes appropriately."""
     # Test with empty bytes - should not crash
-    with patch("src.service.langgraph.langgraph_service._workflow") as mock_workflow:
+    with patch("src.service.workflow.langgraph_service._workflow") as mock_workflow:
         mock_workflow.invoke.return_value = {}
         result = run_langgraph_on_bytes(b"")
         assert isinstance(result, dict)

@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.service.langgraph.image_to_tags import (
+from src.service.workflow.image_to_tags import (
     build_prompt,
     image_to_tags_node,
 )
@@ -39,7 +39,7 @@ def test_build_prompt_includes_example_format():
     assert '"name":' in prompt and '"values":' in prompt
 
 
-@patch("src.service.langgraph.image_to_tags.OpenRouterClient")
+@patch("src.service.workflow.image_to_tags.OpenRouterClient")
 def test_image_to_tags_node_success(mock_client_class):
     """image_to_tags_node should process image URL and return enhanced state."""
     # Setup mock client
@@ -96,7 +96,7 @@ def test_image_to_tags_node_empty_image_url():
         image_to_tags_node(state)
 
 
-@patch("src.service.langgraph.image_to_tags.OpenRouterClient")
+@patch("src.service.workflow.image_to_tags.OpenRouterClient")
 def test_image_to_tags_node_handles_null_json(mock_client_class):
     """image_to_tags_node should handle null JSON response gracefully."""
     mock_client = MagicMock()
@@ -112,7 +112,7 @@ def test_image_to_tags_node_handles_null_json(mock_client_class):
     assert result["raw_response"] == "failed to parse"
 
 
-@patch("src.service.langgraph.image_to_tags.OpenRouterClient")
+@patch("src.service.workflow.image_to_tags.OpenRouterClient")
 def test_image_to_tags_node_preserves_existing_state(mock_client_class):
     """image_to_tags_node should preserve existing state while adding new fields."""
     mock_client = MagicMock()
@@ -137,9 +137,9 @@ def test_image_to_tags_node_preserves_existing_state(mock_client_class):
     assert "raw_response" in result
 
 
-@patch("src.service.langgraph.image_to_tags.make_text_part")
-@patch("src.service.langgraph.image_to_tags.make_image_part")
-@patch("src.service.langgraph.image_to_tags.OpenRouterClient")
+@patch("src.service.workflow.image_to_tags.make_text_part")
+@patch("src.service.workflow.image_to_tags.make_image_part")
+@patch("src.service.workflow.image_to_tags.OpenRouterClient")
 def test_image_to_tags_node_message_structure(
     mock_client_class, mock_make_image, mock_make_text
 ):

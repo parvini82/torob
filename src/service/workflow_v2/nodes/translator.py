@@ -58,7 +58,7 @@ class TranslatorNode(BaseNode):
             "final_merged_tags",
             "merged_tags",
             "image_tags",
-            "tags_from_caption"
+            "tags_from_caption",
         ]
 
         for key in possible_keys:
@@ -68,24 +68,21 @@ class TranslatorNode(BaseNode):
                 break
 
         if not tags_to_translate:
-            raise ValueError(f"{self.name}: No tags found to translate in keys: {list(state.keys())}")
+            raise ValueError(
+                f"{self.name}: No tags found to translate in keys: {list(state.keys())}"
+            )
 
         self.log_execution(f"Translating tags from key: {source_key}")
 
         try:
             # Import here to avoid circular imports
-            from ...langgraph.model_client import OpenRouterClient, make_text_part
+            from ...workflow.model_client import OpenRouterClient, make_text_part
 
             client = OpenRouterClient()
             tags_json = json.dumps(tags_to_translate, ensure_ascii=False, indent=2)
             prompt = self.prompt_template.format(tags_json=tags_json)
 
-            messages = [
-                {
-                    "role": "user",
-                    "content": [make_text_part(prompt)]
-                }
-            ]
+            messages = [{"role": "user", "content": [make_text_part(prompt)]}]
 
             result = client.call_json(model=self.model, messages=messages)
             translated_tags = result.get("json", {})
@@ -98,7 +95,7 @@ class TranslatorNode(BaseNode):
                 "translated_tags": translated_tags,
                 "translation_raw_response": result,
                 "final_output": translated_tags,  # For compatibility
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -107,5 +104,5 @@ class TranslatorNode(BaseNode):
                 **state,
                 "translated_tags": {},
                 "translation_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }

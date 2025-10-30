@@ -51,10 +51,10 @@ class CaptionGeneratorNode(BaseNode):
 
         try:
             # Import here to avoid circular imports
-            from ...langgraph.model_client import (
+            from ...workflow.model_client import (
                 OpenRouterClient,
                 make_image_part,
-                make_text_part
+                make_text_part,
             )
 
             client = OpenRouterClient()
@@ -64,8 +64,8 @@ class CaptionGeneratorNode(BaseNode):
                     "role": "user",
                     "content": [
                         make_text_part(self.custom_prompt),
-                        make_image_part(image_url)
-                    ]
+                        make_image_part(image_url),
+                    ],
                 }
             ]
 
@@ -78,7 +78,7 @@ class CaptionGeneratorNode(BaseNode):
                 **state,
                 "caption": caption,
                 "caption_raw_response": result,
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
 
         except Exception as e:
@@ -87,5 +87,5 @@ class CaptionGeneratorNode(BaseNode):
                 **state,
                 "caption": "",
                 "caption_error": str(e),
-                "step_count": state.get("step_count", 0) + 1
+                "step_count": state.get("step_count", 0) + 1,
             }
