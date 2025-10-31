@@ -1,91 +1,121 @@
 """
-Caption generation node for creating descriptive text from images.
+Caption generation node for image analysis.
 
-This node analyzes product images and generates detailed captions
-that can be used for further processing or tag extraction.
+Generates descriptive captions for images using vision-language models.
 """
 
-from typing import Any, Dict
+from typing import Dict, Any, List
 from ..core.base_node import BaseNode
-from ..config import CAPTION_PROMPT_TEMPLATE, VISION_MODEL
+from ..model_client import create_model_client, ModelClientError
 
 
 class CaptionGeneratorNode(BaseNode):
     """
-    Node that generates descriptive captions from product images.
+    Node that generates descriptive captions for images.
 
-    Input state keys:
-        - image_url: URL or data URI of the image to analyze
-
-    Output state keys:
-        - caption: Generated descriptive caption
-        - caption_raw_response: Raw model response
+    Takes an image URL/data and produces a detailed textual description
+    that can be used by downstream nodes for further analysis.
     """
 
-    def __init__(self, name: str = "caption_generator", config: Dict[str, Any] = None):
+    def __init__(self, model: str = "google/gemini-flash-1.5"):
         """
         Initialize the caption generator node.
 
         Args:
-            name: Node identifier
-            config: Optional configuration
+            model: Model to use for caption generation
         """
-        super().__init__(name, config)
-        self.model = self.config.get("model", VISION_MODEL)
-        self.custom_prompt = self.config.get("prompt", CAPTION_PROMPT_TEMPLATE)
+        super().__init__("CaptionGenerator")
+        self.model = model
+        self.client = None  # Will be initialized on first use
 
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate caption from image.
+        Generate a caption for the provided image.
 
         Args:
-            state: Current workflow state
+            state: Workflow state containing image_url
 
         Returns:
-            Updated state with generated caption
+            Updated state with caption information
         """
-        self.validate_inputs(state, ["image_url"])
+        # Validate required inputs
+        self.validate_required_keys(state, ["image_url"])
 
+        # Get configuration
+        config = self.get_node_config(state)
+        model_to_use = config.get("model", self.model)
+
+        # Initialize client if needed
+        if not self.client:
+            self.client = create_model_client()
+
+        # Get image URL
         image_url = state["image_url"]
-        self.log_execution(f"Generating caption for image")
+        self.logger.info(f"Generating caption for image using model: {model_to_use}")
 
         try:
-            # Import here to avoid circular imports
-            from ...workflow.model_client import (
-                OpenRouterClient,
-                make_image_part,
-                make_text_part,
-            )
-
-            client = OpenRouterClient()
-
+            # Prepare messages for vision model
             messages = [
+                {
+                    "role": "system",
+                    "content": self._get_system_prompt()
+                },
                 {
                     "role": "user",
                     "content": [
-                        make_text_part(self.custom_prompt),
-                        make_image_part(image_url),
-                    ],
+                        {
+                            "type": "text",
+                            "text": "Please provide a detailed caption for this image."
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": image_url}
+                        }
+                    ]
                 }
             ]
 
-            result = client.call_text(model=self.model, messages=messages)
-            caption = result.get("text", "").strip()
+            # Generate caption
+            caption_text = self.client.call_text(
+                model_to_use,
+                messages,
+                max_tokens=config.get("max_tokens", 500),
+                temperature=config.get("temperature", 0.7)
+            )
 
-            self.log_execution(f"Generated caption: {caption[:50]}...")
-
-            return {
-                **state,
-                "caption": caption,
-                "caption_raw_response": result,
-                "step_count": state.get("step_count", 0) + 1,
+            # Create caption result
+            caption_result = {
+                "text": caption_text,
+                "model_used": model_to_use,
+                "word_count": len(caption_text.split()),
+                "generated_by": self.node_name
             }
 
+            # Update state
+            updated_state = state.copy()
+            updated_state["caption"] = caption_result
+
+            self.logger.info(f"Generated caption with {caption_result['word_count']} words")
+            self.logger.debug(f"Caption preview: {caption_text[:100]}...")
+
+            return updated_state
+
+        except ModelClientError as e:
+            self.logger.error(f"Model client error during caption generation: {str(e)}")
+            raise
         except Exception as e:
-            self.log_execution(f"Error generating caption: {str(e)}", "error")
-            return {
-                **state,
-                "caption": "",
-                "caption_error": str(e),
-                "step_count": state.get("step_count", 0) + 1,
-            }
+            self.logger.error(f"Unexpected error during caption generation: {str(e)}")
+            raise
+
+    def _get_system_prompt(self) -> str:
+        """Get the system prompt for caption generation."""
+        return """You are an expert image analyst. Generate detailed, accurate captions for images.
+
+Your caption should:
+1. Describe the main subject(s) and their key characteristics
+2. Include relevant context, setting, and environment
+3. Mention important visual elements, colors, and composition
+4. Be factual and objective, avoiding speculation
+5. Be comprehensive but concise (aim for 2-4 sentences)
+
+Focus on details that would be useful for product categorization, search, and understanding."""

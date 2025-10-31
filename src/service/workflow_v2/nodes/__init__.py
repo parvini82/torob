@@ -1,8 +1,8 @@
 """
-Node implementations for LangGraph v2 workflows.
+Workflow nodes for the v2 system.
 
-This package contains all the specialized node types that can be
-used to build complex image analysis and translation workflows.
+This package contains all individual node implementations that can be
+composed together to create workflow scenarios.
 """
 
 from .caption_generator import CaptionGeneratorNode
@@ -11,6 +11,7 @@ from .image_tag_extractor import ImageTagExtractorNode
 from .translator import TranslatorNode
 from .merger import MergerNode
 from .refiner import RefinerNode
+from .conversation_refiner import ConversationRefinerNode
 
 __all__ = [
     "CaptionGeneratorNode",
@@ -19,4 +20,5 @@ __all__ = [
     "TranslatorNode",
     "MergerNode",
     "RefinerNode",
+    "ConversationRefinerNode"
 ]

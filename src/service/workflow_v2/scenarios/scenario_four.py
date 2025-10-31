@@ -1,296 +1,231 @@
 """
-Scenario Four: Conversation Loop with Iterative Refinement
+Scenario Four: Iterative Conversation Refinement.
 
-This scenario implements a conversation loop where tags are
-extracted, then iteratively refined based on previous results
-and the original image.
+Extract → Iterative Refinement → Translate
+Highest accuracy through iterative improvement with conversation loops.
 """
 
-from typing import Dict, Any
-from ..core.graph_builder import GraphBuilder
-from ..core.state_manager import StateManager
-from ..nodes.image_tag_extractor import ImageTagExtractorNode
-from ..nodes.refiner import RefinerNode
-from ..nodes.translator import TranslatorNode
+from typing import Dict, Any, Optional
+from langgraph.graph import StateGraph
 
-
-class ConversationStateManager:
-    """
-    Manages conversation state for iterative refinement loops.
-    """
-
-    def __init__(self, max_iterations: int = 2):
-        """
-        Initialize conversation state manager.
-
-        Args:
-            max_iterations: Maximum number of refinement iterations
-        """
-        self.max_iterations = max_iterations
-
-    def should_continue_refinement(self, state: Dict[str, Any]) -> bool:
-        """
-        Determine if refinement loop should continue.
-
-        Args:
-            state: Current workflow state
-
-        Returns:
-            True if refinement should continue, False otherwise
-        """
-        current_iteration = state.get("refinement_iteration", 0)
-
-        # Stop if max iterations reached
-        if current_iteration >= self.max_iterations:
-            return False
-
-        # Stop if previous refinement had minimal changes
-        refinement_summary = state.get("refinement_summary", {})
-        changes_detected = refinement_summary.get("changes_detected", 0)
-
-        # If very few changes in last iteration, consider converged
-        if current_iteration > 0 and changes_detected < 2:
-            return False
-
-        return True
-
-    def update_iteration_state(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Update state for next iteration.
-
-        Args:
-            state: Current workflow state
-
-        Returns:
-            Updated state with iteration tracking
-        """
-        current_iteration = state.get("refinement_iteration", 0)
-
-        # Move refined tags to previous tags for next iteration
-        refined_tags = state.get("refined_tags", {})
-
-        return {
-            **state,
-            "refinement_iteration": current_iteration + 1,
-            "previous_tags": refined_tags,
-            "iteration_history": state.get("iteration_history", [])
-            + [
-                {
-                    "iteration": current_iteration,
-                    "tags": refined_tags,
-                    "summary": state.get("refinement_summary", {}),
-                }
-            ],
-        }
-
-
-class ConversationRefinerNode(RefinerNode):
-    """
-    Specialized refiner node for conversation loops.
-
-    This node handles iteration state management and
-    convergence detection.
-    """
-
-    def __init__(
-        self, name: str = "conversation_refiner", config: Dict[str, Any] = None
-    ):
-        """
-        Initialize conversation refiner node.
-
-        Args:
-            name: Node identifier
-            config: Optional configuration
-        """
-        super().__init__(name, config)
-        self.conversation_manager = ConversationStateManager(
-            max_iterations=self.config.get("max_iterations", 2)
-        )
-
-    def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Run refinement with conversation loop management.
-
-        Args:
-            state: Current workflow state
-
-        Returns:
-            Updated state with refinement results
-        """
-        current_iteration = state.get("refinement_iteration", 0)
-        self.log_execution(f"Starting refinement iteration {current_iteration + 1}")
-
-        # Run the refinement process
-        refined_state = super().run(state)
-
-        # Update conversation state
-        updated_state = self.conversation_manager.update_iteration_state(refined_state)
-
-        # Check if we should continue refining
-        should_continue = self.conversation_manager.should_continue_refinement(
-            updated_state
-        )
-        updated_state["should_continue_refinement"] = should_continue
-
-        if should_continue:
-            self.log_execution("Refinement will continue for another iteration")
-        else:
-            self.log_execution(
-                "Refinement loop completed - converged or max iterations reached"
-            )
-
-        return updated_state
+from ..core import StateManager, GraphBuilder, get_workflow_logger
+from ..nodes import (
+    ImageTagExtractorNode,
+    ConversationRefinerNode,
+    TranslatorNode
+)
 
 
 class ScenarioFour:
     """
-    Implementation of Scenario Four workflow.
+    Iterative conversation refinement scenario.
 
-    Workflow: Image → Extract Tags → [Refine Loop] → Translate
+    Workflow:
+    1. ImageTagExtractor: Initial direct image analysis
+    2. ConversationRefiner: Iterative refinement through conversation
+    3. Translator: Translate final refined results
     """
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         """
-        Initialize scenario four with optional configuration.
+        Initialize Scenario Four.
 
         Args:
-            config: Configuration including max_iterations
+            config: Optional configuration for the scenario
         """
         self.config = config or {}
-        self.max_iterations = self.config.get("max_iterations", 2)
-        self.state_manager = StateManager()
+        self.logger = get_workflow_logger(f"{__name__}.ScenarioFour")
         self.graph = None
-        self._build_workflow()
 
-    def _build_workflow(self):
-        """Build the conversation loop workflow."""
-        builder = GraphBuilder("scenario_four")
+        self.logger.info("Initialized Scenario Four - Iterative Conversation Refinement")
 
-        # Create nodes
-        initial_extractor = ImageTagExtractorNode(
-            "initial_extraction", config=self.config.get("extractor_config", {})
-        )
-
-        refiner = ConversationRefinerNode(
-            "conversation_refiner",
-            config={
-                "max_iterations": self.max_iterations,
-                **self.config.get("refiner_config", {}),
-            },
-        )
-
-        translator = TranslatorNode(
-            "translate_final", config={"input_key": "refined_tags"}
-        )
-
-        # Add nodes to graph
-        builder.add_node(initial_extractor)
-        builder.add_node(refiner)
-        builder.add_node(translator)
-
-        # Define edges
-        builder.add_sequential_edge("initial_extraction", "conversation_refiner")
-
-        # Add conditional edge for refinement loop
-        def should_continue_refining(state: Dict[str, Any]) -> str:
-            """Routing function for refinement loop."""
-            if state.get("should_continue_refinement", False):
-                return "conversation_refiner"  # Continue loop
-            else:
-                return "translate_final"  # Exit loop
-
-        # Note: This requires LangGraph conditional edges
-        # For simplicity, we'll implement a fixed iteration approach
-
-        builder.add_sequential_edge("conversation_refiner", "translate_final")
-
-        # Set entry and finish points
-        builder.set_entry_point("initial_extraction")
-        builder.set_finish_point("translate_final")
-
-        self.graph = builder.build()
-
-    def execute(self, image_url: str) -> Dict[str, Any]:
+    def build_graph(self) -> StateGraph:
         """
-        Execute scenario four workflow with conversation loop.
-
-        Args:
-            image_url: URL or data URI of image to process
+        Build the workflow graph for Scenario Four.
 
         Returns:
-            Final workflow results with iteration history
+            Configured StateGraph for execution
         """
-        initial_state = self.state_manager.create_initial_state(
-            image_url=image_url,
-            scenario="scenario_four",
-            refinement_iteration=0,
-            max_iterations=self.max_iterations,
-        )
+        self.logger.info("Building Scenario Four workflow graph")
 
-        # For conversation loops, we might need to run multiple times
-        # This is a simplified implementation - in practice, you might
-        # need more sophisticated loop handling
+        # Initialize graph builder
+        builder = GraphBuilder("ScenarioFour_Graph")
 
-        current_state = initial_state
+        # Add nodes with configuration
+        node_config = self.config.get("node_config", {})
 
-        # Run initial extraction
-        current_state = self._run_initial_extraction(current_state)
+        builder.add_node("image_tag_extractor", ImageTagExtractorNode(
+            model=node_config.get("extractor_model", "google/gemini-flash-1.5")
+        ))
 
-        # Run refinement iterations
-        current_state = self._run_refinement_loop(current_state)
+        builder.add_node("conversation_refiner", ConversationRefinerNode(
+            model=node_config.get("refiner_model", "google/gemini-flash-1.5"),
+            max_iterations=node_config.get("max_iterations", 3),
+            convergence_threshold=node_config.get("convergence_threshold", 0.1)
+        ))
 
-        # Run final translation
-        final_state = self._run_translation(current_state)
+        builder.add_node("translator", TranslatorNode(
+            model=node_config.get("translation_model", "google/gemini-flash-1.5"),
+            target_language=node_config.get("target_language", "Persian")
+        ))
 
+        # Add edges to create the workflow
+        builder.add_edge("image_tag_extractor", "conversation_refiner")
+        builder.add_edge("conversation_refiner", "translator")
+
+        # Set entry point
+        builder.set_entry_point("image_tag_extractor")
+
+        # Build and store the graph
+        self.graph = builder.build()
+
+        self.logger.info("Successfully built Scenario Four workflow graph")
+        return self.graph
+
+    def execute(self, image_url: str, initial_state: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Execute Scenario Four workflow.
+
+        Args:
+            image_url: URL or data URI of image to analyze
+            initial_state: Optional initial state data
+
+        Returns:
+            Complete workflow execution results
+        """
+        self.logger.info(f"Executing Scenario Four for image: {image_url[:50]}...")
+
+        try:
+            # Build graph if not already built
+            if not self.graph:
+                self.build_graph()
+
+            # Initialize state
+            state_manager = StateManager()
+
+            # Prepare initial state
+            init_state = {
+                "image_url": image_url,
+                "scenario": "scenario_four",
+                "config": self.config
+            }
+
+            # Add any provided initial state
+            if initial_state:
+                init_state.update(initial_state)
+
+            state_manager.initialize_state(init_state)
+
+            # Execute the workflow
+            self.logger.info("Starting workflow execution...")
+            final_state = self.graph.invoke(state_manager)
+
+            # Extract results
+            results = final_state.get_full_state()
+
+            # Add execution metadata
+            convergence_info = results.get("conversation_tags", {}).get("convergence_info", {})
+
+            results["execution_info"] = {
+                "scenario": "scenario_four",
+                "workflow": "extract → iterative_refinement → translate",
+                "nodes_executed": ["image_tag_extractor", "conversation_refiner", "translator"],
+                "refinement_iterations": convergence_info.get("iterations_used", 0),
+                "converged_early": convergence_info.get("converged_early", False),
+                "success": True
+            }
+
+            self.logger.info("Scenario Four execution completed successfully")
+            self._log_execution_summary(results)
+
+            return results
+
+        except Exception as e:
+            self.logger.error(f"Error executing Scenario Four: {str(e)}")
+
+            # Return error result
+            error_result = {
+                "error": str(e),
+                "scenario": "scenario_four",
+                "image_url": image_url,
+                "execution_info": {
+                    "scenario": "scenario_four",
+                    "success": False,
+                    "error": str(e)
+                }
+            }
+
+            return error_result
+
+    def _log_execution_summary(self, results: Dict[str, Any]) -> None:
+        """Log a summary of execution results."""
+
+        exec_info = results.get("execution_info", {})
+
+        # Log refinement statistics
+        iterations = exec_info.get("refinement_iterations", 0)
+        converged = exec_info.get("converged_early", False)
+
+        self.logger.info(f"Conversation refinement: {iterations} iterations")
+        self.logger.info(f"Early convergence: {converged}")
+
+        # Log conversation history
+        if "conversation_history" in results:
+            history = results["conversation_history"]
+            successful_iterations = len([h for h in history if "error" not in h])
+
+            self.logger.info(f"Successful refinement iterations: {successful_iterations}")
+
+            # Log confidence improvements
+            total_confidence_change = sum(
+                h.get("confidence_improvement", 0) for h in history
+            )
+
+            if total_confidence_change != 0:
+                self.logger.info(f"Total confidence improvement: {total_confidence_change:+.3f}")
+
+        # Log final results
+        if "conversation_tags" in results:
+            conversation_data = results["conversation_tags"]
+            entities_count = len(conversation_data.get("entities", []))
+            categories_count = len(conversation_data.get("categories", []))
+
+            self.logger.info(f"Final refined results: {entities_count} entities, {categories_count} categories")
+
+        # Log translation results
+        if "persian_output" in results:
+            persian_data = results["persian_output"]
+            persian_entities = len(persian_data.get("entities", []))
+
+            self.logger.info(f"Persian translation: {persian_entities} entities")
+
+    def get_scenario_info(self) -> Dict[str, Any]:
+        """
+        Get information about this scenario.
+
+        Returns:
+            Scenario description and capabilities
+        """
         return {
-            "scenario": "scenario_four",
-            "execution_summary": self.state_manager.get_execution_summary(),
-            "results": {
-                "initial_tags": final_state.get("image_tags", {}),
-                "iteration_history": final_state.get("iteration_history", []),
-                "final_refined_tags": final_state.get("refined_tags", {}),
-                "translated_tags": final_state.get("translated_tags", {}),
-                "total_iterations": final_state.get("refinement_iteration", 0),
-            },
-            "english_output": final_state.get("refined_tags", {}),
-            "persian_output": final_state.get("translated_tags", {}),
-            "convergence_info": {
-                "iterations_used": final_state.get("refinement_iteration", 0),
-                "max_iterations": self.max_iterations,
-                "converged_early": final_state.get("refinement_iteration", 0)
-                < self.max_iterations,
-            },
+            "name": "Scenario Four",
+            "description": "Highest accuracy through iterative conversation refinement",
+            "workflow": [
+                "Initial Image Tag Extraction",
+                "Iterative Conversation Refinement",
+                "Translation to Target Language"
+            ],
+            "strengths": [
+                "Highest possible accuracy",
+                "Self-improving through iterations",
+                "Adaptive convergence detection",
+                "Detailed refinement tracking"
+            ],
+            "use_cases": [
+                "Maximum accuracy requirements",
+                "Research and analysis",
+                "Quality benchmarking",
+                "Model evaluation"
+            ],
+            "estimated_time": "60-180 seconds",
+            "model_calls": "4-10 (depends on convergence)"
         }
-
-    def _run_initial_extraction(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Run initial tag extraction."""
-        extractor = ImageTagExtractorNode("initial_extraction")
-        return extractor.run(state)
-
-    def _run_refinement_loop(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Run the refinement loop."""
-        refiner = ConversationRefinerNode(
-            "conversation_refiner", {"max_iterations": self.max_iterations}
-        )
-
-        current_state = state.copy()
-        current_state["previous_tags"] = current_state.get("image_tags", {})
-
-        # Run refinement iterations
-        for iteration in range(self.max_iterations):
-            current_state["refinement_iteration"] = iteration
-            refined_state = refiner.run(current_state)
-
-            # Check if we should continue
-            if not refined_state.get("should_continue_refinement", False):
-                break
-
-            # Prepare for next iteration
-            current_state = refined_state
-
-        return refined_state
-
-    def _run_translation(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Run final translation."""
-        translator = TranslatorNode("translate_final", {"input_key": "refined_tags"})
-        return translator.run(state)

@@ -1,0 +1,781 @@
+{
+  "metadata": {
+    "vision_model": "mistralai/mistral-small-3.1-24b-instruct:free",
+    "provider": "openrouter",
+    "sample_path": "../data/processed/Ground_Truth_first10.json",
+    "sample_size": 10,
+    "execution_time": 117.75,
+    "timestamp": "2025-10-31T16:27:29.483372",
+    "successful_predictions": 10,
+    "failed_predictions": 0
+  },
+  "products": [
+    {
+      "index": 1,
+      "image_url": "https://image.torob.com/base/images/ST/V0/STV0N9liwgLNmi27.jpg",
+      "ground_truth_count": 6
+    },
+    {
+      "index": 2,
+      "image_url": "https://image.torob.com/base/images/P-/f_/P-f_QMAfF6u30BQF.jpg",
+      "ground_truth_count": 7
+    },
+    {
+      "index": 3,
+      "image_url": "https://image.torob.com/base/images/Ls/z7/Lsz71VTLh8xUdBLL.jpg",
+      "ground_truth_count": 6
+    },
+    {
+      "index": 4,
+      "image_url": "https://image.torob.com/base/images/30/Ys/30YsoRxuA-XTNz4B.jpg",
+      "ground_truth_count": 6
+    },
+    {
+      "index": 5,
+      "image_url": "https://image.torob.com/base/images/vL/0p/vL0p1KbGJsZetff_.jpg",
+      "ground_truth_count": 6
+    },
+    {
+      "index": 6,
+      "image_url": "https://image.torob.com/base/images/Gl/tN/GltNtC2yOfGRKI0h.jpg",
+      "ground_truth_count": 6
+    },
+    {
+      "index": 7,
+      "image_url": "https://image.torob.com/base/images/be/5o/be5ohjwwQfN856Xu.jpg",
+      "ground_truth_count": 7
+    },
+    {
+      "index": 8,
+      "image_url": "https://image.torob.com/base/images/Xo/fu/XofuFjYa8ntWiFiQ.jpg",
+      "ground_truth_count": 5
+    },
+    {
+      "index": 9,
+      "image_url": "https://image.torob.com/base/images/Tn/Oc/TnOcyt0Kbulemoa2.jpg",
+      "ground_truth_count": 6
+    },
+    {
+      "index": 10,
+      "image_url": "https://image.torob.com/base/images/47/ZT/47ZT57zAOfQ_3-xO.jpg",
+      "ground_truth_count": 7
+    }
+  ],
+  "predictions": [
+    [
+      {
+        "name": "Brand",
+        "values": [
+          "Freedom"
+        ]
+      },
+      {
+        "name": "Product Type",
+        "values": [
+          "Boxer Briefs"
+        ]
+      },
+      {
+        "name": "Colors",
+        "values": [
+          "Black",
+          "Grey",
+          "Green"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "clothing_item",
+        "values": [
+          "blouse",
+          "shirt",
+          "top"
+        ]
+      },
+      {
+        "name": "color",
+        "values": [
+          "gray",
+          "black"
+        ]
+      },
+      {
+        "name": "style",
+        "values": [
+          "v-neck",
+          "collared"
+        ]
+      },
+      {
+        "name": "material",
+        "values": [
+          "fabric"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Product Type",
+        "values": [
+          "Swimsuit"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "Maroon",
+          "Dark Burgundy"
+        ]
+      },
+      {
+        "name": "Design",
+        "values": [
+          "Cross-back",
+          "High-waisted bottom",
+          "Skirted top"
+        ]
+      },
+      {
+        "name": "Accessories",
+        "values": [
+          "Bracelet"
+        ]
+      },
+      {
+        "name": "Additional Items",
+        "values": [
+          "Dried flowers",
+          "Picture frame"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "watch_brand",
+        "values": [
+          "Hublot"
+        ]
+      },
+      {
+        "name": "watch_model",
+        "values": [
+          "Big Bang"
+        ]
+      },
+      {
+        "name": "watch_color",
+        "values": [
+          "blue",
+          "teal"
+        ]
+      },
+      {
+        "name": "watch_features",
+        "values": [
+          "chronograph",
+          "sporty design"
+        ]
+      },
+      {
+        "name": "additional_objects",
+        "values": [
+          "cotton swabs"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Clothing",
+        "values": [
+          "Hijab",
+          "Long-sleeve top"
+        ]
+      },
+      {
+        "name": "Accessories",
+        "values": [
+          "Handbag",
+          "Watch",
+          "Ring"
+        ]
+      },
+      {
+        "name": "Patterns and Designs",
+        "values": [
+          "Floral",
+          "Gucci pattern"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Text",
+        "values": [
+          "NACTION",
+          "Life is a song... sing it! Life is a struggle... accept it! Life is a joke... make it! Life is life... fight for it!"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "peach"
+        ]
+      },
+      {
+        "name": "Design Elements",
+        "values": [
+          "three faces with different colored hats and glasses"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Brand",
+        "values": [
+          "New Balance"
+        ]
+      },
+      {
+        "name": "Model",
+        "values": [
+          "990"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "Black"
+        ]
+      },
+      {
+        "name": "Store",
+        "values": [
+          "Tabriz poush"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Magazine",
+        "values": [
+          "Vogue"
+        ]
+      },
+      {
+        "name": "Patterns",
+        "values": [
+          "leopard print",
+          "leopard spots"
+        ]
+      },
+      {
+        "name": "Clothing Items",
+        "values": [
+          "dress",
+          "sleeves"
+        ]
+      },
+      {
+        "name": "Colors",
+        "values": [
+          "black",
+          "white",
+          "brown"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "color",
+        "values": [
+          "black"
+        ]
+      },
+      {
+        "name": "type",
+        "values": [
+          "pants"
+        ]
+      },
+      {
+        "name": "style",
+        "values": [
+          "cropped",
+          "straight leg"
+        ]
+      },
+      {
+        "name": "material",
+        "values": [
+          "fabric"
+        ]
+      },
+      {
+        "name": "features",
+        "values": [
+          "side pockets",
+          "elastic waistband"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Brand",
+        "values": [
+          "BAGI"
+        ]
+      },
+      {
+        "name": "Material",
+        "values": [
+          "Beaded"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "Black"
+        ]
+      },
+      {
+        "name": "Type",
+        "values": [
+          "Handbag"
+        ]
+      },
+      {
+        "name": "Features",
+        "values": [
+          "Handle",
+          "Clasp closure"
+        ]
+      }
+    ]
+  ],
+  "ground_truths": [
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "باکسر بریفز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "خاکستری",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "فریدوم"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کمربند الاستیک"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "بلوز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "خاکستری"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "استاین"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بلند"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "V شکل"
+        ]
+      },
+      {
+        "name": "ویژگیهای سبک",
+        "values": [
+          "دکمه دار"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "مایو"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "بورگوندی",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "نایلون",
+          "اسپاندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "گردنبند",
+          "پیشکش بلند",
+          "چین‌دار"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت شده"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "ساعت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی",
+          "سبز دودی",
+          "مشکی",
+          "قرمز",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "فلز",
+          "لاستیک"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "کرونوگراف",
+          "آنالوگ"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "صفحه نمایش‌های متعدد",
+          "گردنه پیچشی",
+          "دکمه‌های فشاری"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "چندرنگ"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گلدار",
+          "مونوگرام"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "بسته‌شونده با قفل فلپ",
+          "دست‌گیر"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "گوچی"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تی‌شرت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "چاپی"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "کوتاه"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "چیره"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کفش ورزشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم",
+          "مصنوعی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "برنده با فینگر کش",
+          "نوک گرد"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "نیو بالانس"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "زیره متناوب",
+          "لوگوی برند"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "قهوه‌ای",
+          "سفید"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "زبرا"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی‌آستین"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت‌شده"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "شلوار"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلی‌استر",
+          "اسپ‌اندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "شکل",
+        "values": [
+          "لاغر"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "کمربند انعطاف‌پذیر"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "دانه‌دار"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "سوراخ‌دار"
+        ]
+      },
+      {
+        "name": "نوع دسته",
+        "values": [
+          "دو دسته‌ای"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "BEGA"
+        ]
+      },
+      {
+        "name": "نوع بست",
+        "values": [
+          "چرخشی"
+        ]
+      }
+    ]
+  ],
+  "performance": {
+    "total_products": 10,
+    "successful_predictions": 10,
+    "failed_predictions": 0,
+    "success_rate": 100.0,
+    "avg_time_per_product": 11.78
+  }
+}

@@ -1,191 +1,383 @@
 """
-Merger node for combining multiple tag extraction results.
+Merger node for combining multiple extraction results.
 
-This node merges tag results from different sources (caption-based,
-image-based) and creates a unified output.
+Intelligently merges results from different extraction nodes while
+removing duplicates and maintaining quality scores.
 """
 
-from typing import Any, Dict, List
+from typing import Dict, Any, List, Set
 from ..core.base_node import BaseNode
 
 
 class MergerNode(BaseNode):
     """
-    Node that merges multiple tag extraction results into a unified output.
+    Node that merges multiple extraction results into a unified output.
 
-    Input state keys:
-        - tags_from_caption: Tags extracted from caption (optional)
-        - image_tags: Tags extracted directly from image (optional)
-        - parallel_results: List of parallel extraction results (optional)
-
-    Output state keys:
-        - merged_tags: Combined and deduplicated tags
-        - merge_summary: Summary of merge process
+    Combines results from different extraction nodes (caption-based, image-based)
+    while handling duplicates and maintaining quality metrics.
     """
 
-    def __init__(self, name: str = "merger", config: Dict[str, Any] = None):
+    def __init__(self, confidence_threshold: float = 0.5):
         """
         Initialize the merger node.
 
         Args:
-            name: Node identifier
-            config: Optional configuration
+            confidence_threshold: Minimum confidence score to include entities
         """
-        super().__init__(name, config)
-        self.merge_strategy = self.config.get(
-            "strategy", "union"
-        )  # union, intersection
-        self.deduplicate = self.config.get("deduplicate", True)
+        super().__init__("Merger")
+        self.confidence_threshold = confidence_threshold
 
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Merge multiple tag extraction results.
+        Merge multiple extraction results in the state.
 
         Args:
-            state: Current workflow state
+            state: Workflow state containing multiple extraction results
 
         Returns:
-            Updated state with merged tags
+            Updated state with merged results
         """
-        self.log_execution("Starting tag merge process")
+        # Find all extraction results to merge
+        extraction_sources = self._find_extraction_sources(state)
 
-        # Collect all available tag sources
-        tag_sources = []
-        source_info = []
-
-        # Check for caption-based tags
-        if "tags_from_caption" in state and state["tags_from_caption"]:
-            tag_sources.append(state["tags_from_caption"])
-            source_info.append("caption")
-
-        # Check for image-based tags
-        if "image_tags" in state and state["image_tags"]:
-            tag_sources.append(state["image_tags"])
-            source_info.append("image")
-
-        # Check for parallel results
-        if "parallel_results" in state and state["parallel_results"]:
-            for i, result in enumerate(state["parallel_results"]):
-                if result:
-                    tag_sources.append(result)
-                    source_info.append(f"parallel_{i}")
-
-        if not tag_sources:
-            self.log_execution("No tag sources found for merging", "warning")
-            return {
-                **state,
-                "merged_tags": {"entities": []},
-                "merge_summary": {"sources": 0, "total_entities": 0},
-                "step_count": state.get("step_count", 0) + 1,
-            }
-
-        self.log_execution(f"Merging {len(tag_sources)} tag sources: {source_info}")
-
-        try:
-            merged_result = self._merge_tag_sources(tag_sources)
-
-            summary = {
-                "sources": len(tag_sources),
-                "source_types": source_info,
-                "total_entities": len(merged_result.get("entities", [])),
-                "strategy": self.merge_strategy,
-            }
-
-            self.log_execution(f"Merge completed: {summary['total_entities']} entities")
-
-            return {
-                **state,
-                "merged_tags": merged_result,
-                "final_merged_tags": merged_result,  # Alias for compatibility
-                "merge_summary": summary,
-                "step_count": state.get("step_count", 0) + 1,
-            }
-
-        except Exception as e:
-            self.log_execution(f"Error merging tags: {str(e)}", "error")
-            return {
-                **state,
-                "merged_tags": {"entities": []},
-                "merge_error": str(e),
-                "step_count": state.get("step_count", 0) + 1,
-            }
-
-    def _merge_tag_sources(self, sources: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Merge multiple tag sources using configured strategy.
-
-        Args:
-            sources: List of tag dictionaries to merge
-
-        Returns:
-            Merged tag dictionary
-        """
-        if self.merge_strategy == "union":
-            return self._union_merge(sources)
-        elif self.merge_strategy == "intersection":
-            return self._intersection_merge(sources)
+        if len(extraction_sources) < 2:
+            self.logger.warning(f"Found only {len(extraction_sources)} sources to merge")
+            if len(extraction_sources) == 1:
+                # Just pass through the single source
+                source_name, source_data = next(iter(extraction_sources.items()))
+                merged_result = source_data.copy()
+                merged_result["merged_from"] = [source_name]
+                merged_result["merged_by"] = self.node_name
+            else:
+                # No sources found
+                merged_result = self._create_empty_result()
         else:
-            return self._union_merge(sources)  # Default fallback
+            # Perform the merge
+            self.logger.info(f"Merging results from {len(extraction_sources)} sources: {list(extraction_sources.keys())}")
+            merged_result = self._merge_extraction_results(extraction_sources)
 
-    def _union_merge(self, sources: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Union merge strategy - combine all unique entities."""
-        merged_entities = {}
+        # Update state
+        updated_state = state.copy()
+        updated_state["merged_tags"] = merged_result
 
-        for source in sources:
-            entities = source.get("entities", [])
+        # Log merge statistics
+        self._log_merge_statistics(merged_result, extraction_sources)
+
+        return updated_state
+
+    def _find_extraction_sources(self, state: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+        """Find all extraction results that can be merged."""
+        possible_sources = [
+            "extracted_tags",      # From TagExtractorNode
+            "image_tags",          # From ImageTagExtractorNode
+            "refined_tags",        # From RefinerNode
+            "conversation_tags"    # From ConversationRefinerNode
+        ]
+
+        found_sources = {}
+
+        for source_name in possible_sources:
+            if source_name in state and isinstance(state[source_name], dict):
+                source_data = state[source_name]
+
+                # Validate that it has mergeable content
+                if self._is_mergeable_content(source_data):
+                    found_sources[source_name] = source_data
+                    self.logger.debug(f"Found mergeable source: {source_name}")
+
+        return found_sources
+
+    def _is_mergeable_content(self, content: Dict[str, Any]) -> bool:
+        """Check if content has fields that can be merged."""
+        required_fields = ["entities", "categories"]
+        return any(field in content and content[field] for field in required_fields)
+
+    def _merge_extraction_results(self, sources: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+        """Merge multiple extraction results intelligently."""
+        merged_result = {
+            "entities": [],
+            "categories": [],
+            "keywords": [],
+            "attributes": {},
+            "visual_attributes": {},
+            "summary": "",
+            "merged_from": list(sources.keys()),
+            "merged_by": self.node_name,
+            "merge_statistics": {}
+        }
+
+        # Merge entities with deduplication
+        merged_result["entities"] = self._merge_entities(sources)
+
+        # Merge categories with deduplication
+        merged_result["categories"] = self._merge_categories(sources)
+
+        # Merge keywords
+        merged_result["keywords"] = self._merge_keywords(sources)
+
+        # Merge attributes
+        merged_result["attributes"] = self._merge_attributes(sources, "attributes")
+        merged_result["visual_attributes"] = self._merge_attributes(sources, "visual_attributes")
+
+        # Create comprehensive summary
+        merged_result["summary"] = self._merge_summaries(sources)
+
+        # Add merge statistics
+        merged_result["merge_statistics"] = self._calculate_merge_statistics(sources, merged_result)
+
+        return merged_result
+
+    def _merge_entities(self, sources: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Merge entities from multiple sources with deduplication."""
+        entity_groups = {}  # Group similar entities
+
+        for source_name, source_data in sources.items():
+            entities = source_data.get("entities", [])
+
             for entity in entities:
-                name = entity.get("name", "")
-                values = entity.get("values", [])
+                if not isinstance(entity, dict) or "name" not in entity:
+                    continue
 
-                if name not in merged_entities:
-                    merged_entities[name] = set()
+                # Skip low-confidence entities
+                confidence = entity.get("confidence", 0.8)
+                if confidence < self.confidence_threshold:
+                    continue
 
-                merged_entities[name].update(values)
+                # Create entity key for grouping
+                entity_key = self._create_entity_key(entity)
 
-        # Convert back to list format
-        result_entities = [
-            {"name": name, "values": list(values)}
-            for name, values in merged_entities.items()
-        ]
+                if entity_key not in entity_groups:
+                    entity_groups[entity_key] = {
+                        "entities": [],
+                        "sources": []
+                    }
 
-        return {"entities": result_entities}
+                entity_groups[entity_key]["entities"].append(entity)
+                entity_groups[entity_key]["sources"].append(source_name)
 
-    def _intersection_merge(self, sources: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Intersection merge strategy - only keep common entities."""
-        if not sources:
-            return {"entities": []}
+        # Create merged entities from groups
+        merged_entities = []
 
-        # Start with first source
-        common_entities = {}
-        first_source = sources[0].get("entities", [])
+        for entity_key, group_data in entity_groups.items():
+            merged_entity = self._merge_entity_group(group_data["entities"], group_data["sources"])
+            merged_entities.append(merged_entity)
 
-        for entity in first_source:
-            name = entity.get("name", "")
-            values = set(entity.get("values", []))
-            common_entities[name] = values
+        # Sort by confidence
+        merged_entities.sort(key=lambda x: x.get("confidence", 0), reverse=True)
 
-        # Intersect with remaining sources
-        for source in sources[1:]:
-            source_entities = {}
-            for entity in source.get("entities", []):
-                name = entity.get("name", "")
-                values = set(entity.get("values", []))
-                source_entities[name] = values
+        return merged_entities
 
-            # Keep only common entity names and intersect values
-            new_common = {}
-            for name in common_entities:
-                if name in source_entities:
-                    new_common[name] = common_entities[name].intersection(
-                        source_entities[name]
-                    )
-            common_entities = new_common
+    def _create_entity_key(self, entity: Dict[str, Any]) -> str:
+        """Create a key for entity grouping (handles similar entities)."""
+        name = entity["name"].lower().strip()
+        entity_type = entity.get("type", "unknown").lower()
 
-        # Convert back to list format
-        result_entities = [
-            {"name": name, "values": list(values)}
-            for name, values in common_entities.items()
-            if values  # Only include non-empty intersections
-        ]
+        # Simple similarity - could be enhanced with fuzzy matching
+        return f"{name}_{entity_type}"
 
-        return {"entities": result_entities}
+    def _merge_entity_group(self, entities: List[Dict[str, Any]], sources: List[str]) -> Dict[str, Any]:
+        """Merge a group of similar entities into one."""
+        # Use the entity with highest confidence as base
+        base_entity = max(entities, key=lambda x: x.get("confidence", 0))
+
+        merged_entity = {
+            "name": base_entity["name"],
+            "type": base_entity.get("type", "unknown"),
+            "confidence": self._calculate_merged_confidence(entities),
+            "context": self._merge_entity_contexts(entities),
+            "attributes": self._merge_entity_attributes(entities),
+            "sources": sources,
+            "source_count": len(set(sources))
+        }
+
+        return merged_entity
+
+    def _calculate_merged_confidence(self, entities: List[Dict[str, Any]]) -> float:
+        """Calculate confidence for merged entity."""
+        confidences = [entity.get("confidence", 0.8) for entity in entities]
+
+        # Weighted average with boost for multiple sources
+        avg_confidence = sum(confidences) / len(confidences)
+        source_boost = min(0.1 * (len(entities) - 1), 0.2)  # Up to 0.2 boost
+
+        return min(avg_confidence + source_boost, 1.0)
+
+    def _merge_entity_contexts(self, entities: List[Dict[str, Any]]) -> str:
+        """Merge context information from multiple entities."""
+        contexts = [entity.get("context", "") for entity in entities if entity.get("context")]
+
+        # Remove duplicates and combine
+        unique_contexts = []
+        seen = set()
+
+        for context in contexts:
+            context_lower = context.lower().strip()
+            if context_lower and context_lower not in seen:
+                unique_contexts.append(context)
+                seen.add(context_lower)
+
+        return ". ".join(unique_contexts)
+
+    def _merge_entity_attributes(self, entities: List[Dict[str, Any]]) -> List[str]:
+        """Merge attributes from multiple entities."""
+        all_attributes = set()
+
+        for entity in entities:
+            attributes = entity.get("attributes", [])
+            if isinstance(attributes, list):
+                all_attributes.update(attributes)
+
+        return list(all_attributes)
+
+    def _merge_categories(self, sources: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Merge categories from multiple sources."""
+        category_groups = {}
+
+        for source_name, source_data in sources.items():
+            categories = source_data.get("categories", [])
+
+            for category in categories:
+                if not isinstance(category, dict) or "name" not in category:
+                    continue
+
+                category_name = category["name"].lower().strip()
+
+                if category_name not in category_groups:
+                    category_groups[category_name] = {
+                        "categories": [],
+                        "sources": []
+                    }
+
+                category_groups[category_name]["categories"].append(category)
+                category_groups[category_name]["sources"].append(source_name)
+
+        # Merge category groups
+        merged_categories = []
+
+        for category_name, group_data in category_groups.items():
+            merged_category = self._merge_category_group(group_data["categories"], group_data["sources"])
+            merged_categories.append(merged_category)
+
+        # Sort by confidence
+        merged_categories.sort(key=lambda x: x.get("confidence", 0), reverse=True)
+
+        return merged_categories
+
+    def _merge_category_group(self, categories: List[Dict[str, Any]], sources: List[str]) -> Dict[str, Any]:
+        """Merge a group of similar categories."""
+        base_category = max(categories, key=lambda x: x.get("confidence", 0))
+
+        merged_category = {
+            "name": base_category["name"],
+            "level": base_category.get("level", "main"),
+            "confidence": self._calculate_merged_confidence(categories),
+            "reasoning": self._merge_category_reasoning(categories),
+            "sources": sources,
+            "source_count": len(set(sources))
+        }
+
+        return merged_category
+
+    def _merge_category_reasoning(self, categories: List[Dict[str, Any]]) -> str:
+        """Merge reasoning from multiple categories."""
+        reasonings = [cat.get("reasoning", "") for cat in categories if cat.get("reasoning")]
+
+        # Take the most detailed reasoning
+        return max(reasonings, key=len) if reasonings else ""
+
+    def _merge_keywords(self, sources: Dict[str, Dict[str, Any]]) -> List[str]:
+        """Merge keywords from all sources."""
+        all_keywords = set()
+
+        for source_data in sources.values():
+            keywords = source_data.get("keywords", [])
+            if isinstance(keywords, list):
+                all_keywords.update(kw.lower().strip() for kw in keywords if kw)
+
+        return sorted(list(all_keywords))
+
+    def _merge_attributes(self, sources: Dict[str, Dict[str, Any]], attr_field: str) -> Dict[str, List[str]]:
+        """Merge attributes from all sources."""
+        merged_attrs = {}
+
+        for source_data in sources.values():
+            attributes = source_data.get(attr_field, {})
+            if isinstance(attributes, dict):
+                for attr_key, attr_values in attributes.items():
+                    if attr_key not in merged_attrs:
+                        merged_attrs[attr_key] = set()
+
+                    if isinstance(attr_values, list):
+                        merged_attrs[attr_key].update(v.lower().strip() for v in attr_values if v)
+                    elif attr_values:
+                        merged_attrs[attr_key].add(str(attr_values).lower().strip())
+
+        # Convert sets back to sorted lists
+        return {key: sorted(list(values)) for key, values in merged_attrs.items()}
+
+    def _merge_summaries(self, sources: Dict[str, Dict[str, Any]]) -> str:
+        """Create a comprehensive summary from all sources."""
+        summaries = []
+
+        for source_name, source_data in sources.items():
+            summary = source_data.get("summary", "")
+            if summary and summary.strip():
+                summaries.append(f"[{source_name}] {summary.strip()}")
+
+        return " | ".join(summaries)
+
+    def _calculate_merge_statistics(self, sources: Dict[str, Dict[str, Any]], merged_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Calculate statistics about the merge operation."""
+        stats = {
+            "sources_merged": len(sources),
+            "total_entities_input": 0,
+            "total_categories_input": 0,
+            "entities_output": len(merged_result.get("entities", [])),
+            "categories_output": len(merged_result.get("categories", [])),
+            "deduplication_ratio": 0.0
+        }
+
+        # Count input items
+        for source_data in sources.values():
+            stats["total_entities_input"] += len(source_data.get("entities", []))
+            stats["total_categories_input"] += len(source_data.get("categories", []))
+
+        # Calculate deduplication effectiveness
+        total_input = stats["total_entities_input"] + stats["total_categories_input"]
+        total_output = stats["entities_output"] + stats["categories_output"]
+
+        if total_input > 0:
+            stats["deduplication_ratio"] = 1.0 - (total_output / total_input)
+
+        return stats
+
+    def _create_empty_result(self) -> Dict[str, Any]:
+        """Create an empty merge result."""
+        return {
+            "entities": [],
+            "categories": [],
+            "keywords": [],
+            "attributes": {},
+            "visual_attributes": {},
+            "summary": "",
+            "merged_from": [],
+            "merged_by": self.node_name,
+            "merge_statistics": {
+                "sources_merged": 0,
+                "total_entities_input": 0,
+                "total_categories_input": 0,
+                "entities_output": 0,
+                "categories_output": 0,
+                "deduplication_ratio": 0.0
+            }
+        }
+
+    def _log_merge_statistics(self, merged_result: Dict[str, Any], sources: Dict[str, Dict[str, Any]]) -> None:
+        """Log statistics about the merge operation."""
+        stats = merged_result.get("merge_statistics", {})
+
+        self.logger.info("Merge operation completed:")
+        self.logger.info(f"  Sources merged: {stats.get('sources_merged', 0)}")
+        self.logger.info(f"  Entities: {stats.get('total_entities_input', 0)} → {stats.get('entities_output', 0)}")
+        self.logger.info(f"  Categories: {stats.get('total_categories_input', 0)} → {stats.get('categories_output', 0)}")
+        self.logger.info(f"  Deduplication ratio: {stats.get('deduplication_ratio', 0.0):.2%}")

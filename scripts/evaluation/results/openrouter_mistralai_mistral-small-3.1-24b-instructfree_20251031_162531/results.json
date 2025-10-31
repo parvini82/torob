@@ -1,0 +1,798 @@
+[
+  {
+    "index": 1,
+    "image_url": "https://image.torob.com/base/images/ST/V0/STV0N9liwgLNmi27.jpg",
+    "predictions": [
+      {
+        "name": "Brand",
+        "values": [
+          "Freedom"
+        ]
+      },
+      {
+        "name": "Product Type",
+        "values": [
+          "Boxer Briefs"
+        ]
+      },
+      {
+        "name": "Colors",
+        "values": [
+          "Black",
+          "Grey",
+          "Green"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "باکسر بریفز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "خاکستری",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "فریدوم"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کمربند الاستیک"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 8.42,
+    "timestamp": "2025-10-31T16:25:40.150598",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 2,
+    "image_url": "https://image.torob.com/base/images/P-/f_/P-f_QMAfF6u30BQF.jpg",
+    "predictions": [
+      {
+        "name": "clothing_item",
+        "values": [
+          "blouse",
+          "shirt",
+          "top"
+        ]
+      },
+      {
+        "name": "color",
+        "values": [
+          "gray",
+          "black"
+        ]
+      },
+      {
+        "name": "style",
+        "values": [
+          "v-neck",
+          "collared"
+        ]
+      },
+      {
+        "name": "material",
+        "values": [
+          "fabric"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "بلوز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "خاکستری"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "استاین"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بلند"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "V شکل"
+        ]
+      },
+      {
+        "name": "ویژگیهای سبک",
+        "values": [
+          "دکمه دار"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 9.89,
+    "timestamp": "2025-10-31T16:25:50.045957",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 3,
+    "image_url": "https://image.torob.com/base/images/Ls/z7/Lsz71VTLh8xUdBLL.jpg",
+    "predictions": [
+      {
+        "name": "Product Type",
+        "values": [
+          "Swimsuit"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "Maroon",
+          "Dark Burgundy"
+        ]
+      },
+      {
+        "name": "Design",
+        "values": [
+          "Cross-back",
+          "High-waisted bottom",
+          "Skirted top"
+        ]
+      },
+      {
+        "name": "Accessories",
+        "values": [
+          "Bracelet"
+        ]
+      },
+      {
+        "name": "Additional Items",
+        "values": [
+          "Dried flowers",
+          "Picture frame"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "مایو"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "بورگوندی",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "نایلون",
+          "اسپاندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "گردنبند",
+          "پیشکش بلند",
+          "چین‌دار"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت شده"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 22.87,
+    "timestamp": "2025-10-31T16:26:12.914857",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 4,
+    "image_url": "https://image.torob.com/base/images/30/Ys/30YsoRxuA-XTNz4B.jpg",
+    "predictions": [
+      {
+        "name": "watch_brand",
+        "values": [
+          "Hublot"
+        ]
+      },
+      {
+        "name": "watch_model",
+        "values": [
+          "Big Bang"
+        ]
+      },
+      {
+        "name": "watch_color",
+        "values": [
+          "blue",
+          "teal"
+        ]
+      },
+      {
+        "name": "watch_features",
+        "values": [
+          "chronograph",
+          "sporty design"
+        ]
+      },
+      {
+        "name": "additional_objects",
+        "values": [
+          "cotton swabs"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "ساعت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی",
+          "سبز دودی",
+          "مشکی",
+          "قرمز",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "فلز",
+          "لاستیک"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "کرونوگراف",
+          "آنالوگ"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "صفحه نمایش‌های متعدد",
+          "گردنه پیچشی",
+          "دکمه‌های فشاری"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 12.23,
+    "timestamp": "2025-10-31T16:26:25.144394",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 5,
+    "image_url": "https://image.torob.com/base/images/vL/0p/vL0p1KbGJsZetff_.jpg",
+    "predictions": [
+      {
+        "name": "Clothing",
+        "values": [
+          "Hijab",
+          "Long-sleeve top"
+        ]
+      },
+      {
+        "name": "Accessories",
+        "values": [
+          "Handbag",
+          "Watch",
+          "Ring"
+        ]
+      },
+      {
+        "name": "Patterns and Designs",
+        "values": [
+          "Floral",
+          "Gucci pattern"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "چندرنگ"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گلدار",
+          "مونوگرام"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "بسته‌شونده با قفل فلپ",
+          "دست‌گیر"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "گوچی"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 8.7,
+    "timestamp": "2025-10-31T16:26:33.844444",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 6,
+    "image_url": "https://image.torob.com/base/images/Gl/tN/GltNtC2yOfGRKI0h.jpg",
+    "predictions": [
+      {
+        "name": "Text",
+        "values": [
+          "NACTION",
+          "Life is a song... sing it! Life is a struggle... accept it! Life is a joke... make it! Life is life... fight for it!"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "peach"
+        ]
+      },
+      {
+        "name": "Design Elements",
+        "values": [
+          "three faces with different colored hats and glasses"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تی‌شرت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "چاپی"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "کوتاه"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "چیره"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 10.38,
+    "timestamp": "2025-10-31T16:26:44.230170",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 7,
+    "image_url": "https://image.torob.com/base/images/be/5o/be5ohjwwQfN856Xu.jpg",
+    "predictions": [
+      {
+        "name": "Brand",
+        "values": [
+          "New Balance"
+        ]
+      },
+      {
+        "name": "Model",
+        "values": [
+          "990"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "Black"
+        ]
+      },
+      {
+        "name": "Store",
+        "values": [
+          "Tabriz poush"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کفش ورزشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم",
+          "مصنوعی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "برنده با فینگر کش",
+          "نوک گرد"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "نیو بالانس"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "زیره متناوب",
+          "لوگوی برند"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 12.12,
+    "timestamp": "2025-10-31T16:26:56.358212",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 8,
+    "image_url": "https://image.torob.com/base/images/Xo/fu/XofuFjYa8ntWiFiQ.jpg",
+    "predictions": [
+      {
+        "name": "Magazine",
+        "values": [
+          "Vogue"
+        ]
+      },
+      {
+        "name": "Patterns",
+        "values": [
+          "leopard print",
+          "leopard spots"
+        ]
+      },
+      {
+        "name": "Clothing Items",
+        "values": [
+          "dress",
+          "sleeves"
+        ]
+      },
+      {
+        "name": "Colors",
+        "values": [
+          "black",
+          "white",
+          "brown"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "قهوه‌ای",
+          "سفید"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "زبرا"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی‌آستین"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت‌شده"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 12.32,
+    "timestamp": "2025-10-31T16:27:08.678728",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 9,
+    "image_url": "https://image.torob.com/base/images/Tn/Oc/TnOcyt0Kbulemoa2.jpg",
+    "predictions": [
+      {
+        "name": "color",
+        "values": [
+          "black"
+        ]
+      },
+      {
+        "name": "type",
+        "values": [
+          "pants"
+        ]
+      },
+      {
+        "name": "style",
+        "values": [
+          "cropped",
+          "straight leg"
+        ]
+      },
+      {
+        "name": "material",
+        "values": [
+          "fabric"
+        ]
+      },
+      {
+        "name": "features",
+        "values": [
+          "side pockets",
+          "elastic waistband"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "شلوار"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلی‌استر",
+          "اسپ‌اندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "شکل",
+        "values": [
+          "لاغر"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "کمربند انعطاف‌پذیر"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 11.51,
+    "timestamp": "2025-10-31T16:27:20.195960",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 10,
+    "image_url": "https://image.torob.com/base/images/47/ZT/47ZT57zAOfQ_3-xO.jpg",
+    "predictions": [
+      {
+        "name": "Brand",
+        "values": [
+          "BAGI"
+        ]
+      },
+      {
+        "name": "Material",
+        "values": [
+          "Beaded"
+        ]
+      },
+      {
+        "name": "Color",
+        "values": [
+          "Black"
+        ]
+      },
+      {
+        "name": "Type",
+        "values": [
+          "Handbag"
+        ]
+      },
+      {
+        "name": "Features",
+        "values": [
+          "Handle",
+          "Clasp closure"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "دانه‌دار"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "سوراخ‌دار"
+        ]
+      },
+      {
+        "name": "نوع دسته",
+        "values": [
+          "دو دسته‌ای"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "BEGA"
+        ]
+      },
+      {
+        "name": "نوع بست",
+        "values": [
+          "چرخشی"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 9.28,
+    "timestamp": "2025-10-31T16:27:29.479252",
+    "error": null,
+    "retry_count": 0
+  }
+]

@@ -1,12 +1,18 @@
 """
-Core components for LangGraph v2 modular system.
+Core components for the Workflow v2 system.
 
-This package provides the foundational classes and utilities
-for building extensible workflow graphs.
+This package contains the foundational classes and utilities that power
+the entire workflow orchestration system.
 """
 
 from .base_node import BaseNode
-from .graph_builder import GraphBuilder
 from .state_manager import StateManager
+from .graph_builder import GraphBuilder
+from .logger import WorkflowLogger
 
-__all__ = ["BaseNode", "GraphBuilder", "StateManager"]
+__all__ = [
+    "BaseNode",
+    "StateManager",
+    "GraphBuilder",
+    "WorkflowLogger"
+]
