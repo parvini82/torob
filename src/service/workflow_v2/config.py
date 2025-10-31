@@ -12,7 +12,10 @@ Enhanced with multi-provider model client support.
 import os
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
+from dotenv import load_dotenv
 
+# Load .env file
+load_dotenv()
 
 @dataclass
 class ModelConfig:
@@ -21,7 +24,7 @@ class ModelConfig:
     api_key: Optional[str] = None
     timeout: int = 60
     max_retries: int = 3
-    default_model: str = "google/gemini-flash-1.5"
+    default_model: str = "qwen/qwen2.5-vl-32b-instruct:free"
 
     @classmethod
     def from_env(cls) -> 'ModelConfig':
@@ -31,7 +34,7 @@ class ModelConfig:
             api_key=os.getenv("OPENROUTER_API_KEY") or os.getenv("METIS_API_KEY") or os.getenv("TOGETHER_API_KEY"),
             timeout=int(os.getenv("API_TIMEOUT", "60")),
             max_retries=int(os.getenv("API_MAX_RETRIES", "3")),
-            default_model=os.getenv("DEFAULT_MODEL", "google/gemini-flash-1.5")
+            default_model=os.getenv("DEFAULT_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
         )
 
 
@@ -57,10 +60,6 @@ def get_config() -> WorkflowConfig:
     return WorkflowConfig.from_env()
 
 
-# Model configurations (using same as original)
-# VISION_MODEL = "qwen/qwen2.5-vl-32b-instruct:free",
-# TRANSLATE_MODEL = "qwen/qwen2.5-vl-32b-instruct:free",
-# GENERAL_MODEL = "qwen/qwen2.5-vl-32b-instruct:free",
 
 # Node execution settings
 # DEFAULT_TIMEOUT = 30  # seconds

@@ -61,17 +61,17 @@ class ScenarioThree:
 
         # Add caption generation branch
         builder.add_node("caption_generator", CaptionGeneratorNode(
-            model=node_config.get("caption_model", "google/gemini-flash-1.5")
+            model=node_config.get("caption_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
         builder.add_node("tag_extractor", TagExtractorNode(
-            model=node_config.get("tag_model", "google/gemini-flash-1.5")
+            model=node_config.get("tag_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
         # Add multiple parallel image extractors
         extractor_models = node_config.get("extractor_models", [
-            "google/gemini-flash-1.5",
-            "google/gemini-pro-1.5"
+            "qwen/qwen2.5-vl-32b-instruct:free",
+            "qwen/qwen2.5-vl-32b-instruct:free"
         ])
 
         for i in range(num_parallel_extractors):
@@ -86,7 +86,7 @@ class ScenarioThree:
         ))
 
         builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", "google/gemini-flash-1.5"),
+            model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
             target_language=node_config.get("target_language", "Persian")
         ))
 
@@ -192,8 +192,8 @@ class ScenarioThree:
         # Branch 2: Multiple image extractors
         num_extractors = node_config.get("num_parallel_extractors", 2)
         extractor_models = node_config.get("extractor_models", [
-            "google/gemini-flash-1.5",
-            "google/gemini-pro-1.5"
+            "qwen/qwen2.5-vl-32b-instruct:free",
+            "qwen/qwen2.5-vl-32b-instruct:free"
         ])
 
         parallel_results = []

@@ -8,11 +8,12 @@ the entire workflow orchestration system.
 from .base_node import BaseNode
 from .state_manager import StateManager
 from .graph_builder import GraphBuilder
-from .logger import WorkflowLogger
+from .logger import WorkflowLogger, get_workflow_logger
 
 __all__ = [
     "BaseNode",
     "StateManager",
     "GraphBuilder",
-    "WorkflowLogger"
+    "WorkflowLogger",
+    "get_workflow_logger"
 ]

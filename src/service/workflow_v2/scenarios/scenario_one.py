@@ -8,7 +8,9 @@ Complete workflow with both caption-based and direct image analysis.
 from typing import Dict, Any, Optional
 from langgraph.graph import StateGraph
 
-from ..core import StateManager, GraphBuilder, get_workflow_logger
+from ..core import StateManager, GraphBuilder
+from ..core.logger import get_workflow_logger
+
 from ..nodes import (
     CaptionGeneratorNode,
     TagExtractorNode,
@@ -59,15 +61,15 @@ class ScenarioOne:
         node_config = self.config.get("node_config", {})
 
         builder.add_node("caption_generator", CaptionGeneratorNode(
-            model=node_config.get("caption_model", "google/gemini-flash-1.5")
+            model=node_config.get("caption_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
         builder.add_node("tag_extractor", TagExtractorNode(
-            model=node_config.get("tag_model", "google/gemini-flash-1.5")
+            model=node_config.get("tag_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
         builder.add_node("image_tag_extractor", ImageTagExtractorNode(
-            model=node_config.get("image_model", "google/gemini-flash-1.5")
+            model=node_config.get("image_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
         builder.add_node("merger", MergerNode(
@@ -75,7 +77,7 @@ class ScenarioOne:
         ))
 
         builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", "google/gemini-flash-1.5"),
+            model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
             target_language=node_config.get("target_language", "Persian")
         ))
 
@@ -112,10 +114,6 @@ class ScenarioOne:
             if not self.graph:
                 self.build_graph()
 
-            # Initialize state
-            state_manager = StateManager()
-
-            # Prepare initial state
             init_state = {
                 "image_url": image_url,
                 "scenario": "scenario_one",
@@ -126,14 +124,9 @@ class ScenarioOne:
             if initial_state:
                 init_state.update(initial_state)
 
-            state_manager.initialize_state(init_state)
-
             # Execute the workflow
             self.logger.info("Starting workflow execution...")
-            final_state = self.graph.invoke(state_manager)
-
-            # Extract results
-            results = final_state.get_full_state()
+            results = self.graph.invoke(init_state)
 
             # Add execution metadata
             results["execution_info"] = {

@@ -17,7 +17,7 @@ class ImageTagExtractorNode(BaseNode):
     tags, entities, and categories without intermediate text generation.
     """
 
-    def __init__(self, model: str = "google/gemini-flash-1.5"):
+    def __init__(self, model: str = "qwen/qwen2.5-vl-32b-instruct:free"):
         """
         Initialize the image tag extractor node.
 

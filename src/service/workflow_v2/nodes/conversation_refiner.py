@@ -19,7 +19,7 @@ class ConversationRefinerNode(BaseNode):
     """
 
     def __init__(self,
-                 model: str = "google/gemini-flash-1.5",
+                 model: str = "qwen/qwen2.5-vl-32b-instruct:free",
                  max_iterations: int = 3,
                  convergence_threshold: float = 0.1):
         """

@@ -17,7 +17,7 @@ class CaptionGeneratorNode(BaseNode):
     that can be used by downstream nodes for further analysis.
     """
 
-    def __init__(self, model: str = "google/gemini-flash-1.5"):
+    def __init__(self, model: str = "qwen/qwen2.5-vl-32b-instruct:free"):
         """
         Initialize the caption generator node.
 

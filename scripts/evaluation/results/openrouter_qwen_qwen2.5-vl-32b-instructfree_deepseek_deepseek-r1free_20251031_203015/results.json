@@ -1,0 +1,638 @@
+[
+  {
+    "index": 1,
+    "image_url": "https://image.torob.com/base/images/ST/V0/STV0N9liwgLNmi27.jpg",
+    "predictions": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "شلوارک شورت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "خاکستری",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یک‌دست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "فریدم"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "بند کمر"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "باکسر بریفز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "خاکستری",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "فریدوم"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کمربند الاستیک"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 48.21,
+    "timestamp": "2025-10-31T20:31:04.057973",
+    "error": null,
+    "retry_count": 1
+  },
+  {
+    "index": 2,
+    "image_url": "https://image.torob.com/base/images/P-/f_/P-f_QMAfF6u30BQF.jpg",
+    "predictions": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "بلوز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "خاکستری"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "حریر"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکنواخت"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "آستین بلند"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "یقه V"
+        ]
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "چسبان"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "بلوز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "خاکستری"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "استاین"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بلند"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "V شکل"
+        ]
+      },
+      {
+        "name": "ویژگیهای سبک",
+        "values": [
+          "دکمه دار"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 71.66,
+    "timestamp": "2025-10-31T21:13:54.541243",
+    "error": null,
+    "retry_count": 5
+  },
+  {
+    "index": 3,
+    "image_url": "https://image.torob.com/base/images/Ls/z7/Lsz71VTLh8xUdBLL.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "مایو"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "بورگوندی",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "نایلون",
+          "اسپاندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "گردنبند",
+          "پیشکش بلند",
+          "چین‌دار"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت شده"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 276.26,
+    "timestamp": "2025-10-31T20:35:54.640709",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 4,
+    "image_url": "https://image.torob.com/base/images/30/Ys/30YsoRxuA-XTNz4B.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "ساعت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی",
+          "سبز دودی",
+          "مشکی",
+          "قرمز",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "فلز",
+          "لاستیک"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "کرونوگراف",
+          "آنالوگ"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "صفحه نمایش‌های متعدد",
+          "گردنه پیچشی",
+          "دکمه‌های فشاری"
+        ]
+      }
+    ],
+    "status": "failed",
+    "prediction_time_seconds": 861.76,
+    "timestamp": "2025-10-31T21:28:16.307794",
+    "error": "OpenRouter call failed: OpenRouter HTTP 400: {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"code\\\":400,\\\"msg\\\":\\\"bad request\\\"}\",\"provider_name\":\"AtlasCloud\"}},\"user_id\":\"user_34WRsiXd7nd0WfR5i1UIlNIRiBF\"}",
+    "retry_count": 6
+  },
+  {
+    "index": 5,
+    "image_url": "https://image.torob.com/base/images/vL/0p/vL0p1KbGJsZetff_.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "چندرنگ"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گلدار",
+          "مونوگرام"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "بسته‌شونده با قفل فلپ",
+          "دست‌گیر"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "گوچی"
+        ]
+      }
+    ],
+    "status": "failed",
+    "prediction_time_seconds": 31.26,
+    "timestamp": "2025-10-31T21:28:47.572747",
+    "error": "merge_results_node: 'image_tags_fa' is missing in state",
+    "retry_count": 6
+  },
+  {
+    "index": 6,
+    "image_url": "https://image.torob.com/base/images/Gl/tN/GltNtC2yOfGRKI0h.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تی‌شرت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "چاپی"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "کوتاه"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "چیره"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 104.92,
+    "timestamp": "2025-10-31T20:42:40.431635",
+    "error": null,
+    "retry_count": 0
+  },
+  {
+    "index": 7,
+    "image_url": "https://image.torob.com/base/images/be/5o/be5ohjwwQfN856Xu.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کفش ورزشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم",
+          "مصنوعی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "برنده با فینگر کش",
+          "نوک گرد"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "نیو بالانس"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "زیره متناوب",
+          "لوگوی برند"
+        ]
+      }
+    ],
+    "status": "failed",
+    "prediction_time_seconds": 568.38,
+    "timestamp": "2025-10-31T20:52:08.808653",
+    "error": "OpenRouter call failed: OpenRouter HTTP 400: {\"error\":{\"message\":\"Provider returned error\",\"code\":400,\"metadata\":{\"raw\":\"{\\\"code\\\":400,\\\"msg\\\":\\\"bad request\\\"}\",\"provider_name\":\"AtlasCloud\"}},\"user_id\":\"user_34WRsiXd7nd0WfR5i1UIlNIRiBF\"}",
+    "retry_count": 5
+  },
+  {
+    "index": 8,
+    "image_url": "https://image.torob.com/base/images/Xo/fu/XofuFjYa8ntWiFiQ.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "قهوه‌ای",
+          "سفید"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "زبرا"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی‌آستین"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت‌شده"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 568.21,
+    "timestamp": "2025-10-31T21:01:37.021610",
+    "error": null,
+    "retry_count": 4
+  },
+  {
+    "index": 9,
+    "image_url": "https://image.torob.com/base/images/Tn/Oc/TnOcyt0Kbulemoa2.jpg",
+    "predictions": [],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "شلوار"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلی‌استر",
+          "اسپ‌اندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "شکل",
+        "values": [
+          "لاغر"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "کمربند انعطاف‌پذیر"
+        ]
+      }
+    ],
+    "status": "failed",
+    "prediction_time_seconds": 613.45,
+    "timestamp": "2025-10-31T21:11:50.473886",
+    "error": "merge_results_node: 'image_tags_fa' is missing in state",
+    "retry_count": 5
+  },
+  {
+    "index": 10,
+    "image_url": "https://image.torob.com/base/images/47/ZT/47ZT57zAOfQ_3-xO.jpg",
+    "predictions": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "دکمه‌ای"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "ملموس"
+        ]
+      },
+      {
+        "name": "نوع دسته",
+        "values": [
+          "دسته دوگانه"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "BAGGU"
+        ]
+      }
+    ],
+    "ground_truth": [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "دانه‌دار"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "سوراخ‌دار"
+        ]
+      },
+      {
+        "name": "نوع دسته",
+        "values": [
+          "دو دسته‌ای"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "BEGA"
+        ]
+      },
+      {
+        "name": "نوع بست",
+        "values": [
+          "چرخشی"
+        ]
+      }
+    ],
+    "status": "success",
+    "prediction_time_seconds": 52.39,
+    "timestamp": "2025-10-31T21:12:42.874611",
+    "error": null,
+    "retry_count": 0
+  }
+]

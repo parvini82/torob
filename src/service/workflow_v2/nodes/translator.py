@@ -19,7 +19,7 @@ class TranslatorNode(BaseNode):
     """
 
     def __init__(self,
-                 model: str = "google/gemini-flash-1.5",
+                 model: str = "qwen/qwen2.5-vl-32b-instruct:free",
                  target_language: str = "Persian",
                  source_language: str = "English"):
         """

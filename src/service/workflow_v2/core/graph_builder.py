@@ -29,7 +29,7 @@ class GraphBuilder:
             name: Name for the graph (used in logging)
         """
         self.name = name
-        self.graph = StateGraph(StateManager)
+        self.graph = StateGraph(dict)
         self.nodes: Dict[str, BaseNode] = {}
         self.edges: List[tuple] = []
         self.conditional_edges: List[dict] = []
@@ -59,17 +59,11 @@ class GraphBuilder:
             raise ValueError(f"Node must be an instance of BaseNode, got {type(node)}")
 
         # Wrap node execution for graph compatibility
-        def node_wrapper(state: StateManager) -> StateManager:
+        def node_wrapper(state: Dict[str, Any]) -> Dict[str, Any]:
             """Wrapper to make BaseNode compatible with StateGraph."""
-            # Get full state as dictionary
-            state_dict = state.get_full_state()
-
-            # Execute node
-            result_dict = node.execute(state_dict)
-
-            # Update state manager with results
-            state.update_state(result_dict)
-            return state
+            # Execute node directly with state dict
+            result_dict = node.execute(state)
+            return result_dict
 
         self.graph.add_node(name, node_wrapper)
         self.nodes[name] = node

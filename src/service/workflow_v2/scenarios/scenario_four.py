@@ -55,17 +55,17 @@ class ScenarioFour:
         node_config = self.config.get("node_config", {})
 
         builder.add_node("image_tag_extractor", ImageTagExtractorNode(
-            model=node_config.get("extractor_model", "google/gemini-flash-1.5")
+            model=node_config.get("extractor_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
         builder.add_node("conversation_refiner", ConversationRefinerNode(
-            model=node_config.get("refiner_model", "google/gemini-flash-1.5"),
+            model=node_config.get("refiner_model", "qwen/qwen2.5-vl-32b-instruct:free"),
             max_iterations=node_config.get("max_iterations", 3),
             convergence_threshold=node_config.get("convergence_threshold", 0.1)
         ))
 
         builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", "google/gemini-flash-1.5"),
+            model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
             target_language=node_config.get("target_language", "Persian")
         ))
 
@@ -100,13 +100,10 @@ class ScenarioFour:
             if not self.graph:
                 self.build_graph()
 
-            # Initialize state
-            state_manager = StateManager()
-
             # Prepare initial state
             init_state = {
                 "image_url": image_url,
-                "scenario": "scenario_four",
+                "scenario": "scenario_one",
                 "config": self.config
             }
 
@@ -114,14 +111,9 @@ class ScenarioFour:
             if initial_state:
                 init_state.update(initial_state)
 
-            state_manager.initialize_state(init_state)
-
             # Execute the workflow
             self.logger.info("Starting workflow execution...")
-            final_state = self.graph.invoke(state_manager)
-
-            # Extract results
-            results = final_state.get_full_state()
+            results = self.graph.invoke(init_state)
 
             # Add execution metadata
             convergence_info = results.get("conversation_tags", {}).get("convergence_info", {})

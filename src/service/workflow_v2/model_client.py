@@ -16,7 +16,26 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from .core.logger import get_workflow_logger
+import os
+from dotenv import load_dotenv
 
+# Load .env file
+load_dotenv()
+
+OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
+OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1/chat/completions"
+REQUEST_TIMEOUT: int = int(os.getenv("REQUEST_TIMEOUT", "60"))
+
+OPENROUTER_SITE_URL: str = os.getenv("OPENROUTER_SITE_URL", "")
+OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "")
+
+METIS_API_KEY: str = os.getenv("METIS_API_KEY", "")
+METIS_BASE_URL: str = os.getenv("METIS_BASE_URL", "")
+
+VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
+TRANSLATE_MODEL: str = os.getenv(
+    "TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free"
+)
 
 class Provider(Enum):
     """Supported AI providers."""
@@ -384,7 +403,7 @@ class ModelClient:
         retry_strategy = Retry(
             total=self.max_retries,
             status_forcelist=[429, 500, 502, 503, 504],
-            method_whitelist=["HEAD", "GET", "POST"],
+            allowed_methods=["HEAD", "GET", "OPTIONS", "POST"],
             backoff_factor=1
         )
 
@@ -444,7 +463,7 @@ class ModelClient:
     def _get_default_test_model(self) -> str:
         """Get default model for connection testing."""
         defaults = {
-            Provider.OPENROUTER: "google/gemini-flash-1.5",
+            Provider.OPENROUTER: "qwen/qwen2.5-vl-32b-instruct:free",
             Provider.METIS: "gpt-3.5-turbo",
             Provider.TOGETHER: "meta-llama/Llama-2-7b-chat-hf",
             Provider.OPENAI: "gpt-3.5-turbo"
@@ -482,6 +501,8 @@ def create_model_client(provider: str = None, api_key: str = None) -> ModelClien
 
     # Get provider from environment if not specified
     if not provider:
+        # provider = os.getenv("API_PROVIDER", "openrouter")
         provider = os.getenv("API_PROVIDER", "openrouter")
+        api_key = os.getenv("OPENROUTER_API_KEY","")
 
     return ModelClient(provider=provider, api_key=api_key)
