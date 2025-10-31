@@ -11,6 +11,30 @@ export default function UploadPage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [progress, setProgress] = useState(0);
   const [minioImageUrl, setMinioImageUrl] = useState("");
+  const [mode, setMode] = useState("fast");
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile && droppedFile.type.startsWith("image/")) {
+      setFile(droppedFile);
+      setImageUrl("");
+      setUploadedImage(URL.createObjectURL(droppedFile));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +66,8 @@ export default function UploadPage() {
         }, 100);
 
         // Use the new upload-and-tag endpoint
-        res = await fetch("http://localhost:8000/upload-and-tag", {
+        const uploadUrl = `http://localhost:8000/upload-and-tag?mode=${mode}`;
+        res = await fetch(uploadUrl, {
           method: "POST",
           body: formData,
         });
@@ -57,7 +82,7 @@ export default function UploadPage() {
         res = await fetch("http://localhost:8000/generate-tags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image_url: imageUrl }),
+          body: JSON.stringify({ image_url: imageUrl, mode: mode }),
         });
       }
       // Case 3: No input provided
@@ -171,18 +196,17 @@ export default function UploadPage() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
         fontFamily: "'Inter', 'Segoe UI', sans-serif",
         padding: "20px",
         background: darkMode
           ? "linear-gradient(135deg, #2c3e50 0%, #34495e 100%)"
-          : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
         position: "relative",
         transition: "background 0.6s ease",
+        overflow: "hidden",
       }}
     >
       <button
@@ -228,23 +252,30 @@ export default function UploadPage() {
         }}
       />
 
-      <h1
+      {/* Fixed header section - no scroll needed */}
+      <div
         style={{
-          marginBottom: "25px",
-          marginTop: "60px",
-          fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
-          fontWeight: 800,
-          color: "#fff",
-          textAlign: "center",
-          lineHeight: "1.2",
-          textShadow: "0 2px 10px rgba(0,0,0,0.2)",
-          letterSpacing: "0.5px",
+          flexShrink: 0,
+          width: "100%",
         }}
       >
-        Welcome to <span className="gashtal">Gashtal</span> Image Tagging
-      </h1>
+        <h1
+          style={{
+            marginBottom: "15px",
+            marginTop: "20px",
+            fontSize: "clamp(1.3rem, 4vw, 2rem)",
+            fontWeight: 800,
+            color: "#fff",
+            textAlign: "center",
+            lineHeight: "1.2",
+            textShadow: "0 2px 10px rgba(0,0,0,0.2)",
+            letterSpacing: "0.5px",
+          }}
+        >
+          Welcome to <span className="gashtal">Gashtal</span> Image Tagging
+        </h1>
 
-      <style jsx>{`
+        <style jsx>{`
         .gashtal {
           background: linear-gradient(90deg, #ffd89b, #19547b, #ffd89b);
           -webkit-background-clip: text;
@@ -293,298 +324,508 @@ export default function UploadPage() {
         }
       `}</style>
 
-      <form
-        onSubmit={handleSubmit}
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "600px",
+            margin: "0 auto 15px",
+            padding: "0 20px",
+          }}
+        >
+          <p
+            style={{
+              color: "#fff",
+              fontSize: "1.1rem",
+              marginBottom: "10px",
+              fontWeight: "600",
+              textAlign: "center",
+              textShadow: "0 1px 3px rgba(0,0,0,0.2)",
+            }}
+          >
+            Please select your model first
+          </p>
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "14px 18px",
+              fontSize: "1.05rem",
+              borderRadius: "12px",
+              border: "3px solid rgba(255,255,255,0.4)",
+              boxSizing: "border-box",
+              background: "rgba(255,255,255,0.95)",
+              transition: "all 0.3s ease",
+              outline: "none",
+              cursor: "pointer",
+              fontWeight: "600",
+              color: "#2c3e50",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#6a11cb";
+              e.target.style.boxShadow = "0 0 0 4px rgba(106,17,203,0.15)";
+              e.target.style.transform = "scale(1.02)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "rgba(255,255,255,0.4)";
+              e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+              e.target.style.transform = "scale(1)";
+            }}
+          >
+            <option value="fast">⚡ Fast (Fastest processing)</option>
+            <option value="reasoning">🧠 Reasoning (Better accuracy)</option>
+            <option value="advanced_reasoning">🚀 Advanced Reasoning (Best quality with SerpAPI)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Main content area - scrollable if needed */}
+      <div
         style={{
+          flex: "1",
+          display: "flex",
+          flexDirection: "row",
+          overflow: "hidden",
           width: "100%",
-          maxWidth: "480px",
+          maxWidth: "1600px",
           margin: "0 auto",
-          boxSizing: "border-box",
-          background: darkMode
-            ? "rgba(255, 255, 255, 0.05)"
-            : "rgba(255, 255, 255, 0.25)",
-          padding: "25px",
-          borderRadius: "16px",
-          backdropFilter: "blur(10px)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+          padding: "0 20px",
+          gap: "20px",
         }}
       >
-        <p
-          style={{
-            color: "#fff",
-            fontSize: "1.05rem",
-            marginBottom: "8px",
-            fontWeight: "600",
-            textShadow: "0 1px 3px rgba(0,0,0,0.2)",
-          }}
-        >
-          Image URL:
-        </p>
-        <input
-          type="text"
-          placeholder="Paste your image URL here..."
-          value={imageUrl}
-          onChange={(e) => {
-            setImageUrl(e.target.value);
-            setFile(null);
-          }}
-          style={{
-            width: "100%",
-            padding: "12px 15px",
-            fontSize: "1rem",
-            marginBottom: "15px",
-            borderRadius: "10px",
-            border: "2px solid rgba(255,255,255,0.3)",
-            boxSizing: "border-box",
-            background: "rgba(255,255,255,0.9)",
-            transition: "all 0.3s ease",
-            outline: "none",
-          }}
-          onFocus={(e) => {
-            e.target.style.borderColor = "#6a11cb";
-            e.target.style.boxShadow = "0 0 0 3px rgba(106,17,203,0.1)";
-          }}
-          onBlur={(e) => {
-            e.target.style.borderColor = "rgba(255,255,255,0.3)";
-            e.target.style.boxShadow = "none";
-          }}
-        />
-
-        <p
-          style={{
-            color: "#fff",
-            fontSize: "1.05rem",
-            marginBottom: "8px",
-            fontWeight: "600",
-            textShadow: "0 1px 3px rgba(0,0,0,0.2)",
-          }}
-        >
-          Or upload an image file:
-        </p>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            setFile(e.target.files[0]);
-            setImageUrl("");
-          }}
-          style={{
-            width: "100%",
-            marginBottom: "15px",
-            padding: "10px",
-            color: "#fff",
-            background: "rgba(255,255,255,0.15)",
-            borderRadius: "10px",
-            border: "2px dashed rgba(255,255,255,0.4)",
-            cursor: "pointer",
-            fontSize: "0.95rem",
-          }}
-        />
-
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "14px",
-            fontSize: "1.15rem",
-            borderRadius: "12px",
-            marginTop: "10px",
-            fontWeight: "700",
-            color: "#fff",
-            background: loading
-              ? "linear-gradient(90deg, #95a5a6, #7f8c8d)"
-              : "linear-gradient(90deg, #f093fb 0%, #f5576c 100%)",
-            border: "none",
-            cursor: loading ? "not-allowed" : "pointer",
-            opacity: loading ? 0.7 : 1,
-            transition: "all 0.3s ease",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-            letterSpacing: "0.5px",
-          }}
-          disabled={loading}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.target.style.transform = "translateY(-2px)";
-              e.target.style.boxShadow = "0 6px 20px rgba(0,0,0,0.3)";
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
-            }
-          }}
-        >
-          {loading ? "⏳ Processing..." : "🚀 Generate Tags"}
-        </button>
-      </form>
-
-      {progress > 0 && loading && (
+        {/* Left side - Image placeholder */}
         <div
           style={{
-            width: "100%",
-            maxWidth: "480px",
-            marginTop: "15px",
-            background: "rgba(255,255,255,0.25)",
-            borderRadius: "6px",
-            overflow: "hidden",
-            padding: "2px",
+            flex: "0 0 auto",
+            minWidth: "400px",
+            maxWidth: "500px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
           }}
         >
-          <div style={progressBarStyle}></div>
-        </div>
-      )}
-
-      {error && (
-        <p
-          style={{
-            color: "#fff",
-            marginTop: "15px",
-            fontWeight: "700",
-            textAlign: "center",
-            padding: "15px 20px",
-            background: "rgba(231, 76, 60, 0.9)",
-            borderRadius: "12px",
-            maxWidth: "480px",
-            boxShadow: "0 4px 15px rgba(231, 76, 60, 0.4)",
-            fontSize: "1rem",
-          }}
-        >
-          ⚠️ {error}
-        </p>
-      )}
-
-      {uploadedImage && (
-        <div
-          style={{
-            marginTop: "25px",
-            textAlign: "center",
-            maxWidth: "min(750px, 90vw)",
-            width: "100%",
-          }}
-        >
-          <img
-            src={uploadedImage}
-            alt="Uploaded"
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
             style={{
-              maxWidth: "100%",
-              maxHeight: "450px",
+              width: "100%",
+              height: "550px",
+              border: isDragging
+                ? "3px dashed #6a11cb"
+                : "3px dashed rgba(255,255,255,0.3)",
               borderRadius: "12px",
-              boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
-              objectFit: "contain",
-              display: "block",
-              margin: "0 auto",
-              border: "3px solid rgba(255,255,255,0.3)",
+              background: isDragging
+                ? "rgba(106,17,203,0.1)"
+                : darkMode
+                  ? "rgba(255,255,255,0.05)"
+                  : "rgba(255,255,255,0.1)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.3s ease",
+              position: "relative",
             }}
-          />
-          {minioImageUrl && (
-            <p
-              style={{
-                marginTop: "12px",
-                fontSize: "0.85rem",
-                color: darkMode ? "#bbb" : "#ecf0f1",
-                wordBreak: "break-all",
-                padding: "0 15px",
-                fontWeight: "500",
-              }}
-            >
-              📁 Saved image: {minioImageUrl}
-            </p>
-          )}
-        </div>
-      )}
-
-      {loading && (
-        <div
-          style={{
-            marginTop: "25px",
-            width: "100%",
-            maxWidth: "min(750px, 90vw)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "12px",
-          }}
-        >
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} style={skeletonCategoryStyle}></div>
-          ))}
-        </div>
-      )}
-
-      {tagGroups.length > 0 && (
-        <div
-          style={{
-            marginTop: "30px",
-            width: "100%",
-            maxWidth: "min(750px, 90vw)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "15px",
-          }}
-        >
-          {tagGroups.map((group, i) => (
-            <div
-              key={i}
-              style={{
-                ...categoryStyle,
-                opacity: animateTags ? 1 : 0,
-                transform: animateTags
-                  ? "translateY(0)"
-                  : "translateY(30px)",
-                transition: `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${
-                  i * 0.12
-                }s`,
-              }}
-            >
-              <div style={categoryTitleStyle}>
-                <span style={{ fontSize: "24px" }}>🏷️</span>
-                <span>{group.نام || group.name}</span>
-              </div>
+          >
+            {uploadedImage ? (
               <div
                 style={{
+                  width: "100%",
+                  height: "100%",
                   display: "flex",
-                  flexWrap: "wrap",
-                  gap: "8px",
-                  justifyContent: "flex-start",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                {(group.مقادیر || group.values || []).map((value, j) => (
-                  <span
-                    key={j}
+                <img
+                  src={uploadedImage}
+                  alt="Uploaded"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    width: "auto",
+                    height: "auto",
+                    borderRadius: "8px",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+                {minioImageUrl && (
+                  <p
                     style={{
-                      ...tagStyle,
-                      opacity: animateTags ? 1 : 0,
-                      transform: animateTags
-                        ? "translateY(0)"
-                        : "translateY(20px)",
-                      transition: `all 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${
-                        i * 0.12 + j * 0.05
-                      }s`,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundPosition = "100% 0";
-                      e.target.style.transform =
-                        "scale(1.12) translateY(-2px)";
-                      e.target.style.boxShadow =
-                        "0 8px 20px rgba(0,0,0,0.3)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundPosition = "0 0";
-                      e.target.style.transform = "scale(1) translateY(0)";
-                      e.target.style.boxShadow =
-                        "0 3px 8px rgba(0,0,0,0.18)";
+                      marginTop: "8px",
+                      fontSize: "0.75rem",
+                      color: darkMode ? "#bbb" : "#ecf0f1",
+                      wordBreak: "break-all",
+                      padding: "0 15px",
+                      fontWeight: "500",
                     }}
                   >
-                    {value}
-                  </span>
-                ))}
+                    📁 Saved image: {minioImageUrl}
+                  </p>
+                )}
               </div>
-            </div>
-          ))}
+            ) : loading ? (
+              <div
+                style={{
+                  color: "#fff",
+                  fontSize: "1.2rem",
+                  textAlign: "center",
+                }}
+              >
+                ⏳ Processing...
+              </div>
+            ) : (
+              <div
+                style={{
+                  color: "#fff",
+                  fontSize: "1.1rem",
+                  textAlign: "center",
+                  padding: "20px",
+                  opacity: 0.7,
+                }}
+              >
+                {isDragging ? (
+                  <>
+                    <div style={{ fontSize: "3rem", marginBottom: "10px" }}>
+                      📤
+                    </div>
+                    <div>Drop image here</div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ fontSize: "3rem", marginBottom: "10px" }}>
+                      🖼️
+                    </div>
+                    <div>Drag & drop image here</div>
+                    <div style={{ fontSize: "0.9rem", marginTop: "10px" }}>
+                      or use upload below
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      )}
+
+        {/* Center - Tags */}
+        <div
+          style={{
+            flex: "1",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            maxHeight: "550px",
+            overflowY: "auto",
+            overflowX: "hidden",
+            padding: "0 15px",
+          }}
+        >
+          {tagGroups.length > 0 && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                width: "100%",
+                maxWidth: "400px",
+              }}
+            >
+              {tagGroups.map((group, i) => (
+                <div
+                  key={i}
+                  style={{
+                    ...categoryStyle,
+                    width: "100%",
+                    opacity: animateTags ? 1 : 0,
+                    transform: animateTags
+                      ? "translateY(0)"
+                      : "translateY(30px)",
+                    transition: `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${i * 0.12
+                      }s`,
+                  }}
+                >
+                  <div style={categoryTitleStyle}>
+                    <span style={{ fontSize: "20px" }}>🏷️</span>
+                    <span>{group.نام || group.name}</span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "6px",
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    {(group.مقادیر || group.values || []).map((value, j) => (
+                      <span
+                        key={j}
+                        style={{
+                          ...tagStyle,
+                          padding: "8px 14px",
+                          fontSize: "0.85rem",
+                          opacity: animateTags ? 1 : 0,
+                          transform: animateTags
+                            ? "translateY(0)"
+                            : "translateY(20px)",
+                          transition: `all 0.5s cubic-bezier(0.4, 0, 0.2, 1) ${i * 0.12 + j * 0.05
+                            }s`,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundPosition = "100% 0";
+                          e.target.style.transform =
+                            "scale(1.12) translateY(-2px)";
+                          e.target.style.boxShadow =
+                            "0 8px 20px rgba(0,0,0,0.3)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundPosition = "0 0";
+                          e.target.style.transform = "scale(1) translateY(0)";
+                          e.target.style.boxShadow =
+                            "0 3px 8px rgba(0,0,0,0.18)";
+                        }}
+                      >
+                        {value}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right side - Form */}
+        <div
+          style={{
+            flex: "0 0 auto",
+            minWidth: "450px",
+            maxWidth: "550px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              background: darkMode
+                ? "rgba(255, 255, 255, 0.05)"
+                : "rgba(255, 255, 255, 0.9)",
+              padding: "30px",
+              borderRadius: "16px",
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+              minHeight: "550px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <p
+              style={{
+                color: "#fff",
+                fontSize: "1.05rem",
+                marginBottom: "10px",
+                fontWeight: "600",
+                textShadow: "0 1px 3px rgba(0,0,0,0.2)",
+              }}
+            >
+              Image URL:
+            </p>
+            <input
+              type="text"
+              placeholder="Paste your image URL here..."
+              value={imageUrl}
+              onChange={(e) => {
+                setImageUrl(e.target.value);
+                setFile(null);
+              }}
+              style={{
+                width: "100%",
+                padding: "12px 15px",
+                fontSize: "1rem",
+                marginBottom: "15px",
+                borderRadius: "10px",
+                border: "2px solid rgba(255,255,255,0.3)",
+                boxSizing: "border-box",
+                background: "rgba(255,255,255,0.9)",
+                transition: "all 0.3s ease",
+                outline: "none",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#6a11cb";
+                e.target.style.boxShadow = "0 0 0 3px rgba(106,17,203,0.1)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "rgba(255,255,255,0.3)";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+
+            <p
+              style={{
+                color: "#fff",
+                fontSize: "1.05rem",
+                marginBottom: "10px",
+                fontWeight: "600",
+                textShadow: "0 1px 3px rgba(0,0,0,0.2)",
+              }}
+            >
+              Or upload an image file:
+            </p>
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById("file-upload-input").click()}
+              style={{
+                width: "100%",
+                marginBottom: "15px",
+                padding: "20px",
+                color: "#fff",
+                background: isDragging
+                  ? "rgba(106,17,203,0.2)"
+                  : "rgba(255,255,255,0.15)",
+                borderRadius: "10px",
+                border: isDragging
+                  ? "2px dashed #6a11cb"
+                  : "2px dashed rgba(255,255,255,0.4)",
+                cursor: "pointer",
+                fontSize: "0.95rem",
+                textAlign: "center",
+                transition: "all 0.3s ease",
+                position: "relative",
+              }}
+            >
+              {isDragging ? (
+                <div>📤 Drop image here</div>
+              ) : (
+                <>
+                  <div style={{ marginBottom: "8px" }}>📁</div>
+                  <div>Click to upload or drag & drop</div>
+                </>
+              )}
+              <input
+                id="file-upload-input"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const selectedFile = e.target.files[0];
+                  if (selectedFile) {
+                    setFile(selectedFile);
+                    setImageUrl("");
+                    setUploadedImage(URL.createObjectURL(selectedFile));
+                  }
+                }}
+                style={{
+                  position: "absolute",
+                  opacity: 0,
+                  width: "100%",
+                  height: "100%",
+                  cursor: "pointer",
+                  top: 0,
+                  left: 0,
+                }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "14px",
+                fontSize: "1.1rem",
+                borderRadius: "12px",
+                marginTop: "10px",
+                fontWeight: "700",
+                color: "#fff",
+                background: loading
+                  ? "linear-gradient(90deg, #95a5a6, #7f8c8d)"
+                  : "linear-gradient(90deg, #f093fb 0%, #f5576c 100%)",
+                border: "none",
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.7 : 1,
+                transition: "all 0.3s ease",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+                letterSpacing: "0.5px",
+              }}
+              disabled={loading}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 20px rgba(0,0,0,0.3)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.2)";
+                }
+              }}
+            >
+              {loading ? "⏳ Processing..." : "🚀 Generate Tags"}
+            </button>
+          </form>
+
+          {progress > 0 && loading && (
+            <div
+              style={{
+                width: "100%",
+                marginTop: "12px",
+                background: "rgba(255,255,255,0.25)",
+                borderRadius: "6px",
+                overflow: "hidden",
+                padding: "2px",
+              }}
+            >
+              <div style={progressBarStyle}></div>
+            </div>
+          )}
+
+          {error && (
+            <p
+              style={{
+                color: "#fff",
+                marginTop: "12px",
+                fontWeight: "700",
+                textAlign: "center",
+                padding: "12px 16px",
+                background: "rgba(231, 76, 60, 0.9)",
+                borderRadius: "12px",
+                boxShadow: "0 4px 15px rgba(231, 76, 60, 0.4)",
+                fontSize: "0.9rem",
+              }}
+            >
+              ⚠️ {error}
+            </p>
+          )}
+
+          {loading && !uploadedImage && (
+            <div
+              style={{
+                width: "100%",
+                marginTop: "15px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} style={skeletonCategoryStyle}></div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
