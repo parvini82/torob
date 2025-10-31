@@ -1,7 +1,7 @@
 [
   {
-    "PROVIDER": "openrouter",
-    "VISION_MODEL": "mistralai/mistral-small-3.1-24b-instruct:free",
-    "TRANSLATE_MODEL": "z-ai/glm-4.5-air:free"
+    "provider": "openrouter",
+    "vision_model": "qwen/qwen2.5-vl-32b-instruct:free",
+    "translate_model": "deepseek/deepseek-r1:free"
   }
 ]
