@@ -625,47 +625,29 @@ def load_model_pairs(config_path: Path) -> List[ModelTriple]:
 
 
 def main():
-    """Main entry point with CLI arguments."""
-    parser = argparse.ArgumentParser(
-        description="Integrated Multi-Provider Multi-Model Evaluation System"
-    )
-    parser.add_argument(
-        '--config',
-        type=Path,
-        default=Path('model_pairs.json'),
-        help='Path to model pairs configuration JSON file'
-    )
-    parser.add_argument(
-        '--dataset',
-        type=Path,
-        default=Path('data/processed/Ground_Truth_first10.json'),
-        help='Path to dataset JSON file'
-    )
-    parser.add_argument(
-        '--output',
-        type=Path,
-        default=Path('evaluation/results'),
-        help='Output directory for results'
-    )
-
-    args = parser.parse_args()
+    """Main entry point with hardcoded parameters."""
+    # Directly provide the values for config, dataset, and output
+    config_path = Path('model_pairs.json')  # Replace with the actual path to your config file
+    dataset_path = Path('data/processed/Ground_Truth_first10.json')  # Replace with the actual dataset path
+    output_dir = Path('evaluation/results')  # Replace with the desired output directory path
 
     # Validate inputs
-    if not args.config.exists():
-        print(f"❌ Config file not found: {args.config}")
+    if not config_path.exists():
+        print(f"❌ Config file not found: {config_path}")
         sys.exit(1)
 
-    if not args.dataset.exists():
-        print(f"❌ Dataset file not found: {args.dataset}")
+    if not dataset_path.exists():
+        print(f"❌ Dataset file not found: {dataset_path}")
         sys.exit(1)
 
     # Load configuration
-    model_triples = load_model_pairs(args.config)
-    print(f"Loaded {len(model_triples)} model pairs from {args.config}")
+    model_triples = load_model_pairs(config_path)
+    print(f"Loaded {len(model_triples)} model pairs from {config_path}")
 
     # Create orchestrator and run
-    orchestrator = EvaluationOrchestrator(model_triples, args.dataset, args.output)
+    orchestrator = EvaluationOrchestrator(model_triples, dataset_path, output_dir)
     orchestrator.run()
+
 
 
 if __name__ == "__main__":
