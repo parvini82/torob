@@ -1,4 +1,4 @@
-from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile
+from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile, Query
 from src.service.ratelimit.rate_limit_service import RateLimitService
 from src.service.caching.redis_cache_service import RedisCacheService, get_cache_service
 from src.service.database.database import save_request_response
@@ -94,7 +94,7 @@ async def upload_and_tag(
     file: UploadFile = File(...),
     background_tasks: BackgroundTasks = None,
     request: Request = None,  # Added request dependency for IP check
-    mode: str = "fast"  # Default mode
+    mode: str = Query("fast", description="Processing mode: fast, reasoning, or advanced_reasoning")  # Default mode
 ):
     await check_rate_limit(request)  # Check rate limit
 
