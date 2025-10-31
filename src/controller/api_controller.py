@@ -52,6 +52,7 @@ async def generate_tags(
 
     image_url = payload.get("image_url")
     file = payload.get("file")  # Added file input handling
+    mode = payload.get("mode", "fast")  # Get mode: fast, reasoning, or advanced_reasoning
 
     if not image_url and not file:
         return {"error": "Either 'image_url' or 'file' is required"}
@@ -70,7 +71,7 @@ async def generate_tags(
 
         try:
             # If not cached, call the LangGraph service to process the URL and get the response
-            result = run_langgraph_on_url(image_url)
+            result = run_langgraph_on_url(image_url, mode=mode)
 
             # Store the generated tags in the Redis cache
             await cache_service.set_cached_tags(image_hash, result.get("persian", {}))
@@ -86,14 +87,14 @@ async def generate_tags(
 
     elif file:
         # Handle file upload and image processing
-        return await upload_and_tag(file, background_tasks, request)  # Delegating to file handler
-
+        return await upload_and_tag(file, background_tasks, request, mode)  # Delegating to file handler
 
 @app.post("/upload-and-tag")
 async def upload_and_tag(
     file: UploadFile = File(...),
     background_tasks: BackgroundTasks = None,
-    request: Request = None  # Added request dependency for IP check
+    request: Request = None,  # Added request dependency for IP check
+    mode: str = "fast"  # Default mode
 ):
     await check_rate_limit(request)  # Check rate limit
 
@@ -104,7 +105,6 @@ async def upload_and_tag(
 
         # Read file content
         file_content = await file.read()
-
         if len(file_content) == 0:
             raise HTTPException(status_code=400, detail="Empty file uploaded")
 
@@ -128,7 +128,7 @@ async def upload_and_tag(
         )
 
         # Process with LangGraph using BYTES (not URL)
-        result = run_langgraph_on_bytes(file_content)
+        result = run_langgraph_on_bytes(file_content, mode=mode)
 
         # Store the generated tags in the Redis cache
         await cache_service.set_cached_tags(image_hash, result.get("persian", {}))
