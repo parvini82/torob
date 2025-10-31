@@ -32,9 +32,9 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
     """
 
     # Retry configuration
-    MAX_RETRIES = 3
+    MAX_RETRIES = 5
     BASE_DELAY = 20  # Base delay in seconds
-    MAX_DELAY = 120  # Maximum delay in seconds
+    MAX_DELAY = 180  # Maximum delay in seconds
 
     last_error = None
     total_wait_time = 0
@@ -292,16 +292,16 @@ def main():
     script_dir = Path(__file__).parent
     project_root = script_dir.parent
 
-    MODEL_NAME = "your_model"  # Change this to your model name
+    # MODEL_NAME = "your_model"  # Change this based to your model name
 
     config = EvaluationConfig(
-        results_dir=project_root / "evaluation" / "predictions", model_name=MODEL_NAME
+        results_dir=project_root / "evaluation" / "predictions",
     )
 
     # Create model runner
     runner = ModelRunner(config)
 
-    print(f"\nRunning predictions with model: {MODEL_NAME}")
+    print(f"\nRunning predictions with model: {config.model_name}")
     print("Note: Using placeholder model function. Replace with your actual model!")
 
     try:
@@ -311,7 +311,7 @@ def main():
         )
 
         # Save predictions for later evaluation
-        output_filename = f"predictions_{MODEL_NAME}_{sample_path.stem}.json"
+        output_filename = f"predictions_{config.model_name}_{sample_path.stem}.json"
         output_path = config.results_dir / output_filename
 
         save_prediction_results(results, output_path)
