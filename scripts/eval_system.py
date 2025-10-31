@@ -628,7 +628,7 @@ def main():
     """Main entry point with hardcoded parameters."""
     # Directly provide the values for config, dataset, and output
     config_path = Path('model_pairs.json')  # Replace with the actual path to your config file
-    dataset_path = Path('data/processed/Ground_Truth_first10.json')  # Replace with the actual dataset path
+    dataset_path = Path('../data/processed/Ground_Truth_first10.json')  # Replace with the actual dataset path
     output_dir = Path('evaluation/results')  # Replace with the desired output directory path
 
     # Validate inputs
