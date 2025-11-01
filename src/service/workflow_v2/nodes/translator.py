@@ -8,10 +8,14 @@ preserving structure and maintaining fashion industry terminology accuracy.
 import os
 from typing import Dict, Any, List
 from dotenv import load_dotenv
-
+import json
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import TranslationPrompts
+from .utils.json_sanitizer import sanitize_json_response
+from .utils.retry_handler import with_retry, RetryError
+import re  # for pre-sanitization of pseudo-JSON
+
 
 # Load environment variables
 load_dotenv()
@@ -138,28 +142,81 @@ class TranslatorNode(BaseNode):
             raise
 
     def _extract_translatable_fashion_content(self, state: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
-        """Extract fashion content that can be translated from the state."""
-        # Priority order for fashion content sources
+        """
+        Intelligently select fashion-related data for translation based on
+        semantic priority and available sources in workflow state.
+
+        Priority order:
+        1. merged_tags - Highest quality merged results
+        2. refined_tags - Refined/processed results
+        3. conversation_tags - Conversation-enhanced results
+        4. extracted_tags - Text-based extraction results
+        5. image_tags - Direct image analysis results
+        """
         translatable_sources = [
-            "merged_tags",        # Merged results (highest priority)
-            "conversation_tags",  # Conversation refined results
-            "refined_tags",       # Refined results
-            "extracted_tags",     # Text-based extraction
-            "image_tags"          # Direct image analysis
+            "refined_tags",  # Second - refined processing results
+            "merged_tags",  # Highest priority - final merged results
+            "conversation_tags",  # Third - conversation enhanced results
+            "extracted_tags",  # Fourth - text extraction results
+            "image_tags"  # Fifth - direct image analysis
         ]
 
-        found_content = {}
+        found = {}
 
-        for source in translatable_sources:
-            if source in state and isinstance(state[source], dict):
-                content = state[source]
-
-                # Check if content has translatable fashion fields
+        # Collect all available sources that have fashion content
+        for key in translatable_sources:
+            if key in state and isinstance(state[key], dict):
+                content = state[key]
                 if self._has_translatable_fashion_fields(content):
-                    found_content[source] = content
-                    self.logger.debug(f"Found translatable fashion content in: {source}")
+                    found[key] = content
+                    self.logger.debug(f"Found translatable content in: {key}")
 
-        return found_content
+        # Case 1: We found at least one high-priority final source
+        high_priority_sources = ["refined_tags", "merged_tags"]
+        for key in high_priority_sources:
+            if key in found:
+                entities_count = len(found[key].get("entities", []))
+                self.logger.info(f"Using high-priority source '{key}' with {entities_count} entities for translation")
+                return {key: found[key]}
+
+        # Case 2: No final sources, but multiple partial ones → merge them
+        if len(found) > 1:
+            source_names = list(found.keys())
+            total_entities = sum(len(content.get("entities", [])) for content in found.values())
+
+            self.logger.info(f"Merging {len(found)} partial sources ({', '.join(source_names)}) "
+                             f"with total {total_entities} entities for translation")
+
+            try:
+                merged_temp = self._merge_fashion_translations(
+                    {f"{k}_temp": v for k, v in found.items()},
+                    target_lang="intermediate"  # Intermediate merge before translation
+                )
+                return {"merged_partial_sources": merged_temp}
+
+            except Exception as e:
+                self.logger.error(f"Failed to merge partial sources: {str(e)}")
+                # Fallback to highest priority single source
+                fallback_key = next(
+                    (key for key in translatable_sources if key in found),
+                    next(iter(found))
+                ) # First in priority order
+
+                # fallback_key = source_names[0]  # First in priority order
+                self.logger.warning(f"Falling back to single source: {fallback_key}")
+                return {fallback_key: found[fallback_key]}
+
+        # Case 3: Only one partial source (e.g., image_tags or extracted_tags)
+        if len(found) == 1:
+            key, content = next(iter(found.items()))
+            entities_count = len(content.get("entities", []))
+            self.logger.info(f"Using single available source '{key}' with {entities_count} entities for translation")
+            return {key: content}
+
+        # Case 4: Nothing found
+        self.logger.warning("No translatable fashion content found in state - available keys: "
+                            f"{list(state.keys())}")
+        return {}
 
     def _has_translatable_fashion_fields(self, content: Dict[str, Any]) -> bool:
         """Check if content has fashion fields that can be translated."""
@@ -185,7 +242,7 @@ class TranslatorNode(BaseNode):
         translation_content = self._prepare_fashion_content_for_translation(content)
 
         # Convert to JSON string for translation
-        import json
+
         content_json = json.dumps(translation_content, indent=2, ensure_ascii=False)
 
         # Prepare specialized fashion translation request
@@ -201,12 +258,94 @@ class TranslatorNode(BaseNode):
         ]
 
         # Get translation
-        translated_result = self.client.call_json(
+        # OLD:
+        # translated_result = self.client.call_json(
+        #     model,
+        #     messages,
+        #     max_tokens=2500,
+        #     temperature=0.1
+        # )
+
+        # NEW: get raw text, then sanitize+parse
+        translated_raw = self.client.call_text(
             model,
             messages,
-            max_tokens=2500,  # Increased for comprehensive fashion translations
-            temperature=0.1   # Very low for consistent translation accuracy
+            max_tokens=2500,
+            temperature=0.1
         )
+
+        try:
+            # --- PRE-SANITIZATION: normalize common pseudo-JSON before main sanitizer ---
+            # Purpose: Handle ScenarioZero-style outputs like {'entities': ...} or '...'
+            # without affecting valid JSON (e.g., {"entities": ...}).
+            # --- PRE-SANITIZATION: robust normalization for pseudo/Python-style JSON ---
+            # --- PRE-SANITIZATION: robust normalization for pseudo/Python-style JSON ---
+            translated_raw = translated_raw.strip()
+
+            # Force extraction even if explanation precedes JSON
+            if "{" in translated_raw and "}" in translated_raw:
+                start = translated_raw.find("{")
+                end = translated_raw.rfind("}")
+                translated_raw = translated_raw[start:end + 1].strip()
+
+
+            # If the model wrapped JSON inside explanations, try to extract only the JSON part
+            match_json = re.search(r"(\{[\s\S]+\})", translated_raw)
+            if match_json:
+                translated_raw = match_json.group(1).strip()
+
+            # Detect JSON-like content that might use single quotes or unquoted keys
+            if (
+                re.match(r"^\s*\{", translated_raw)
+                and not re.match(r"^\s*\{\s*\"", translated_raw)
+            ):
+                self.logger.debug("Detected single-quoted or unquoted JSON-like structure → enforcing JSON compliance.")
+
+                # Replace single-quoted KEYS → double-quoted
+                translated_raw = re.sub(r"([{\[,]\s*)'([^'\"]+?)'\s*:", r'\1"\2":', translated_raw)
+                # Replace single-quoted VALUES → double-quoted
+                translated_raw = re.sub(r':\s*\'([^\'"]*)\'(\s*[,}\]])', r': "\1"\2', translated_raw)
+                # Handle unquoted KEYS → wrap in double quotes
+                translated_raw = re.sub(r'([{,]\s*)([A-Za-z0-9_\-]+)\s*:', r'\1"\2":', translated_raw)
+
+            # Strip markdown/code fences or helper prefixes
+            translated_raw = re.sub(
+                r"^\s*(?:```json|```|Here is.*?:|JSON output:)\s*", "", translated_raw, flags=re.IGNORECASE
+            )
+            translated_raw = re.sub(r"\s*```$", "", translated_raw)
+
+
+            translated_result = sanitize_json_response(translated_raw)
+        except Exception as e:
+            self.logger.warning(f"⚠️ JSON parse failed: {e}. Attempting self-healing retry...")
+
+            # ---- Phase 2: repair prompt ----
+            repair_prompt = f"""
+        The following text failed JSON parsing. 
+        Your task: rewrite it into syntactically valid JSON without changing meanings, 
+        preserving field names and structure exactly. 
+        Do NOT add explanations or extra text.
+
+        Text to repair:
+        {translated_raw}
+        """
+            try:
+                fixed_raw = self.client.call_text(
+                    model,
+                    [{"role": "user", "content": repair_prompt}],
+                    max_tokens=2000,
+                    temperature=0.0
+                )
+                translated_result = sanitize_json_response(fixed_raw)
+                self.logger.info("✅ JSON successfully repaired after retry.")
+            except Exception as repair_error:
+                self.logger.error(f"❌ JSON repair retry failed: {repair_error}")
+                raise repair_error
+
+        # If the model returned a top-level list (e.g., entities-only), normalize it.
+        if isinstance(translated_result, list):
+            # Normalize to an object so downstream code remains stable.
+            translated_result = {"entities": translated_result}
 
         # Structure the translated result
         return self._structure_fashion_translated_result(translated_result, content, target_lang)

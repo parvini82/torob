@@ -4,6 +4,7 @@ Multi-provider model client for LLM interactions.
 Supports multiple AI providers with automatic endpoint selection,
 retry logic, and JSON sanitization capabilities.
 """
+from .nodes.utils.json_sanitizer import sanitize_json_response
 
 import json
 import logging
@@ -125,7 +126,7 @@ class ModelClient:
 
     def call_json(self, model: str, messages: List[Dict[str, Any]], **kwargs) -> Dict[str, Any]:
         """
-        Call model and expect JSON response.
+        Call model and expect JSON response, with full sanitization pipeline.
 
         Args:
             model: Model name/identifier
@@ -133,7 +134,7 @@ class ModelClient:
             **kwargs: Additional parameters (temperature, max_tokens, etc.)
 
         Returns:
-            Parsed JSON response
+            Parsed JSON response (dict or list)
 
         Raises:
             ProviderError: If API call fails
@@ -141,22 +142,24 @@ class ModelClient:
         """
         self.logger.info(f"Making JSON call to {model} via {self.provider.value}")
 
-        # Add JSON format instruction to system message if not present
+        # Ensure model instructed to return valid JSON
         formatted_messages = self._ensure_json_format(messages)
 
-        # Make API call
+        # Make API call (get raw text)
         response_text = self._make_api_call(model, formatted_messages, **kwargs)
 
-        # Parse and sanitize JSON
+        # Parse and sanitize JSON using robust sanitizer
         try:
-            json_data = self._parse_and_sanitize_json(response_text)
-            self.logger.info(f"Successfully parsed JSON response with {len(json_data)} keys")
-            return json_data
+            parsed = sanitize_json_response(response_text)
+            kind = "list" if isinstance(parsed, list) else "dict"
+            self.logger.info(f"Successfully parsed {kind} JSON response.")
+            return parsed
 
         except Exception as e:
-            self.logger.error(f"JSON parsing failed: {str(e)}")
-            self.logger.debug(f"Raw response: {response_text[:500]}...")
-
+            # Log short preview for debugging
+            snippet = (response_text or "")[:400].replace("\n", " ")
+            self.logger.error(f"Failed to sanitize/parse JSON: {e}")
+            self.logger.debug(f"Raw response head: {snippet}...")
             raise ModelClientError(f"Failed to parse JSON response: {str(e)}")
 
     def call_text(self, model: str, messages: List[Dict[str, Any]], **kwargs) -> str:
@@ -318,6 +321,7 @@ class ModelClient:
 
         return formatted_messages
 
+    # --- Deprecated: now handled by sanitize_json_response ---
     def _parse_and_sanitize_json(self, text: str) -> Dict[str, Any]:
         """
         Parse and sanitize JSON from model response.

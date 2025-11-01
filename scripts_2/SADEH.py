@@ -1,12 +1,11 @@
 # Simple usage
-from src.service.workflow_v2 import create_scenario_runner
 import logging
 import time
 
 # Disable all logging output
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 
-
+from src.service.workflow_v2 import create_scenario_runner
 scenarios_name = [
     "scenario_one", "scenario_two", "scenario_three", "scenario_four",
                   "scenario_zero"]

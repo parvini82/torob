@@ -8,8 +8,11 @@ from typing import List, Dict, Any, Set
 import math
 
 from .base import BaseMetric, EntityProcessor
+from sentence_transformers import SentenceTransformer
 
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 class SimilarityMetrics(BaseMetric):
     """Similarity-based metrics for flexible evaluation."""
 
@@ -45,9 +48,10 @@ class SimilarityMetrics(BaseMetric):
         """Lazy load semantic similarity model."""
         if self._semantic_model is None:
             try:
-                from sentence_transformers import SentenceTransformer
+
                 # Use multilingual model for Persian support
-                self._semantic_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+                semantic_model_name = os.getenv("SEMANTIC_MODEL",'paraphrase-multilingual-MiniLM-L12-v2')
+                self._semantic_model = SentenceTransformer(semantic_model_name)
             except ImportError:
                 print("Warning: sentence-transformers not available, semantic similarity disabled")
                 return None

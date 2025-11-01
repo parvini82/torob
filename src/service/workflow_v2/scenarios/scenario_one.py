@@ -1,35 +1,29 @@
 """
-Scenario One: Comprehensive Sequential Analysis.
+Scenario One: Simple Caption-Based Analysis.
 
-Caption → Tags → Image Tags → Merge → Translate
-Complete workflow with both caption-based and direct image analysis.
+Caption → Tags → Translate
+Fast and simple workflow using only caption-based extraction.
 """
 
 from typing import Dict, Any, Optional
 from langgraph.graph import StateGraph
 
-from ..core import StateManager, GraphBuilder
-from ..core.logger import get_workflow_logger
-
+from ..core import StateManager, GraphBuilder, get_workflow_logger
 from ..nodes import (
     CaptionGeneratorNode,
     TagExtractorNode,
-    ImageTagExtractorNode,
-    MergerNode,
     TranslatorNode
 )
 
 
 class ScenarioOne:
     """
-    Comprehensive sequential analysis scenario.
+    Simple caption-based analysis scenario.
 
     Workflow:
     1. CaptionGenerator: Generate descriptive caption from image
     2. TagExtractor: Extract structured tags from caption
-    3. ImageTagExtractor: Direct image analysis for tags
-    4. Merger: Combine caption-based and image-based results
-    5. Translator: Translate final results to target language
+    3. Translator: Translate results to target language
     """
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -43,7 +37,7 @@ class ScenarioOne:
         self.logger = get_workflow_logger(f"{__name__}.ScenarioOne")
         self.graph = None
 
-        self.logger.info("Initialized Scenario One - Comprehensive Sequential Analysis")
+        self.logger.info("Initialized Scenario One - Simple Caption-Based Analysis")
 
     def build_graph(self) -> StateGraph:
         """
@@ -68,14 +62,6 @@ class ScenarioOne:
             model=node_config.get("tag_model", "qwen/qwen2.5-vl-32b-instruct:free")
         ))
 
-        builder.add_node("image_tag_extractor", ImageTagExtractorNode(
-            model=node_config.get("image_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
-
-        builder.add_node("merger", MergerNode(
-            confidence_threshold=node_config.get("merge_threshold", 0.5)
-        ))
-
         builder.add_node("translator", TranslatorNode(
             model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
             target_language=node_config.get("target_language", "Persian")
@@ -83,9 +69,7 @@ class ScenarioOne:
 
         # Add edges to create the workflow
         builder.add_edge("caption_generator", "tag_extractor")
-        builder.add_edge("tag_extractor", "image_tag_extractor")
-        builder.add_edge("image_tag_extractor", "merger")
-        builder.add_edge("merger", "translator")
+        builder.add_edge("tag_extractor", "translator")
 
         # Set entry point
         builder.set_entry_point("caption_generator")
@@ -114,6 +98,7 @@ class ScenarioOne:
             if not self.graph:
                 self.build_graph()
 
+            # Prepare initial state
             init_state = {
                 "image_url": image_url,
                 "scenario": "scenario_one",
@@ -131,11 +116,8 @@ class ScenarioOne:
             # Add execution metadata
             results["execution_info"] = {
                 "scenario": "scenario_one",
-                "workflow": "caption → tags → image_tags → merge → translate",
-                "nodes_executed": [
-                    "caption_generator", "tag_extractor",
-                    "image_tag_extractor", "merger", "translator"
-                ],
+                "workflow": "caption → tags → translate",
+                "nodes_executed": ["caption_generator", "tag_extractor", "translator"],
                 "success": True
             }
 
@@ -164,13 +146,13 @@ class ScenarioOne:
     def _log_execution_summary(self, results: Dict[str, Any]) -> None:
         """Log a summary of execution results."""
 
-        # Log English results
-        if "merged_tags" in results:
-            merged_data = results["merged_tags"]
-            entities_count = len(merged_data.get("entities", []))
-            categories_count = len(merged_data.get("categories", []))
+        # Log extraction results
+        if "extracted_tags" in results:
+            extracted_data = results["extracted_tags"]
+            entities_count = len(extracted_data.get("entities", []))
+            categories_count = len(extracted_data.get("categories", []))
 
-            self.logger.info(f"Merged results: {entities_count} entities, {categories_count} categories")
+            self.logger.info(f"Extracted: {entities_count} entities, {categories_count} categories")
 
         # Log translation results
         if "persian_output" in results:
@@ -193,26 +175,24 @@ class ScenarioOne:
         """
         return {
             "name": "Scenario One",
-            "description": "Comprehensive sequential analysis with both caption and direct image processing",
+            "description": "Fast and simple caption-based analysis",
             "workflow": [
                 "Caption Generation",
                 "Tag Extraction from Caption",
-                "Direct Image Tag Extraction",
-                "Intelligent Merging",
                 "Translation to Target Language"
             ],
             "strengths": [
-                "Most comprehensive analysis",
-                "Combines multiple extraction methods",
-                "High accuracy through merging",
-                "Multi-language support"
+                "Fast execution",
+                "Simple and reliable",
+                "Good for basic analysis",
+                "Low resource usage"
             ],
             "use_cases": [
-                "Product catalog analysis",
-                "Detailed image understanding",
-                "Multi-source validation",
-                "International content processing"
+                "Quick image categorization",
+                "Basic product analysis",
+                "High-volume processing",
+                "Performance-critical applications"
             ],
-            "estimated_time": "30-60 seconds",
-            "model_calls": 5
+            "estimated_time": "15-30 seconds",
+            "model_calls": 3
         }
