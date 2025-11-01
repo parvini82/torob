@@ -9,7 +9,7 @@ import logging
 from typing import Dict, Any, Optional
 
 from .core.logger import WorkflowLogger
-from .scenarios import ScenarioOne, ScenarioTwo, ScenarioThree, ScenarioFour
+from .scenarios import ScenarioZero, ScenarioOne, ScenarioTwo, ScenarioThree, ScenarioFour
 
 
 class ScenarioRunner:
@@ -35,10 +35,11 @@ class ScenarioRunner:
             "scenario_two": ScenarioTwo,
             "scenario_three": ScenarioThree,
             "scenario_four": ScenarioFour,
+            "scenario_zero": ScenarioZero,
         }
 
         self.logger = logging.getLogger(f"{__name__}.ScenarioRunner")
-        self.logger.info("ScenarioRunner initialized with 4 available scenarios")
+        self.logger.info("ScenarioRunner initialized with 5 available scenarios")
 
     def _setup_logging(self, logging_config: Dict[str, Any]) -> None:
         """Setup logging configuration."""

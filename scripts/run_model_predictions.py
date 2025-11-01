@@ -32,7 +32,7 @@ def example_model_function(image_url: str) -> List[Dict[str, Any]]:
     """
 
     # Retry configuration
-    MAX_RETRIES = 5
+    MAX_RETRIES = 9
     BASE_DELAY = 20  # Base delay in seconds
     MAX_DELAY = 180  # Maximum delay in seconds
 

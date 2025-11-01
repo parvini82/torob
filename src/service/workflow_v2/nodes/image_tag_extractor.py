@@ -1,42 +1,64 @@
 """
 Direct image tag extraction node.
 
-Extracts tags directly from images without intermediate caption generation.
+Extracts structured fashion tags directly from images without intermediate
+caption generation using specialized computer vision and fashion analysis prompts.
 """
 
+import os
 from typing import Dict, Any, List
+from dotenv import load_dotenv
+
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
+from ..prompts import ImageTagExtractionPrompts
+
+# Load environment variables
+load_dotenv()
+
+# Default vision model from environment
+VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
 
 
 class ImageTagExtractorNode(BaseNode):
     """
-    Node that extracts tags directly from images.
+    Node that extracts structured fashion tags directly from images.
 
-    Uses vision models to analyze images and extract structured
-    tags, entities, and categories without intermediate text generation.
+    Uses advanced computer vision models with specialized fashion industry
+    prompts to analyze product images and extract comprehensive commercial
+    metadata without requiring intermediate text generation.
     """
 
-    def __init__(self, model: str = "qwen/qwen2.5-vl-32b-instruct:free"):
+    def __init__(self, model: str = None):
         """
         Initialize the image tag extractor node.
 
         Args:
-            model: Vision model to use for direct image analysis
+            model: Vision model to use. If None, uses VISION_MODEL from env
         """
         super().__init__("ImageTagExtractor")
-        self.model = model
+        self.model = model or VISION_MODEL
         self.client = None
+
+        self.logger.info(f"Initialized with vision model: {self.model}")
 
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Extract tags directly from the image.
+        Extract structured fashion tags directly from the image.
+
+        Uses specialized computer vision and fashion analysis prompts to
+        perform comprehensive visual product analysis and extract commercial
+        metadata suitable for e-commerce applications.
 
         Args:
             state: Workflow state containing image_url
 
         Returns:
-            Updated state with extracted image tags
+            Updated state with extracted image tags in fashion-specific structure
+
+        Raises:
+            ValueError: If image_url is missing from state
+            ModelClientError: If vision model call fails
         """
         # Validate required inputs
         self.validate_required_keys(state, ["image_url"])
@@ -51,21 +73,21 @@ class ImageTagExtractorNode(BaseNode):
 
         # Get image URL
         image_url = state["image_url"]
-        self.logger.info(f"Extracting tags directly from image using model: {model_to_use}")
+        self.logger.info(f"Extracting fashion tags directly from image using model: {model_to_use}")
 
         try:
-            # Prepare messages for direct image analysis
+            # Prepare messages with specialized computer vision fashion prompt
             messages = [
                 {
                     "role": "system",
-                    "content": self._get_system_prompt()
+                    "content": ImageTagExtractionPrompts.SYSTEM_PROMPT
                 },
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": "Analyze this image and extract structured tags and information."
+                            "text": "Analyze this fashion product image and extract comprehensive commercial metadata using the systematic visual analysis protocol."
                         },
                         {
                             "type": "image_url",
@@ -75,80 +97,46 @@ class ImageTagExtractorNode(BaseNode):
                 }
             ]
 
-            # Extract tags as JSON
+            # Extract tags as JSON using specialized computer vision analysis
             tags_result = self.client.call_json(
                 model_to_use,
                 messages,
-                max_tokens=config.get("max_tokens", 1500),
-                temperature=config.get("temperature", 0.3)
+                max_tokens=config.get("max_tokens", 2000),  # Increased for comprehensive fashion analysis
+                temperature=config.get("temperature", 0.1)   # Very low for consistent structured output
             )
 
-            # Structure the result
-            structured_tags = self._structure_image_tags_result(tags_result, model_to_use)
+            # Structure the result according to fashion taxonomy
+            structured_tags = self._structure_image_fashion_tags_result(tags_result, model_to_use)
 
             # Update state
             updated_state = state.copy()
             updated_state["image_tags"] = structured_tags
 
-            self.logger.info(f"Extracted {len(structured_tags.get('entities', []))} entities from image")
-            self.logger.info(f"Identified {len(structured_tags.get('categories', []))} categories")
+            # Log extraction statistics
+            entities_count = len(structured_tags.get("entities", []))
+            unique_categories = self._get_unique_categories(structured_tags)
+
+            self.logger.info(f"Extracted {entities_count} fashion entities from image")
+            self.logger.info(f"Visual categories identified: {unique_categories[:5]}")  # Show first 5
+
+            # Log quality assessment if available
+            quality_score = structured_tags.get("quality_score", 0)
+            if quality_score > 0:
+                self.logger.info(f"Image analysis quality score: {quality_score:.2f}")
 
             return updated_state
 
         except ModelClientError as e:
-            self.logger.error(f"Model client error during image tag extraction: {str(e)}")
+            self.logger.error(f"Vision model error during image tag extraction: {str(e)}")
             raise
         except Exception as e:
             self.logger.error(f"Unexpected error during image tag extraction: {str(e)}")
             raise
 
-    def _get_system_prompt(self) -> str:
-        """Get the system prompt for direct image tag extraction."""
-        return """You are an expert computer vision analyst. Analyze images and extract comprehensive structured information.
+    def _structure_image_fashion_tags_result(self, raw_result: Dict[str, Any], model_used: str) -> Dict[str, Any]:
+        """Structure and validate the image fashion tags extraction result."""
 
-Examine the image carefully and return detailed information as JSON:
-
-{
-  "entities": [
-    {
-      "name": "object/brand/feature name",
-      "type": "product/brand/feature/material/color/shape/etc",
-      "confidence": 0.0-1.0,
-      "location": "description of where in image",
-      "attributes": ["attr1", "attr2"]
-    }
-  ],
-  "categories": [
-    {
-      "name": "category name",
-      "level": "main/sub/specific", 
-      "confidence": 0.0-1.0,
-      "reasoning": "why this category applies"
-    }
-  ],
-  "visual_attributes": {
-    "colors": ["primary_color", "secondary_color"],
-    "materials": ["material1", "material2"],
-    "textures": ["texture1", "texture2"],
-    "shapes": ["shape1", "shape2"],
-    "patterns": ["pattern1", "pattern2"]
-  },
-  "scene_context": {
-    "setting": "indoor/outdoor/studio/etc",
-    "lighting": "bright/dim/natural/artificial",
-    "background": "description",
-    "composition": "close-up/wide/etc"
-  },
-  "text_detected": ["any visible text"],
-  "brands_visible": ["brand1", "brand2"],
-  "quality_score": 0.0-1.0,
-  "summary": "comprehensive summary of what you see"
-}
-
-Be thorough and accurate. Only include information you can clearly observe in the image. Assign appropriate confidence scores based on visibility and certainty."""
-
-    def _structure_image_tags_result(self, raw_result: Dict[str, Any], model_used: str) -> Dict[str, Any]:
-        """Structure and validate the image tags extraction result."""
+        # Initialize structured result with fashion-specific metadata
         structured_result = {
             "entities": [],
             "categories": [],
@@ -160,65 +148,177 @@ Be thorough and accurate. Only include information you can clearly observe in th
             "summary": "",
             "model_used": model_used,
             "extracted_by": self.node_name,
-            "extraction_type": "direct_image_analysis"
+            "extraction_type": "direct_image_analysis",
+            "analysis_method": "computer_vision_fashion"
         }
 
-        # Extract entities
+        # Process entities with fashion-specific structure adaptation
         if "entities" in raw_result and isinstance(raw_result["entities"], list):
             for entity in raw_result["entities"]:
-                if isinstance(entity, dict) and "name" in entity:
+                if isinstance(entity, dict) and "name" in entity and "values" in entity:
                     structured_entity = {
                         "name": str(entity["name"]),
-                        "type": entity.get("type", "unknown"),
-                        "confidence": float(entity.get("confidence", 0.8)),
-                        "location": entity.get("location", ""),
-                        "attributes": entity.get("attributes", [])
+                        "values": [str(v) for v in entity["values"] if v],
+                        "entity_type": "visual_attribute",
+                        "confidence": 0.85,  # Default confidence for visual analysis
+                        "source": "direct_image_analysis",
+                        "visual_evidence": "confirmed"
                     }
                     structured_result["entities"].append(structured_entity)
 
-        # Extract categories
-        if "categories" in raw_result and isinstance(raw_result["categories"], list):
-            for category in raw_result["categories"]:
-                if isinstance(category, dict) and "name" in category:
-                    structured_category = {
-                        "name": str(category["name"]),
-                        "level": category.get("level", "main"),
-                        "confidence": float(category.get("confidence", 0.8)),
-                        "reasoning": category.get("reasoning", "")
-                    }
-                    structured_result["categories"].append(structured_category)
+        # Extract visual categories from entities
+        visual_categories = self._extract_visual_categories(structured_result["entities"])
+        structured_result["categories"] = visual_categories
 
-        # Extract visual attributes
-        if "visual_attributes" in raw_result and isinstance(raw_result["visual_attributes"], dict):
-            for attr_key, attr_values in raw_result["visual_attributes"].items():
-                if isinstance(attr_values, list):
-                    structured_result["visual_attributes"][attr_key] = [str(v) for v in attr_values if v]
-                elif attr_values:
-                    structured_result["visual_attributes"][attr_key] = [str(attr_values)]
+        # Build visual attributes dictionary
+        structured_result["visual_attributes"] = self._build_visual_attributes(structured_result["entities"])
 
-        # Extract scene context
+        # Extract scene context information
+        structured_result["scene_context"] = self._extract_scene_context(raw_result)
+
+        # Extract detected text and brands
+        structured_result["text_detected"] = self._extract_detected_text(raw_result)
+        structured_result["brands_visible"] = self._extract_visible_brands(raw_result)
+
+        # Extract quality score
+        structured_result["quality_score"] = self._extract_quality_score(raw_result)
+
+        # Generate comprehensive visual summary
+        structured_result["summary"] = self._generate_visual_summary(structured_result)
+
+        return structured_result
+
+    def _extract_visual_categories(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Extract visual categories from fashion entities."""
+        categories = []
+
+        # Key visual category indicators for fashion
+        category_entities = [
+            "product_type", "subcategory", "style_classification",
+            "target_demographic", "occasion_primary"
+        ]
+
+        for entity in entities:
+            if entity.get("name") in category_entities:
+                for value in entity.get("values", []):
+                    categories.append({
+                        "name": value,
+                        "type": entity.get("name"),
+                        "level": self._determine_category_level(entity.get("name")),
+                        "confidence": 0.9,
+                        "visual_evidence": "confirmed",
+                        "source": "direct_image_analysis"
+                    })
+
+        return categories
+
+    def _determine_category_level(self, entity_name: str) -> str:
+        """Determine hierarchy level for fashion categories."""
+        level_mapping = {
+            "product_type": "main",
+            "subcategory": "sub",
+            "style_classification": "specific",
+            "target_demographic": "demographic",
+            "occasion_primary": "usage"
+        }
+        return level_mapping.get(entity_name, "general")
+
+    def _build_visual_attributes(self, entities: List[Dict[str, Any]]) -> Dict[str, List[str]]:
+        """Build structured visual attributes dictionary."""
+        visual_attrs = {}
+
+        # Focus on visual fashion attributes
+        visual_attribute_names = [
+            "color_primary", "color_secondary", "pattern_type",
+            "material_primary", "texture_finish", "fit_profile",
+            "construction_features", "hardware_details", "design_elements"
+        ]
+
+        for entity in entities:
+            attr_name = entity.get("name", "")
+            attr_values = entity.get("values", [])
+
+            if attr_name in visual_attribute_names and attr_values:
+                visual_attrs[attr_name] = attr_values
+
+        return visual_attrs
+
+    def _extract_scene_context(self, raw_result: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract scene context information from raw result."""
+        scene_context = {}
+
+        # Look for scene context in raw result
         if "scene_context" in raw_result and isinstance(raw_result["scene_context"], dict):
-            structured_result["scene_context"] = {
+            scene_context = {
                 k: str(v) for k, v in raw_result["scene_context"].items() if v
             }
 
-        # Extract detected text
+        return scene_context
+
+    def _extract_detected_text(self, raw_result: Dict[str, Any]) -> List[str]:
+        """Extract any text detected in the image."""
+        detected_text = []
+
         if "text_detected" in raw_result and isinstance(raw_result["text_detected"], list):
-            structured_result["text_detected"] = [str(text) for text in raw_result["text_detected"] if text]
+            detected_text = [str(text) for text in raw_result["text_detected"] if text]
 
-        # Extract visible brands
+        return detected_text
+
+    def _extract_visible_brands(self, raw_result: Dict[str, Any]) -> List[str]:
+        """Extract visible brand names from the image."""
+        brands = []
+
         if "brands_visible" in raw_result and isinstance(raw_result["brands_visible"], list):
-            structured_result["brands_visible"] = [str(brand) for brand in raw_result["brands_visible"] if brand]
+            brands = [str(brand) for brand in raw_result["brands_visible"] if brand]
 
-        # Extract quality score
-        if "quality_score" in raw_result:
-            try:
-                structured_result["quality_score"] = float(raw_result["quality_score"])
-            except (ValueError, TypeError):
-                structured_result["quality_score"] = 0.8
+        return brands
 
-        # Extract summary
-        if "summary" in raw_result:
-            structured_result["summary"] = str(raw_result["summary"])
+    def _extract_quality_score(self, raw_result: Dict[str, Any]) -> float:
+        """Extract image analysis quality score."""
+        try:
+            return float(raw_result.get("quality_score", 0.0))
+        except (ValueError, TypeError):
+            return 0.8  # Default reasonable quality score
 
-        return structured_result
+    def _generate_visual_summary(self, structured_result: Dict[str, Any]) -> str:
+        """Generate a comprehensive visual analysis summary."""
+        entities = structured_result.get("entities", [])
+
+        # Find key visual elements
+        product_type = self._find_entity_values(entities, "product_type")
+        colors = self._find_entity_values(entities, "color_primary")
+        materials = self._find_entity_values(entities, "material_primary")
+        style = self._find_entity_values(entities, "style_classification")
+        quality_tier = self._find_entity_values(entities, "quality_tier")
+
+        summary_parts = []
+
+        if product_type:
+            summary_parts.append(f"Visual ID: {', '.join(product_type[:2])}")
+        if colors:
+            summary_parts.append(f"Colors: {', '.join(colors[:3])}")
+        if materials:
+            summary_parts.append(f"Materials: {', '.join(materials[:2])}")
+        if style:
+            summary_parts.append(f"Style: {', '.join(style[:2])}")
+        if quality_tier:
+            summary_parts.append(f"Quality: {', '.join(quality_tier[:1])}")
+
+        # Add image quality info
+        quality_score = structured_result.get("quality_score", 0)
+        if quality_score > 0:
+            summary_parts.append(f"Analysis Score: {quality_score:.2f}")
+
+        return " | ".join(summary_parts) if summary_parts else "Direct image analysis completed"
+
+    def _find_entity_values(self, entities: List[Dict[str, Any]], entity_name: str) -> List[str]:
+        """Find values for a specific entity name in the entities list."""
+        for entity in entities:
+            if entity.get("name") == entity_name:
+                return entity.get("values", [])
+        return []
+
+    def _get_unique_categories(self, structured_tags: Dict[str, Any]) -> List[str]:
+        """Get list of unique category names for logging."""
+        categories = structured_tags.get("categories", [])
+        return list(set(cat.get("name", "") for cat in categories if cat.get("name")))

@@ -1,59 +1,81 @@
 """
-Conversation refiner node for iterative improvement.
+Conversation refiner node for iterative fashion analysis improvement.
 
 Uses conversation loops with AI models to iteratively refine and improve
-extraction results until convergence or maximum iterations reached.
+fashion extraction results through multi-turn analysis until convergence
+or maximum iterations reached. Provides highest possible accuracy.
 """
 
+import os
 from typing import Dict, Any, List, Optional
+from dotenv import load_dotenv
+
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
+from ..prompts import ConversationRefinementPrompts
+
+# Load environment variables
+load_dotenv()
+
+# Default conversation model from environment
+CONVERSATION_MODEL: str = os.getenv("CONVERSATION_MODEL", "anthropic/claude-3.5-sonnet:beta")
 
 
 class ConversationRefinerNode(BaseNode):
     """
-    Node that uses conversation loops to iteratively refine extraction results.
+    Node that uses iterative conversation loops to refine fashion extraction results.
 
     Engages in multi-turn conversations with AI models to progressively
-    improve extraction quality through feedback and refinement cycles.
+    improve fashion analysis quality through feedback cycles, achieving
+    the highest possible accuracy through iterative enhancement.
     """
 
     def __init__(self,
-                 model: str = "qwen/qwen2.5-vl-32b-instruct:free",
+                 model: str = None,
                  max_iterations: int = 3,
                  convergence_threshold: float = 0.1):
         """
         Initialize the conversation refiner node.
 
         Args:
-            model: Model to use for conversation refinement
+            model: Model for conversation refinement. If None, uses CONVERSATION_MODEL from env
             max_iterations: Maximum number of refinement iterations
-            convergence_threshold: Threshold for detecting convergence
+            convergence_threshold: Threshold for detecting convergence (lower = more similar)
         """
         super().__init__("ConversationRefiner")
-        self.model = model
+        self.model = model or CONVERSATION_MODEL
         self.max_iterations = max_iterations
         self.convergence_threshold = convergence_threshold
         self.client = None
 
+        self.logger.info(f"Initialized conversation refiner with model: {self.model}")
+        self.logger.info(f"Max iterations: {max_iterations}, Convergence threshold: {convergence_threshold}")
+
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Perform iterative conversation-based refinement.
+        Perform iterative conversation-based fashion refinement.
+
+        Conducts multiple rounds of AI-assisted refinement through conversation,
+        progressively improving fashion analysis accuracy until convergence
+        is achieved or maximum iterations reached.
 
         Args:
             state: Workflow state containing extraction results and image
 
         Returns:
             Updated state with refined results and conversation history
+
+        Raises:
+            ModelClientError: If conversation model calls fail
         """
         # Find content to refine
-        refinable_content = self._find_refinable_content(state)
+        refinable_content = self._find_refinable_fashion_content(state)
 
         if not refinable_content:
-            self.logger.warning("No refinable content found in state")
+            self.logger.warning("No refinable fashion content found in state")
             return state
 
-        # Get image URL for context
+        # Get image URL for visual context
         image_url = state.get("image_url")
         if not image_url:
             self.logger.warning("No image URL found - refinement may be less effective")
@@ -68,11 +90,11 @@ class ConversationRefinerNode(BaseNode):
         if not self.client:
             self.client = create_model_client()
 
-        self.logger.info(f"Starting conversation refinement with {max_iters} max iterations")
+        self.logger.info(f"Starting iterative fashion refinement with {max_iters} max iterations")
 
         try:
-            # Perform iterative refinement
-            refined_result, conversation_history = self._perform_iterative_refinement(
+            # Perform iterative refinement conversation
+            refined_result, conversation_history = self._perform_iterative_fashion_refinement(
                 refinable_content, image_url, model_to_use, max_iters, convergence_thresh
             )
 
@@ -82,48 +104,60 @@ class ConversationRefinerNode(BaseNode):
             updated_state["conversation_history"] = conversation_history
 
             # Log final statistics
-            self._log_conversation_statistics(refined_result, conversation_history)
+            self._log_conversation_fashion_statistics(refined_result, conversation_history)
 
             return updated_state
 
         except ModelClientError as e:
-            self.logger.error(f"Model client error during conversation refinement: {str(e)}")
+            self.logger.error(f"Conversation model error during iterative refinement: {str(e)}")
             raise
         except Exception as e:
             self.logger.error(f"Unexpected error during conversation refinement: {str(e)}")
             raise
 
-    def _find_refinable_content(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        """Find content that can be refined through conversation."""
-        # Priority order for refinement sources
+    def _find_refinable_fashion_content(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        """Find fashion content suitable for conversation refinement."""
+        # Priority order for conversation refinement sources
         sources = [
-            "refined_tags",  # Already refined content
-            "merged_tags",  # Merged results
-            "image_tags",  # Direct image analysis
-            "extracted_tags"  # Text-based extraction
+            "refined_tags",     # Already refined content (for further improvement)
+            "merged_tags",      # Merged results
+            "image_tags",       # Direct image analysis
+            "extracted_tags"    # Text-based extraction
         ]
 
         for source in sources:
             if source in state and isinstance(state[source], dict):
                 content = state[source]
-                if self._is_refinable_content(content):
-                    self.logger.debug(f"Using content from: {source}")
+                if self._is_conversation_refinable_content(content):
+                    self.logger.debug(f"Using fashion content for conversation from: {source}")
                     return content
 
         return {}
 
-    def _is_refinable_content(self, content: Dict[str, Any]) -> bool:
-        """Check if content has fields that can be refined."""
-        required_fields = ["entities", "categories"]
-        return any(field in content and content[field] for field in required_fields)
+    def _is_conversation_refinable_content(self, content: Dict[str, Any]) -> bool:
+        """Check if content is suitable for conversation-based refinement."""
+        # Need substantial content for meaningful conversation refinement
+        entities = content.get("entities", [])
+        categories = content.get("categories", [])
 
-    def _perform_iterative_refinement(self,
-                                      initial_content: Dict[str, Any],
-                                      image_url: Optional[str],
-                                      model: str,
-                                      max_iterations: int,
-                                      convergence_threshold: float) -> tuple:
-        """Perform the iterative refinement conversation."""
+        # Minimum thresholds for conversation refinement to be worthwhile
+        has_sufficient_entities = len(entities) >= 2
+        has_categories = len(categories) >= 1
+
+        return has_sufficient_entities and has_categories
+
+    def _perform_iterative_fashion_refinement(self,
+                                            initial_content: Dict[str, Any],
+                                            image_url: Optional[str],
+                                            model: str,
+                                            max_iterations: int,
+                                            convergence_threshold: float) -> tuple:
+        """
+        Perform the iterative fashion refinement conversation.
+
+        This is the core logic: starts a conversation with AI and keeps
+        refining until the changes become minimal (convergence) or max iterations reached.
+        """
 
         conversation_history = []
         current_content = initial_content.copy()
@@ -135,16 +169,18 @@ class ConversationRefinerNode(BaseNode):
         conversation_context = [
             {
                 "role": "system",
-                "content": self._get_conversation_system_prompt()
+                "content": ConversationRefinementPrompts.SYSTEM_PROMPT
             }
         ]
 
+        self.logger.info(f"Starting conversation refinement - Initial entities: {len(current_content.get('entities', []))}")
+
         for iteration in range(max_iterations):
             iterations_used = iteration + 1
-            self.logger.info(f"Refinement iteration {iterations_used}/{max_iterations}")
+            self.logger.info(f"Conversation iteration {iterations_used}/{max_iterations}")
 
-            # Create refinement request
-            refinement_request = self._create_refinement_request(
+            # Create iteration-specific refinement request
+            refinement_request = self._create_fashion_refinement_request(
                 current_content, iteration, image_url
             )
 
@@ -158,23 +194,23 @@ class ConversationRefinerNode(BaseNode):
                 refined_response = self.client.call_json(
                     model,
                     conversation_context,
-                    max_tokens=2500,
-                    temperature=0.3
+                    max_tokens=3000,  # Increased for comprehensive fashion conversations
+                    temperature=0.2   # Low for consistent iterative improvements
                 )
 
-                # Add response to conversation context
+                # Add response to conversation context (for next iteration)
                 conversation_context.append({
                     "role": "assistant",
                     "content": str(refined_response)
                 })
 
                 # Structure the refined result
-                iteration_result = self._structure_conversation_result(
+                iteration_result = self._structure_conversation_fashion_result(
                     refined_response, current_content, iteration, model
                 )
 
-                # Record this iteration
-                conversation_history.append({
+                # Record this iteration's statistics
+                iteration_stats = {
                     "iteration": iteration + 1,
                     "input_entities": len(current_content.get("entities", [])),
                     "output_entities": len(iteration_result.get("entities", [])),
@@ -183,15 +219,19 @@ class ConversationRefinerNode(BaseNode):
                     "confidence_improvement": self._calculate_confidence_change(
                         current_content, iteration_result
                     )
-                })
+                }
 
-                # Check for convergence
+                conversation_history.append(iteration_stats)
+
+                # Check for convergence (are changes getting smaller?)
                 if previous_content:
-                    convergence_score = self._calculate_convergence(previous_content, iteration_result)
+                    convergence_score = self._calculate_fashion_convergence(previous_content, iteration_result)
                     conversation_history[-1]["convergence_score"] = convergence_score
 
+                    self.logger.debug(f"Convergence score: {convergence_score:.3f} (threshold: {convergence_threshold})")
+
                     if convergence_score < convergence_threshold:
-                        self.logger.info(f"Convergence achieved at iteration {iterations_used}")
+                        self.logger.info(f"Fashion refinement converged at iteration {iterations_used}")
                         converged = True
                         break
 
@@ -200,7 +240,7 @@ class ConversationRefinerNode(BaseNode):
                 current_content = iteration_result
 
             except Exception as e:
-                self.logger.error(f"Error in iteration {iterations_used}: {str(e)}")
+                self.logger.error(f"Error in conversation iteration {iterations_used}: {str(e)}")
                 conversation_history.append({
                     "iteration": iteration + 1,
                     "error": str(e),
@@ -208,122 +248,53 @@ class ConversationRefinerNode(BaseNode):
                 })
                 break
 
-        # Create final result
+        # Create final result with convergence info
         final_result = current_content.copy()
         final_result["convergence_info"] = {
             "converged_early": converged,
             "iterations_used": iterations_used,
             "max_iterations": max_iterations,
-            "convergence_threshold": convergence_threshold
+            "convergence_threshold": convergence_threshold,
+            "final_convergence_score": convergence_score if previous_content else 0.0
         }
 
         return final_result, conversation_history
 
-    def _get_conversation_system_prompt(self) -> str:
-        """Get system prompt for conversation refinement."""
-        return """You are an expert extraction analyst engaged in iterative refinement through conversation.
-
-Your role is to progressively improve extraction results through multiple rounds of analysis and refinement. Each iteration should build upon the previous results while addressing specific areas for improvement.
-
-For each refinement iteration:
-
-1. **Analyze Current State:**
-   - Review the current extraction results
-   - Identify areas that need improvement
-   - Consider feedback from previous iterations
-
-2. **Apply Targeted Improvements:**
-   - Focus on 1-2 specific improvement areas per iteration
-   - Make incremental, well-reasoned changes
-   - Maintain high-quality existing extractions
-
-3. **Document Changes:**
-   - Clearly explain what changes were made and why
-   - Provide confidence assessments for new/modified entities
-   - Note any uncertainties or areas needing further refinement
-
-4. **Convergence Consideration:**
-   - As iterations progress, make smaller, more targeted changes
-   - Focus on fine-tuning rather than major restructuring
-   - Indicate when you believe the results are well-refined
-
-Return results in this JSON structure:
-
-{
-  "entities": [...],
-  "categories": [...],
-  "attributes": {...},
-  "iteration_changes": ["change1", "change2"],
-  "refinement_focus": "what this iteration focused on",
-  "confidence_assessment": "overall confidence in current results",
-  "suggested_next_focus": "what to focus on in next iteration (if any)",
-  "summary": "updated comprehensive summary"
-}
-
-Be thoughtful and incremental. Quality over quantity of changes."""
-
-    def _create_refinement_request(self,
-                                   current_content: Dict[str, Any],
-                                   iteration: int,
-                                   image_url: Optional[str]) -> str:
-        """Create a refinement request for the current iteration."""
+    def _create_fashion_refinement_request(self,
+                                         current_content: Dict[str, Any],
+                                         iteration: int,
+                                         image_url: Optional[str]) -> str:
+        """Create a fashion-specific refinement request for the current iteration."""
 
         import json
 
-        # Create focused request based on iteration
-        if iteration == 0:
-            focus_prompt = """This is the initial refinement iteration.
+        # Get iteration-specific focus from prompts
+        iteration_focus = ConversationRefinementPrompts.get_iteration_prompt(iteration)
 
-Please analyze the extraction results and improve:
-- Entity accuracy and completeness
-- Category appropriateness and hierarchy
-- Attribute organization and relevance
-
-Focus on the most obvious improvements and quality issues."""
-
-        elif iteration == 1:
-            focus_prompt = """This is the second refinement iteration.
-
-Building on the previous improvements, now focus on:
-- Entity relationships and groupings
-- Attribute refinement and consolidation
-- Category hierarchy optimization
-- Confidence score adjustments"""
-
-        else:
-            focus_prompt = f"""This is iteration {iteration + 1} of refinement.
-
-Focus on fine-tuning and final optimizations:
-- Minor entity adjustments
-- Confidence fine-tuning
-- Final attribute cleanup
-- Summary enhancement
-
-Make smaller, targeted improvements as we approach convergence."""
-
-        # Format current content
+        # Format current content for review
         content_json = json.dumps(current_content, indent=2, ensure_ascii=False)
 
-        request = f"""{focus_prompt}
+        request = f"""{iteration_focus}
 
-Current extraction results to refine:
+Fashion extraction results to refine:
 
 {content_json}
 
-Please provide your refined version with clear documentation of changes made."""
+Please provide your refined version with clear documentation of improvements made.
+Focus on fashion industry accuracy and commercial value."""
 
-        # Add image context if available
+        # Add image context for first iteration
         if image_url and iteration == 0:
-            request += f"\n\nOriginal image URL for context: {image_url}"
+            request += f"\n\nOriginal fashion product image for visual reference: {image_url}"
 
         return request
 
-    def _structure_conversation_result(self,
-                                       refined_data: Dict[str, Any],
-                                       original_content: Dict[str, Any],
-                                       iteration: int,
-                                       model: str) -> Dict[str, Any]:
-        """Structure the conversation refinement result."""
+    def _structure_conversation_fashion_result(self,
+                                             refined_data: Dict[str, Any],
+                                             original_content: Dict[str, Any],
+                                             iteration: int,
+                                             model: str) -> Dict[str, Any]:
+        """Structure the conversation fashion refinement result."""
 
         result = {
             "entities": [],
@@ -336,21 +307,22 @@ Please provide your refined version with clear documentation of changes made."""
             "summary": "",
             "model_used": model,
             "refined_by": self.node_name,
+            "refinement_method": "iterative_conversation",
             "iteration_number": iteration + 1,
             "original_source": original_content.get("extracted_by", "unknown")
         }
 
-        # Structure entities
+        # Structure entities (handle both formats)
         if "entities" in refined_data:
-            result["entities"] = self._structure_conversation_entities(refined_data["entities"])
+            result["entities"] = self._structure_conversation_fashion_entities(refined_data["entities"])
 
         # Structure categories
         if "categories" in refined_data:
-            result["categories"] = self._structure_conversation_categories(refined_data["categories"])
+            result["categories"] = self._structure_conversation_fashion_categories(refined_data["categories"])
 
         # Structure attributes
         if "attributes" in refined_data:
-            result["attributes"] = self._structure_conversation_attributes(refined_data["attributes"])
+            result["attributes"] = self._structure_conversation_fashion_attributes(refined_data["attributes"])
 
         # Extract conversation metadata
         result["iteration_changes"] = refined_data.get("iteration_changes", [])
@@ -361,69 +333,18 @@ Please provide your refined version with clear documentation of changes made."""
 
         return result
 
-    def _structure_conversation_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Structure entities from conversation refinement."""
-        structured_entities = []
+    def _calculate_fashion_convergence(self, previous_content: Dict[str, Any], current_content: Dict[str, Any]) -> float:
+        """
+        Calculate convergence score between two fashion analysis iterations.
 
-        for entity in entities:
-            if isinstance(entity, dict) and "name" in entity:
-                structured_entity = {
-                    "name": str(entity["name"]),
-                    "type": str(entity.get("type", "unknown")),
-                    "confidence": float(entity.get("confidence", 0.8)),
-                    "context": str(entity.get("context", "")),
-                    "attributes": entity.get("attributes", []),
-                    "relationships": entity.get("relationships", []),
-                    "iteration_notes": str(entity.get("iteration_notes", ""))
-                }
-                structured_entities.append(structured_entity)
+        Returns a score where:
+        - 0.0 = identical results (fully converged)
+        - 1.0 = completely different results
+        """
 
-        return structured_entities
-
-    def _structure_conversation_categories(self, categories: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Structure categories from conversation refinement."""
-        structured_categories = []
-
-        for category in categories:
-            if isinstance(category, dict) and "name" in category:
-                structured_category = {
-                    "name": str(category["name"]),
-                    "level": str(category.get("level", "main")),
-                    "confidence": float(category.get("confidence", 0.8)),
-                    "reasoning": str(category.get("reasoning", "")),
-                    "entities": category.get("entities", []),
-                    "iteration_notes": str(category.get("iteration_notes", ""))
-                }
-                structured_categories.append(structured_category)
-
-        return structured_categories
-
-    def _structure_conversation_attributes(self, attributes: Dict[str, Any]) -> Dict[str, List[str]]:
-        """Structure attributes from conversation refinement."""
-        structured_attrs = {}
-
-        for attr_key, attr_values in attributes.items():
-            if isinstance(attr_values, list):
-                structured_attrs[attr_key] = [str(v) for v in attr_values if v]
-            elif attr_values:
-                structured_attrs[attr_key] = [str(attr_values)]
-
-        return structured_attrs
-
-    def _calculate_convergence(self, previous_content: Dict[str, Any], current_content: Dict[str, Any]) -> float:
-        """Calculate convergence score between two iterations."""
-
-        # Compare entities
-        prev_entities = set()
-        curr_entities = set()
-
-        for entity in previous_content.get("entities", []):
-            if isinstance(entity, dict) and "name" in entity:
-                prev_entities.add(f"{entity['name']}_{entity.get('type', 'unknown')}")
-
-        for entity in current_content.get("entities", []):
-            if isinstance(entity, dict) and "name" in entity:
-                curr_entities.add(f"{entity['name']}_{entity.get('type', 'unknown')}")
+        # Compare entities (handle both name/values and name/type formats)
+        prev_entities = self._extract_entity_signatures(previous_content.get("entities", []))
+        curr_entities = self._extract_entity_signatures(current_content.get("entities", []))
 
         # Calculate entity similarity
         if not prev_entities and not curr_entities:
@@ -436,8 +357,16 @@ Please provide your refined version with clear documentation of changes made."""
             entity_similarity = intersection / union if union > 0 else 0.0
 
         # Compare categories
-        prev_categories = set(cat.get("name", "") for cat in previous_content.get("categories", []))
-        curr_categories = set(cat.get("name", "") for cat in current_content.get("categories", []))
+        prev_categories = set()
+        curr_categories = set()
+
+        for cat in previous_content.get("categories", []):
+            if isinstance(cat, dict) and "name" in cat:
+                prev_categories.add(f"{cat['name']}_{cat.get('type', 'general')}")
+
+        for cat in current_content.get("categories", []):
+            if isinstance(cat, dict) and "name" in cat:
+                curr_categories.add(f"{cat['name']}_{cat.get('type', 'general')}")
 
         if not prev_categories and not curr_categories:
             category_similarity = 1.0
@@ -453,6 +382,22 @@ Please provide your refined version with clear documentation of changes made."""
 
         # Return divergence score (lower = more converged)
         return 1.0 - convergence_score
+
+    def _extract_entity_signatures(self, entities: List[Dict[str, Any]]) -> set:
+        """Extract unique signatures from entities for comparison."""
+        signatures = set()
+
+        for entity in entities:
+            if isinstance(entity, dict):
+                if "name" in entity and "values" in entity:
+                    # New format: name + values
+                    values_str = "-".join(entity.get("values", [])[:2])  # Use first 2 values
+                    signatures.add(f"{entity['name']}_{values_str}")
+                elif "name" in entity and "type" in entity:
+                    # Legacy format: name + type
+                    signatures.add(f"{entity['name']}_{entity.get('type', 'unknown')}")
+
+        return signatures
 
     def _calculate_confidence_change(self, previous_content: Dict[str, Any], current_content: Dict[str, Any]) -> float:
         """Calculate the change in average confidence scores."""
@@ -472,14 +417,78 @@ Please provide your refined version with clear documentation of changes made."""
 
         return curr_conf - prev_conf
 
-    def _log_conversation_statistics(self, refined_result: Dict[str, Any],
-                                     conversation_history: List[Dict[str, Any]]) -> None:
-        """Log statistics about the conversation refinement."""
+    def _structure_conversation_fashion_entities(self, entities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Structure entities from conversation refinement."""
+        structured_entities = []
+
+        for entity in entities:
+            if isinstance(entity, dict) and "name" in entity:
+                # Handle different entity formats
+                if "values" in entity:
+                    # New fashion format
+                    structured_entity = {
+                        "name": str(entity["name"]),
+                        "values": [str(v) for v in entity["values"] if v] if isinstance(entity["values"], list) else [str(entity["values"])],
+                        "entity_type": "conversation_refined",
+                        "confidence": float(entity.get("confidence", 0.95)),  # Higher confidence after conversation
+                        "source": "iterative_conversation",
+                        "iteration_notes": str(entity.get("iteration_notes", ""))
+                    }
+                else:
+                    # Legacy format
+                    structured_entity = {
+                        "name": str(entity["name"]),
+                        "type": str(entity.get("type", "unknown")),
+                        "confidence": float(entity.get("confidence", 0.95)),
+                        "context": str(entity.get("context", "")),
+                        "attributes": entity.get("attributes", []),
+                        "relationships": entity.get("relationships", []),
+                        "iteration_notes": str(entity.get("iteration_notes", ""))
+                    }
+
+                structured_entities.append(structured_entity)
+
+        return structured_entities
+
+    def _structure_conversation_fashion_categories(self, categories: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Structure categories from conversation refinement."""
+        structured_categories = []
+
+        for category in categories:
+            if isinstance(category, dict) and "name" in category:
+                structured_category = {
+                    "name": str(category["name"]),
+                    "type": category.get("type", "general"),
+                    "level": str(category.get("level", "main")),
+                    "confidence": float(category.get("confidence", 0.95)),
+                    "reasoning": str(category.get("reasoning", "")),
+                    "entities": category.get("entities", []),
+                    "iteration_notes": str(category.get("iteration_notes", ""))
+                }
+                structured_categories.append(structured_category)
+
+        return structured_categories
+
+    def _structure_conversation_fashion_attributes(self, attributes: Dict[str, Any]) -> Dict[str, List[str]]:
+        """Structure attributes from conversation refinement."""
+        structured_attrs = {}
+
+        for attr_key, attr_values in attributes.items():
+            if isinstance(attr_values, list):
+                structured_attrs[attr_key] = [str(v) for v in attr_values if v]
+            elif attr_values:
+                structured_attrs[attr_key] = [str(attr_values)]
+
+        return structured_attrs
+
+    def _log_conversation_fashion_statistics(self, refined_result: Dict[str, Any], conversation_history: List[Dict[str, Any]]) -> None:
+        """Log statistics about the conversation fashion refinement."""
         convergence_info = refined_result.get("convergence_info", {})
 
-        self.logger.info("Conversation refinement completed:")
+        self.logger.info("Iterative fashion refinement completed:")
         self.logger.info(f"  Iterations used: {convergence_info.get('iterations_used', 0)}")
         self.logger.info(f"  Converged early: {convergence_info.get('converged_early', False)}")
+        self.logger.info(f"  Final convergence score: {convergence_info.get('final_convergence_score', 0.0):.3f}")
 
         if conversation_history:
             final_entities = len(refined_result.get("entities", []))
@@ -488,12 +497,17 @@ Please provide your refined version with clear documentation of changes made."""
             self.logger.info(f"  Final entities: {final_entities}")
             self.logger.info(f"  Final categories: {final_categories}")
 
-            # Log confidence improvements
+            # Log confidence improvements across all iterations
             total_confidence_change = sum(
                 hist.get("confidence_improvement", 0)
                 for hist in conversation_history
                 if "confidence_improvement" in hist
             )
 
-            if total_confidence_change != 0:
+            if abs(total_confidence_change) > 0.001:
                 self.logger.info(f"  Total confidence change: {total_confidence_change:+.3f}")
+
+            # Log iteration focuses
+            focuses = [hist.get("refinement_focus", "") for hist in conversation_history if hist.get("refinement_focus")]
+            if focuses:
+                self.logger.debug(f"  Iteration focuses: {focuses}")

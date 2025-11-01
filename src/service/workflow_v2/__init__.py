@@ -54,7 +54,8 @@ from .scenarios import (
     ScenarioOne,
     ScenarioTwo,
     ScenarioThree,
-    ScenarioFour
+    ScenarioFour,
+    ScenarioZero
 )
 
 # Import all nodes for advanced usage
@@ -102,6 +103,7 @@ __all__ = [
     "ScenarioTwo",
     "ScenarioThree",
     "ScenarioFour",
+    "ScenarioZero",
 
     # Nodes (for custom workflows)
     "CaptionGeneratorNode",

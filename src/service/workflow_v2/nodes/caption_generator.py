@@ -1,42 +1,63 @@
 """
 Caption generation node for image analysis.
 
-Generates descriptive captions for images using vision-language models.
+Generates professional fashion product captions using specialized prompts
+and configurable vision models with environment variable support.
 """
 
+import os
 from typing import Dict, Any, List
+from dotenv import load_dotenv
+
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
+from ..prompts import CaptionPrompts
+
+# Load environment variables
+load_dotenv()
+
+# Default models from environment
+VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
 
 
 class CaptionGeneratorNode(BaseNode):
     """
-    Node that generates descriptive captions for images.
+    Node that generates professional fashion product captions from images.
 
-    Takes an image URL/data and produces a detailed textual description
-    that can be used by downstream nodes for further analysis.
+    Uses specialized fashion industry prompts to create detailed, commercial-grade
+    captions that serve as perfect input for downstream tag extraction processes.
+    Supports configurable vision models via environment variables.
     """
 
-    def __init__(self, model: str = "qwen/qwen2.5-vl-32b-instruct:free"):
+    def __init__(self, model: str = None):
         """
         Initialize the caption generator node.
 
         Args:
-            model: Model to use for caption generation
+            model: Vision model to use. If None, uses VISION_MODEL from env
         """
         super().__init__("CaptionGenerator")
-        self.model = model
+        self.model = model or VISION_MODEL
         self.client = None  # Will be initialized on first use
+
+        self.logger.info(f"Initialized with model: {self.model}")
 
     def run(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate a caption for the provided image.
+        Generate a professional fashion caption for the provided image.
+
+        Uses specialized fashion industry prompts to analyze product images
+        and generate comprehensive captions with commercial-grade detail.
 
         Args:
             state: Workflow state containing image_url
 
         Returns:
             Updated state with caption information
+
+        Raises:
+            ValueError: If image_url is missing from state
+            ModelClientError: If vision model call fails
         """
         # Validate required inputs
         self.validate_required_keys(state, ["image_url"])
@@ -51,21 +72,21 @@ class CaptionGeneratorNode(BaseNode):
 
         # Get image URL
         image_url = state["image_url"]
-        self.logger.info(f"Generating caption for image using model: {model_to_use}")
+        self.logger.info(f"Generating professional fashion caption using model: {model_to_use}")
 
         try:
-            # Prepare messages for vision model
+            # Prepare messages with specialized fashion prompt
             messages = [
                 {
                     "role": "system",
-                    "content": self._get_system_prompt()
+                    "content": CaptionPrompts.SYSTEM_PROMPT
                 },
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": "Please provide a detailed caption for this image."
+                            "text": "Please provide a comprehensive professional fashion caption for this product image."
                         },
                         {
                             "type": "image_url",
@@ -75,47 +96,37 @@ class CaptionGeneratorNode(BaseNode):
                 }
             ]
 
-            # Generate caption
+            # Generate caption using fashion-specific prompt
             caption_text = self.client.call_text(
                 model_to_use,
                 messages,
-                max_tokens=config.get("max_tokens", 500),
-                temperature=config.get("temperature", 0.7)
+                max_tokens=config.get("max_tokens", 800),  # Increased for detailed fashion descriptions
+                temperature=config.get("temperature", 0.3)  # Lower for more consistent professional output
             )
 
-            # Create caption result
+            # Create structured caption result
             caption_result = {
-                "text": caption_text,
+                "text": caption_text.strip(),
                 "model_used": model_to_use,
                 "word_count": len(caption_text.split()),
-                "generated_by": self.node_name
+                "generated_by": self.node_name,
+                "prompt_type": "fashion_professional",
+                "analysis_depth": "comprehensive"
             }
 
-            # Update state
+            # Update state with caption
             updated_state = state.copy()
             updated_state["caption"] = caption_result
 
-            self.logger.info(f"Generated caption with {caption_result['word_count']} words")
-            self.logger.debug(f"Caption preview: {caption_text[:100]}...")
+            # Log generation statistics
+            self.logger.info(f"Generated professional caption: {caption_result['word_count']} words")
+            self.logger.debug(f"Caption preview: {caption_text[:150]}...")
 
             return updated_state
 
         except ModelClientError as e:
-            self.logger.error(f"Model client error during caption generation: {str(e)}")
+            self.logger.error(f"Vision model error during caption generation: {str(e)}")
             raise
         except Exception as e:
             self.logger.error(f"Unexpected error during caption generation: {str(e)}")
             raise
-
-    def _get_system_prompt(self) -> str:
-        """Get the system prompt for caption generation."""
-        return """You are an expert image analyst. Generate detailed, accurate captions for images.
-
-Your caption should:
-1. Describe the main subject(s) and their key characteristics
-2. Include relevant context, setting, and environment
-3. Mention important visual elements, colors, and composition
-4. Be factual and objective, avoiding speculation
-5. Be comprehensive but concise (aim for 2-4 sentences)
-
-Focus on details that would be useful for product categorization, search, and understanding."""

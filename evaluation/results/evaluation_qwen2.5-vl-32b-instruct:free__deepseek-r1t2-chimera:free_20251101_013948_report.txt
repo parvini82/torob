@@ -1,0 +1,88 @@
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION CONFIGURATION
+----------------------------------------
+Evaluation Date: 2025-11-01T01:39:48.261486
+Enabled Metrics: exact, similarity, partial, lenient
+Report Mode: comprehensive
+Semantic Similarity: Enabled
+
+PREDICTION METADATA
+----------------------------------------
+Model Name: qwen2.5-vl-32b-instruct:free__deepseek-r1t2-chimera:free
+Sample Path: /home/peyma/projects/torob/data/processed/Ground_Truth_first10.json
+Total Samples: 10
+Prediction Time: 935.64 seconds
+Prediction Date: 2025-11-01T01:23:37.782873
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 9
+Failed Predictions: 1
+Success Rate: 90.0%
+Average Time per Product: 93.564s
+
+EVALUATION RESULTS
+----------------------------------------
+COMPREHENSIVE EVALUATION RESULTS
+==================================================
+
+Exact Matching Metrics:
+-------------------------
+Precision		0.1744
+Recall			0.2174
+F1			0.1935
+Macro-F1		0.0566
+Exact Match Rate	0.0000
+
+Similarity Metrics:
+-------------------
+Jaccard Similarity	0.1045
+Dice Similarity		0.1829
+Semantic Match Rate	0.4579
+
+Partial Evaluation:
+-------------------
+Partial Precision	0.1551
+Partial Recall		0.1752
+Partial F1		0.1521
+
+Lenient Evaluation:
+-------------------
+Lenient Precision	0.3558
+Lenient Recall		0.3161
+Lenient F1		0.2741
+
+Additional Metrics:
+-------------------
+ROUGE-1			0.3734
+
+SAMPLE ANALYSIS
+----------------------------------------
+Best Sample (F1): Sample #10 - F1: 0.3333
+Worst Sample (F1): Sample #7 - F1: 0.0000
+Perfect Matches: 0/10 (0.0%)
+High F1 (>0.8): 0/10 (0.0%)
+Valid F1 Scores: 10/10 (100.0%)
+
+METRIC INTERPRETATIONS
+----------------------------------------
+Exact Matching:
+  - Standard MAVE evaluation with exact string matching
+  - Precision/Recall/F1 based on complete attribute-value pairs
+
+Similarity Metrics:
+  - Jaccard: Set intersection over union
+  - Dice: 2 * intersection over sum of sets
+  - Semantic: Deep similarity using multilingual embeddings
+
+Partial Evaluation:
+  - Credit for partially correct attribute predictions
+  - Useful for understanding per-attribute performance
+
+Lenient Evaluation:
+  - Flexible matching with normalization
+  - Handles abbreviations and common variations
+  - Better for real-world deployment scenarios
