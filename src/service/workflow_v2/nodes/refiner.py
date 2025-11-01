@@ -5,19 +5,12 @@ Analyzes and refines fashion product extraction results to improve accuracy,
 remove noise, enhance commercial relevance, and optimize for e-commerce usage.
 """
 
-import os
 from typing import Dict, Any, List
-from dotenv import load_dotenv
 
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import RefinementPrompts
-
-# Load environment variables
-load_dotenv()
-
-# Default refinement model from environment
-REFINE_MODEL: str = os.getenv("REFINE_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
+from ..config import get_model
 
 
 class RefinerNode(BaseNode):
@@ -37,7 +30,7 @@ class RefinerNode(BaseNode):
             model: Refinement model to use. If None, uses REFINE_MODEL from env
         """
         super().__init__("Refiner")
-        self.model = model or REFINE_MODEL
+        self.model = model or get_model("refiner")
         self.client = None
 
         self.logger.info(f"Initialized fashion refiner with model: {self.model}")

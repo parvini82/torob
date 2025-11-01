@@ -5,19 +5,11 @@ Generates professional fashion product captions using specialized prompts
 and configurable vision models with environment variable support.
 """
 
-import os
 from typing import Dict, Any, List
-from dotenv import load_dotenv
-
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import CaptionPrompts
-
-# Load environment variables
-load_dotenv()
-
-# Default models from environment
-VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
+from ..config import get_model
 
 
 class CaptionGeneratorNode(BaseNode):
@@ -37,7 +29,7 @@ class CaptionGeneratorNode(BaseNode):
             model: Vision model to use. If None, uses VISION_MODEL from env
         """
         super().__init__("CaptionGenerator")
-        self.model = model or VISION_MODEL
+        self.model = model or get_model("vision")
         self.client = None  # Will be initialized on first use
 
         self.logger.info(f"Initialized with model: {self.model}")

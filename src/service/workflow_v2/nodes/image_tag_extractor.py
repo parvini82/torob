@@ -5,19 +5,12 @@ Extracts structured fashion tags directly from images without intermediate
 caption generation using specialized computer vision and fashion analysis prompts.
 """
 
-import os
 from typing import Dict, Any, List
-from dotenv import load_dotenv
 
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import ImageTagExtractionPrompts
-
-# Load environment variables
-load_dotenv()
-
-# Default vision model from environment
-VISION_MODEL: str = os.getenv("VISION_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
+from ..config import get_model
 
 
 class ImageTagExtractorNode(BaseNode):
@@ -37,7 +30,7 @@ class ImageTagExtractorNode(BaseNode):
             model: Vision model to use. If None, uses VISION_MODEL from env
         """
         super().__init__("ImageTagExtractor")
-        self.model = model or VISION_MODEL
+        self.model = model or get_model("vision")
         self.client = None
 
         self.logger.info(f"Initialized with vision model: {self.model}")

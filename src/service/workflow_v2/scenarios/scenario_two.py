@@ -60,26 +60,15 @@ class ScenarioTwo:
         # Add nodes with configuration
         node_config = self.config.get("node_config", {})
 
-        builder.add_node("caption_generator", CaptionGeneratorNode(
-            model=node_config.get("caption_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
+        builder.add_node("caption_generator", CaptionGeneratorNode())
 
-        builder.add_node("tag_extractor", TagExtractorNode(
-            model=node_config.get("tag_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
+        builder.add_node("tag_extractor", TagExtractorNode())
 
-        builder.add_node("image_tag_extractor", ImageTagExtractorNode(
-            model=node_config.get("image_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
+        builder.add_node("image_tag_extractor", ImageTagExtractorNode())
 
-        builder.add_node("merger", MergerNode(
-            confidence_threshold=node_config.get("merge_threshold", 0.5)
-        ))
+        builder.add_node("merger", MergerNode())
 
-        builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
-            target_language=node_config.get("target_language", "Persian")
-        ))
+        builder.add_node("translator", TranslatorNode())
 
         # Add edges to create the workflow
         builder.add_edge("caption_generator", "tag_extractor")

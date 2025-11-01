@@ -54,20 +54,11 @@ class ScenarioFour:
         # Add nodes with configuration
         node_config = self.config.get("node_config", {})
 
-        builder.add_node("image_tag_extractor", ImageTagExtractorNode(
-            model=node_config.get("extractor_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
+        builder.add_node("image_tag_extractor", ImageTagExtractorNode())
 
-        builder.add_node("conversation_refiner", ConversationRefinerNode(
-            model=node_config.get("refiner_model", "qwen/qwen2.5-vl-32b-instruct:free"),
-            max_iterations=node_config.get("max_iterations", 3),
-            convergence_threshold=node_config.get("convergence_threshold", 0.1)
-        ))
+        builder.add_node("conversation_refiner", ConversationRefinerNode())
 
-        builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
-            target_language=node_config.get("target_language", "Persian")
-        ))
+        builder.add_node("translator", TranslatorNode())
 
         # Add edges to create the workflow
         builder.add_edge("image_tag_extractor", "conversation_refiner")

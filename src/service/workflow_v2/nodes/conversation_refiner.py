@@ -6,19 +6,13 @@ fashion extraction results through multi-turn analysis until convergence
 or maximum iterations reached. Provides highest possible accuracy.
 """
 
-import os
+
 from typing import Dict, Any, List, Optional
-from dotenv import load_dotenv
 
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import ConversationRefinementPrompts
-
-# Load environment variables
-load_dotenv()
-
-# Default conversation model from environment
-CONVERSATION_MODEL: str = os.getenv("CONVERSATION_MODEL", "anthropic/claude-3.5-sonnet:beta")
+from ..config import get_model
 
 
 class ConversationRefinerNode(BaseNode):
@@ -43,7 +37,7 @@ class ConversationRefinerNode(BaseNode):
             convergence_threshold: Threshold for detecting convergence (lower = more similar)
         """
         super().__init__("ConversationRefiner")
-        self.model = model or CONVERSATION_MODEL
+        self.model = model or get_model("conversation")
         self.max_iterations = max_iterations
         self.convergence_threshold = convergence_threshold
         self.client = None

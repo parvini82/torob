@@ -60,35 +60,31 @@ class ScenarioThree:
         num_parallel_extractors = node_config.get("num_parallel_extractors", 2)
 
         # Add caption generation branch
-        builder.add_node("caption_generator", CaptionGeneratorNode(
-            model=node_config.get("caption_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
+        builder.add_node("caption_generator", CaptionGeneratorNode())
 
-        builder.add_node("tag_extractor", TagExtractorNode(
-            model=node_config.get("tag_model", "qwen/qwen2.5-vl-32b-instruct:free")
-        ))
+        builder.add_node("tag_extractor", TagExtractorNode())
+
+        # # Add multiple parallel image extractors
+        # extractor_models = node_config.get("extractor_models", [
+        #     "qwen/qwen2.5-vl-32b-instruct:free",
+        #     "qwen/qwen2.5-vl-32b-instruct:free"
+        # ])
+        #
+        # for i in range(num_parallel_extractors):
+        #     model = extractor_models[i % len(extractor_models)]
+        #     node_name = f"image_extractor_{i + 1}"
+        #
+        #     builder.add_node(node_name, ImageTagExtractorNode(model=model))
 
         # Add multiple parallel image extractors
-        extractor_models = node_config.get("extractor_models", [
-            "qwen/qwen2.5-vl-32b-instruct:free",
-            "qwen/qwen2.5-vl-32b-instruct:free"
-        ])
-
         for i in range(num_parallel_extractors):
-            model = extractor_models[i % len(extractor_models)]
             node_name = f"image_extractor_{i + 1}"
-
-            builder.add_node(node_name, ImageTagExtractorNode(model=model))
+            builder.add_node(node_name, ImageTagExtractorNode())
 
         # Add merger and translator
-        builder.add_node("merger", MergerNode(
-            confidence_threshold=node_config.get("merge_threshold", 0.4)
-        ))
+        builder.add_node("merger", MergerNode())
 
-        builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", "qwen/qwen2.5-vl-32b-instruct:free"),
-            target_language=node_config.get("target_language", "Persian")
-        ))
+        builder.add_node("translator", TranslatorNode())
 
         # Create parallel execution pattern
         # All extractors can run in parallel from the start

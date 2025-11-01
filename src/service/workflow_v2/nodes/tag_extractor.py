@@ -5,19 +5,12 @@ Extracts structured fashion product tags from text content (like captions)
 using specialized e-commerce prompts and configurable language models.
 """
 
-import os
 from typing import Dict, Any, List
-from dotenv import load_dotenv
 
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import TagExtractionPrompts
-
-# Load environment variables
-load_dotenv()
-
-# Default model from environment
-TAG_MODEL: str = os.getenv("TAG_MODEL", "qwen/qwen2.5-vl-32b-instruct:free")
+from ..config import get_model
 
 
 class TagExtractorNode(BaseNode):
@@ -34,10 +27,10 @@ class TagExtractorNode(BaseNode):
         Initialize the tag extractor node.
 
         Args:
-            model: Language model to use. If None, uses TAG_MODEL from env
+            model: Vision model to use. If None, uses centralized config
         """
         super().__init__("TagExtractor")
-        self.model = model or TAG_MODEL
+        self.model = model or get_model("tag")
         self.client = None
 
         self.logger.info(f"Initialized with model: {self.model}")

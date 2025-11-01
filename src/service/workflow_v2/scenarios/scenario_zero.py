@@ -54,16 +54,11 @@ class ScenarioZero:
         builder = GraphBuilder("ScenarioZero_Graph")
 
         # Add nodes with configuration
-        node_config = self.config.get("node_config", {})
+        # node_config = self.config.get("node_config", {})
 
-        builder.add_node("image_tag_extractor", ImageTagExtractorNode(
-            model=node_config.get("image_model", None)  # Uses env variable by default
-        ))
+        builder.add_node("image_tag_extractor", ImageTagExtractorNode())
 
-        builder.add_node("translator", TranslatorNode(
-            model=node_config.get("translation_model", None),  # Uses env variable by default
-            target_language=node_config.get("target_language", "Persian")
-        ))
+        builder.add_node("translator", TranslatorNode())
 
         # Add direct edge - no intermediate steps
         builder.add_edge("image_tag_extractor", "translator")

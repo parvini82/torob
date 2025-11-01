@@ -6,19 +6,12 @@ results from different analysis methods, resolving conflicts and creating
 comprehensive unified fashion product profiles.
 """
 
-import os
 from typing import Dict, Any, List, Set
-from dotenv import load_dotenv
 
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import MergerPrompts
-
-# Load environment variables
-load_dotenv()
-
-# Default merger model from environment
-MERGER_MODEL: str = os.getenv("MERGER_MODEL", "anthropic/claude-3.5-sonnet:beta")
+from ..config import get_model
 
 
 class MergerNode(BaseNode):
@@ -39,7 +32,7 @@ class MergerNode(BaseNode):
             confidence_threshold: Minimum confidence score for including results
         """
         super().__init__("Merger")
-        self.model = model or MERGER_MODEL
+        self.model = model or get_model("merger")
         self.confidence_threshold = confidence_threshold
         self.client = None
 

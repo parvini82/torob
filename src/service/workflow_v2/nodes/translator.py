@@ -5,23 +5,23 @@ Translates extracted fashion tags and content from English to Persian while
 preserving structure and maintaining fashion industry terminology accuracy.
 """
 
-import os
 from typing import Dict, Any, List
-from dotenv import load_dotenv
-import json
+
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
 from ..prompts import TranslationPrompts
+from ..config import get_model  # Import centralized model getter
+
+
+
+
+import json
 from .utils.json_sanitizer import sanitize_json_response
 from .utils.retry_handler import with_retry, RetryError
 import re  # for pre-sanitization of pseudo-JSON
 
 
-# Load environment variables
-load_dotenv()
 
-# Default translation model from environment
-TRANSLATE_MODEL: str = os.getenv("TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free")
 
 
 class TranslatorNode(BaseNode):
@@ -41,12 +41,12 @@ class TranslatorNode(BaseNode):
         Initialize the translator node.
 
         Args:
-            model: Translation model to use. If None, uses TRANSLATE_MODEL from env
+            model: Translation model to use. If None, uses centralized config
             target_language: Target language for translation (default: Persian)
             source_language: Source language (default: English)
         """
         super().__init__("Translator")
-        self.model = model or TRANSLATE_MODEL
+        self.model = model or get_model("translate")
         self.target_language = target_language
         self.source_language = source_language
         self.client = None
