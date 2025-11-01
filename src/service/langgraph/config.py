@@ -13,17 +13,17 @@ OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "")
 # Model configurations for different modes
 MODEL_CONFIG = {
     "fast": {
-        "vision_model": "nvidia/nemotron-nano-12b-v2-vl:free",
+        "vision_model": "mistralai/mistral-small-3.2-24b-instruct:freesss",
         "translate_model": "meituan/longcat-flash-chat:free",
         "use_serpapi": False
     },
     "reasoning": {
-        "vision_model": "nvidia/nemotron-nano-12b-v2-vl:free",
+        "vision_model": "mistralai/mistral-small-3.2-24b-instruct:free",
         "translate_model": "tngtech/deepseek-r1t2-chimera:free",
         "use_serpapi": False
     },
     "advanced_reasoning": {
-        "vision_model": "nvidia/nemotron-nano-12b-v2-vl:free",
+        "vision_model": "mistralai/mistral-small-3.2-24b-instruct:free",
         "translate_model": "tngtech/deepseek-r1t2-chimera:free",
         "use_serpapi": True
     }
