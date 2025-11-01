@@ -49,15 +49,11 @@ export default function UploadPage() {
     try {
       let res;
 
-      // Case 1: User uploaded a file
       if (file) {
         const formData = new FormData();
         formData.append("file", file);
-
-        // Show preview of uploaded file
         setUploadedImage(URL.createObjectURL(file));
 
-        // Simulate progress bar
         let prog = 0;
         const interval = setInterval(() => {
           prog += 5;
@@ -65,7 +61,6 @@ export default function UploadPage() {
           setProgress(prog);
         }, 100);
 
-        // Use the new upload-and-tag endpoint
         const uploadUrl = `http://localhost:8000/upload-and-tag?mode=${mode}`;
         res = await fetch(uploadUrl, {
           method: "POST",
@@ -73,20 +68,15 @@ export default function UploadPage() {
         });
 
         clearInterval(interval);
-      }
-      // Case 2: User provided an image URL
-      else if (imageUrl) {
+      } else if (imageUrl) {
         setUploadedImage(imageUrl);
 
-        // Use the original generate-tags endpoint
         res = await fetch("http://localhost:8000/generate-tags", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ image_url: imageUrl, mode: mode }),
         });
-      }
-      // Case 3: No input provided
-      else {
+      } else {
         throw new Error("Please select an image URL or upload a file.");
       }
 
@@ -97,15 +87,12 @@ export default function UploadPage() {
 
       const data = await res.json();
 
-      // If file was uploaded, we get back image_url
       if (file && data.image_url) {
         setMinioImageUrl(data.image_url);
       }
 
-      // Extract tag groups from the response
       let groups = [];
 
-      // Try different response structures
       if (data.tags && data.tags.entities) {
         groups = data.tags.entities;
       } else if (data.entities) {
@@ -116,7 +103,6 @@ export default function UploadPage() {
         groups = data["ویژگی‌ها"];
       }
 
-      // Keep the full structure: [{نام: "...", مقادیر: [...]}]
       setTagGroups(groups);
       setAnimateTags(true);
       setProgress(100);
@@ -135,7 +121,7 @@ export default function UploadPage() {
     borderRadius: "14px",
     background: darkMode
       ? "rgba(255, 255, 255, 0.08)"
-      : "rgba(255, 255, 255, 0.85)",
+      : "rgba(245, 245, 245, 0.95)",
     backdropFilter: "blur(12px)",
     boxShadow: darkMode
       ? "0 6px 20px rgba(0,0,0,0.3)"
@@ -252,7 +238,6 @@ export default function UploadPage() {
         }}
       />
 
-      {/* Fixed header section - no scroll needed */}
       <div
         style={{
           flexShrink: 0,
@@ -354,12 +339,12 @@ export default function UploadPage() {
               borderRadius: "12px",
               border: "3px solid rgba(255,255,255,0.4)",
               boxSizing: "border-box",
-              background: "rgba(255,255,255,0.95)",
+              background: darkMode ? "rgba(255,255,255,0.95)" : "#e0e0e0",
+              color: darkMode ? "#2c3e50" : "#2c3e50",
               transition: "all 0.3s ease",
               outline: "none",
               cursor: "pointer",
               fontWeight: "600",
-              color: "#2c3e50",
               boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
             }}
             onFocus={(e) => {
@@ -380,7 +365,6 @@ export default function UploadPage() {
         </div>
       </div>
 
-      {/* Main content area - scrollable if needed */}
       <div
         style={{
           flex: "1",
@@ -394,7 +378,6 @@ export default function UploadPage() {
           gap: "20px",
         }}
       >
-        {/* Left side - Image placeholder */}
         <div
           style={{
             flex: "0 0 auto",
@@ -414,13 +397,13 @@ export default function UploadPage() {
               height: "550px",
               border: isDragging
                 ? "3px dashed #6a11cb"
-                : "3px dashed rgba(255,255,255,0.3)",
+                : "3px dashed rgba(0,0,0,0.2)",
               borderRadius: "12px",
               background: isDragging
                 ? "rgba(106,17,203,0.1)"
                 : darkMode
                   ? "rgba(255,255,255,0.05)"
-                  : "rgba(255,255,255,0.1)",
+                  : "#f0f0f0",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -458,7 +441,7 @@ export default function UploadPage() {
                     style={{
                       marginTop: "8px",
                       fontSize: "0.75rem",
-                      color: darkMode ? "#bbb" : "#ecf0f1",
+                      color: darkMode ? "#bbb" : "#2c3e50",
                       wordBreak: "break-all",
                       padding: "0 15px",
                       fontWeight: "500",
@@ -481,7 +464,7 @@ export default function UploadPage() {
             ) : (
               <div
                 style={{
-                  color: "#fff",
+                  color: darkMode ? "#fff" : "#2c3e50",
                   fontSize: "1.1rem",
                   textAlign: "center",
                   padding: "20px",
@@ -511,7 +494,6 @@ export default function UploadPage() {
           </div>
         </div>
 
-        {/* Center - Tags */}
         <div
           style={{
             flex: "1",
@@ -599,7 +581,6 @@ export default function UploadPage() {
           )}
         </div>
 
-        {/* Right side - Form */}
         <div
           style={{
             flex: "0 0 auto",
@@ -618,7 +599,7 @@ export default function UploadPage() {
               boxSizing: "border-box",
               background: darkMode
                 ? "rgba(255, 255, 255, 0.05)"
-                : "rgba(255, 255, 255, 0.9)",
+                : "#f0f0f0",
               padding: "30px",
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
@@ -631,11 +612,10 @@ export default function UploadPage() {
           >
             <p
               style={{
-                color: "#fff",
+                color: darkMode ? "#fff" : "#2c3e50",
                 fontSize: "1.05rem",
                 marginBottom: "10px",
                 fontWeight: "600",
-                textShadow: "0 1px 3px rgba(0,0,0,0.2)",
               }}
             >
               Image URL:
@@ -654,9 +634,10 @@ export default function UploadPage() {
                 fontSize: "1rem",
                 marginBottom: "15px",
                 borderRadius: "10px",
-                border: "2px solid rgba(255,255,255,0.3)",
+                border: "2px solid rgba(0,0,0,0.2)",
                 boxSizing: "border-box",
-                background: "rgba(255,255,255,0.9)",
+                background: "#e0e0e0",
+                color: "#2c3e50",
                 transition: "all 0.3s ease",
                 outline: "none",
               }}
@@ -665,18 +646,17 @@ export default function UploadPage() {
                 e.target.style.boxShadow = "0 0 0 3px rgba(106,17,203,0.1)";
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = "rgba(255,255,255,0.3)";
+                e.target.style.borderColor = "rgba(0,0,0,0.2)";
                 e.target.style.boxShadow = "none";
               }}
             />
 
             <p
               style={{
-                color: "#fff",
+                color: darkMode ? "#fff" : "#2c3e50",
                 fontSize: "1.05rem",
                 marginBottom: "10px",
                 fontWeight: "600",
-                textShadow: "0 1px 3px rgba(0,0,0,0.2)",
               }}
             >
               Or upload an image file:
@@ -690,14 +670,14 @@ export default function UploadPage() {
                 width: "100%",
                 marginBottom: "15px",
                 padding: "20px",
-                color: "#fff",
+                color: darkMode ? "#fff" : "#2c3e50",
                 background: isDragging
                   ? "rgba(106,17,203,0.2)"
-                  : "rgba(255,255,255,0.15)",
+                  : "#e0e0e0",
                 borderRadius: "10px",
                 border: isDragging
                   ? "2px dashed #6a11cb"
-                  : "2px dashed rgba(255,255,255,0.4)",
+                  : "2px dashed rgba(0,0,0,0.3)",
                 cursor: "pointer",
                 fontSize: "0.95rem",
                 textAlign: "center",
@@ -780,7 +760,7 @@ export default function UploadPage() {
               style={{
                 width: "100%",
                 marginTop: "12px",
-                background: "rgba(255,255,255,0.25)",
+                background: "rgba(0,0,0,0.1)",
                 borderRadius: "6px",
                 overflow: "hidden",
                 padding: "2px",
