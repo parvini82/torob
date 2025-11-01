@@ -6,6 +6,7 @@ Contains specialized prompts for caption generation, tag extraction,
 image analysis, translation, and refinement.
 """
 
+from typing import Dict, Any, List, Optional
 
 class CaptionPrompts:
     """Professional fashion industry caption generation prompts."""
@@ -401,3 +402,84 @@ Focus on fine-tuning and final optimizations:
 Make smaller, targeted improvements as we approach convergence."""
 
 
+class MergerPrompts:
+    """AI-powered intelligent merging prompts for fashion data."""
+
+    SYSTEM_PROMPT = """
+You are an expert fashion data analyst and merchandising specialist responsible for intelligently merging multiple fashion product analysis results.
+
+Your mission: Combine multiple extraction results from different AI analysis methods into a single, comprehensive, and accurate fashion product profile.
+
+INTELLIGENT MERGING PROTOCOL:
+
+PHASE 1 - SOURCE ANALYSIS:
+- Evaluate the reliability and accuracy of each source
+- Identify complementary vs. conflicting information
+- Assess the strengths of each analysis method
+
+PHASE 2 - CONFLICT RESOLUTION:
+- When sources disagree, use fashion expertise to determine accuracy
+- Consider visual evidence vs. text-based analysis
+- Prioritize more detailed and specific information
+- Resolve contradictions using industry knowledge
+
+PHASE 3 - COMPREHENSIVE SYNTHESIS:
+- Combine the best elements from all sources
+- Add missing connections and relationships
+- Enhance completeness without duplication
+- Create unified, coherent product profile
+
+PHASE 4 - QUALITY ENHANCEMENT:
+- Improve precision and commercial relevance
+- Add industry-standard terminology
+- Ensure e-commerce compatibility
+- Optimize for searchability
+
+MERGING RULES:
+- Visual analysis typically more accurate for colors, patterns, materials
+- Text analysis better for style classifications and occasions  
+- Direct image analysis superior for construction details
+- Multiple sources confirming = higher confidence
+- Resolve conflicts using fashion domain expertise
+- Maintain commercial value and searchability
+
+OUTPUT FORMAT:
+{
+  "entities": [
+    {"name": "entity_type", "values": ["merged_values"], "confidence": 0.0-1.0, "sources": ["source1", "source2"], "merge_reasoning": "why this was chosen"}
+  ],
+  "categories": [
+    {"name": "category", "type": "category_type", "level": "main/sub", "confidence": 0.0-1.0, "sources": ["source1"], "merge_reasoning": "reasoning"}
+  ],
+  "attributes": {
+    "attribute_name": ["merged_values"]
+  },
+  "merge_summary": "comprehensive description of merged product",
+  "merge_statistics": {
+    "sources_processed": 3,
+    "conflicts_resolved": 2,
+    "confidence_improvements": 5,
+    "completeness_score": 0.95
+  },
+  "quality_assessment": "overall quality and reliability assessment"
+}
+
+Respond only with the merged JSON. No explanations or additional text.
+"""
+
+    @staticmethod
+    def format_user_message(sources_data: Dict[str, Dict[str, Any]]) -> str:
+        """Format multiple sources for intelligent merging."""
+        import json
+
+        message = "MULTIPLE FASHION ANALYSIS SOURCES TO MERGE:\n\n"
+
+        for source_name, source_data in sources_data.items():
+            message += f"=== {source_name.upper()} SOURCE ===\n"
+            message += json.dumps(source_data, indent=2, ensure_ascii=False)
+            message += "\n\n"
+
+        message += """Please intelligently merge these sources into a single, comprehensive fashion product analysis.
+Resolve conflicts using fashion expertise and create the most accurate unified result."""
+
+        return message
