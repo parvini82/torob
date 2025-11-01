@@ -1,16 +1,27 @@
-from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile, Query
+import os
+from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile, Query, Depends
+from fastapi.security import APIKeyHeader
+
+from src.service.database.database import save_request_response
 from src.service.ratelimit.rate_limit_service import RateLimitService
 from src.service.caching.redis_cache_service import RedisCacheService, get_cache_service
-from src.service.database.database import save_request_response
 from src.service.langgraph.langgraph_service import run_langgraph_on_bytes, run_langgraph_on_url
-from src.service.minio.minio_service import get_minio_service
+from src.service.minio import get_minio_service
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from redis import Redis
 from dotenv import load_dotenv
+from typing import Optional
 
-# Load environment variables from .env at project root if present
+# Load environment variables from .env file
 load_dotenv()
+
+# Read the list of valid API tokens from the environment (comma-separated)
+API_TOKENS = os.getenv("API_TOKENS", "").split(",")
+
+# Ensure that the API_TOKENS list is populated
+if not API_TOKENS:
+    raise ValueError("API_TOKENS is not set or is empty in the environment variables")
 
 app = FastAPI(title="Image Tagging API")
 
@@ -19,7 +30,6 @@ Instrumentator().instrument(app).expose(app)
 
 # Enable CORS
 origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -31,6 +41,9 @@ app.add_middleware(
 # Initialize Redis client (ensure it's correctly configured)
 redis_client = Redis(host="redis", port=6379, db=0)  # Adjust as needed
 rate_limit_service = RateLimitService(redis_client=redis_client, limit=10, window_seconds=60)
+
+# Dependency to fetch API token for authentication
+api_key_header = APIKeyHeader(name="Authorization", auto_error=True)
 
 @app.get("/health")
 async def health():
@@ -148,3 +161,18 @@ async def upload_and_tag(
         raise HTTPException(
             status_code=500, detail=f"Error processing upload: {str(e)}"
         )
+
+# New external API endpoint for token-based access
+@app.post("/external-generate-tags")
+async def external_generate_tags(
+    payload: dict = Body(...),
+    background_tasks: BackgroundTasks = None,
+    request: Request = None,
+    api_token: str = Depends(api_key_header)
+):
+    # Check if the provided API token is valid (exists in the list of valid tokens)
+    if api_token not in API_TOKENS:
+        raise HTTPException(status_code=403, detail="Invalid or missing API token")
+
+    # Continue with the same logic as /generate-tags
+    return await generate_tags(payload, background_tasks, request)
