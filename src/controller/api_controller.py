@@ -134,7 +134,7 @@ async def external_generate_tags(
     mode = payload.get("mode", "fast")
 
     try:
-        result = run_langgraph_on_url(image_url)
+        result = run_langgraph_on_url(image_url,mode=mode)
         return {"mode": mode, "tags": result.get("persian", {})}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"External image processing failed: {e}")

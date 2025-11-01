@@ -52,8 +52,8 @@ def serpapi_search_node(state: Dict[str, Any]) -> Dict[str, Any]:
             title = r.get("title")
             if title:
                 titles.append(title)
-
-        cleaned_text = "\n".join(titles).strip()
+        limited_titles = titles[:3]
+        cleaned_text = "\n".join(limited_titles).strip()
 
         state["serpapi_results"] = {
             "status": "ok",
