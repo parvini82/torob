@@ -72,7 +72,7 @@ async def generate_tags(
 
     if image_url:
         # Generate the image hash for caching
-        image_hash = RedisCacheService.generate_image_hash(image_url.encode('utf-8'))
+        image_hash = RedisCacheService.generate_image_hash((image_url + mode).encode("utf-8"))
 
         # Check if the tags are already cached
         cache_service = get_cache_service()
@@ -122,8 +122,7 @@ async def upload_and_tag(
             raise HTTPException(status_code=400, detail="Empty file uploaded")
 
         # Generate the image hash for caching
-        image_hash = RedisCacheService.generate_image_hash(file_content)
-
+        image_hash = RedisCacheService.generate_image_hash(file_content + mode.encode("utf-8"))
         # Check if the tags are already cached
         cache_service = get_cache_service()
         cached_tags = await cache_service.get_cached_tags(image_hash)
