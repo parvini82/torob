@@ -5,7 +5,7 @@ Contains basic settings for model evaluation and metrics calculation.
 
 from dataclasses import dataclass
 from pathlib import Path
-
+from typing import Optional
 
 
 import os
@@ -21,6 +21,9 @@ TRANSLATE_MODEL: str = os.getenv(
     "TRANSLATE_MODEL", "tngtech/deepseek-r1t2-chimera:free"
 )
 
+script_dir = Path(__file__).parent
+project_root = script_dir.parent
+results_dir = project_root / "evaluation" / "results"
 
 
 
@@ -41,6 +44,10 @@ class EvaluationConfig:
     # Entity matching settings
     exact_match_threshold: float = 1.0
     partial_match_threshold: float = 0.8
+
+    # NEW: Weighted macro settings
+    entity_weights_path: Optional[Path] = results_dir / "entity_weights.json"  # Path to entity_weights.json
+    enable_weighted_macro: bool = True
 
     def ensure_directories(self) -> None:
         """Create necessary directories if they don't exist."""

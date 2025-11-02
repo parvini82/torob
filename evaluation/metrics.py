@@ -108,10 +108,10 @@ class EntityMetrics:
         return 1.0 if pred_pairs == true_pairs else 0.0
 
     def calculate_precision_recall_f1(self, predicted_pairs: Set[Tuple[str, str]],
-                                    true_pairs: Set[Tuple[str, str]]) -> Dict[str, float]:
-        """Calculate P/R/F1 based on exact string matching of attribute-value pairs.
-
-        Following MAVE protocol: TP/FP/FN based on exact string match.
+                                      true_pairs: Set[Tuple[str, str]]) -> Dict[str, float]:
+        """
+        Calculate precision, recall, and F1 score based on exact string matching
+        of attribute–value pairs. Follows a robust and logical handling of edge cases.
 
         Args:
             predicted_pairs: Set of predicted (attribute, value) pairs
@@ -120,22 +120,28 @@ class EntityMetrics:
         Returns:
             Dictionary with precision, recall, and f1 scores
         """
+
+        # Case 1: both sets are empty → perfect match (no info to predict)
         if not true_pairs and not predicted_pairs:
             return {"precision": 1.0, "recall": 1.0, "f1": 1.0}
 
-        if not true_pairs:
-            return {"precision": 0.0, "recall": 1.0, "f1": 0.0}
+        # Case 2: ground truth empty but predictions exist → meaningless recall
+        if not true_pairs and predicted_pairs:
+            # Model produced outputs when nothing existed → penalize recall too
+            return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
 
-        if not predicted_pairs:
-            return {"precision": 1.0, "recall": 0.0, "f1": 0.0}
+        # Case 3: ground truth exists but no predictions → missed everything
+        if true_pairs and not predicted_pairs:
+            return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
 
-        # Standard TP/FP/FN calculation
+        # --- Standard TP/FP/FN calculation ---
         true_positives = len(predicted_pairs & true_pairs)
         false_positives = len(predicted_pairs - true_pairs)
         false_negatives = len(true_pairs - predicted_pairs)
 
-        # Calculate metrics
-        precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0.0
+        # --- Compute precision, recall, f1 ---
+        precision = true_positives / (true_positives + false_positives) if (
+                                                                                       true_positives + false_positives) > 0 else 0.0
         recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
         f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
 

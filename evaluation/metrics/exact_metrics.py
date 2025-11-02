@@ -9,7 +9,6 @@ from collections import defaultdict
 
 from .base import BaseMetric, EntityProcessor
 
-
 class ExactMatchingMetrics(BaseMetric):
     """Standard exact matching metrics for AVE evaluation."""
 
@@ -18,23 +17,41 @@ class ExactMatchingMetrics(BaseMetric):
         return "exact_matching"
 
     def calculate_prf(self, predicted_pairs: Set[Tuple[str, str]],
-                      true_pairs: Set[Tuple[str, str]]) -> Dict[str, float]:
-        """Calculate precision, recall, F1 for exact matching."""
+                                      true_pairs: Set[Tuple[str, str]]) -> Dict[str, float]:
+        """
+        Calculate precision, recall, and F1 score based on exact string matching
+        of attribute–value pairs. Follows a robust and logical handling of edge cases.
+
+        Args:
+            predicted_pairs: Set of predicted (attribute, value) pairs
+            true_pairs: Set of ground truth (attribute, value) pairs
+
+        Returns:
+            Dictionary with precision, recall, and f1 scores
+        """
+
+        # Case 1: both sets are empty → perfect match (no info to predict)
         if not true_pairs and not predicted_pairs:
             return {"precision": 1.0, "recall": 1.0, "f1": 1.0}
 
-        if not true_pairs:
-            return {"precision": 0.0, "recall": 1.0, "f1": 0.0}
+        # Case 2: ground truth empty but predictions exist → meaningless recall
+        if not true_pairs and predicted_pairs:
+            # Model produced outputs when nothing existed → penalize recall too
+            return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
 
-        if not predicted_pairs:
-            return {"precision": 1.0, "recall": 0.0, "f1": 0.0}
+        # Case 3: ground truth exists but no predictions → missed everything
+        if true_pairs and not predicted_pairs:
+            return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
 
-        tp = len(predicted_pairs & true_pairs)
-        fp = len(predicted_pairs - true_pairs)
-        fn = len(true_pairs - predicted_pairs)
+        # --- Standard TP/FP/FN calculation ---
+        true_positives = len(predicted_pairs & true_pairs)
+        false_positives = len(predicted_pairs - true_pairs)
+        false_negatives = len(true_pairs - predicted_pairs)
 
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        # --- Compute precision, recall, f1 ---
+        precision = true_positives / (true_positives + false_positives) if (
+                                                                                       true_positives + false_positives) > 0 else 0.0
+        recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0.0
         f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
 
         return {
@@ -158,3 +175,87 @@ class ExactMatchingMetrics(BaseMetric):
             "recall": round(avg_recall, self.config.precision_digits),
             "f1": round(avg_f1, self.config.precision_digits)
         }
+
+    def weighted_macro_averaged_metrics(self, predictions: List[List[Dict]],
+                                        ground_truths: List[List[Dict]],
+                                        categories: List[str] = None) -> Dict[str, float]:
+        """
+        Calculate weighted macro-averaged metrics based on entity frequencies.
+
+        Args:
+            predictions: List of prediction lists
+            ground_truths: List of ground truth lists
+            categories: List of categories for each sample (optional)
+        """
+        if not self.config.enable_weighted_macro or not self.config.entity_weights_path:
+            # Fallback to regular macro averaging
+            return self.macro_averaged_metrics(predictions, ground_truths)
+
+        # Load entity weights
+        entity_weights = EntityProcessor.load_entity_weights(self.config.entity_weights_path)
+        if not entity_weights:
+            return self.macro_averaged_metrics(predictions, ground_truths)
+
+        valid_pairs = [(p, t, c) for (p, t), c in
+                       zip(zip(predictions, ground_truths), categories or ['unknown'] * len(predictions)) if t]
+
+        if not valid_pairs:
+            return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+
+        # Group by attribute and calculate weighted metrics
+        weighted_precision_sum = 0.0
+        weighted_recall_sum = 0.0
+        weighted_f1_sum = 0.0
+        total_weight = 0.0
+
+        # Collect attribute metrics with weights
+        attr_metrics_with_weights = []
+
+        for pred, true, category in valid_pairs:
+            pred_pairs = EntityProcessor.extract_attribute_value_pairs(pred, "minimal")
+            true_pairs = EntityProcessor.extract_attribute_value_pairs(true, "minimal")
+
+            # Group by attribute
+            pred_by_attr = defaultdict(set)
+            true_by_attr = defaultdict(set)
+
+            for attr, val in pred_pairs:
+                pred_by_attr[attr].add((attr, val))
+            for attr, val in true_pairs:
+                true_by_attr[attr].add((attr, val))
+
+            all_attrs = set(pred_by_attr.keys()) | set(true_by_attr.keys())
+
+            for attr in all_attrs:
+                # Calculate metrics for this attribute
+                attr_prf = self.calculate_prf(
+                    pred_by_attr.get(attr, set()),
+                    true_by_attr.get(attr, set())
+                )
+
+                # Get weight for this attribute in this category
+                weight = EntityProcessor.get_entity_weight(attr, category, entity_weights)
+
+                attr_metrics_with_weights.append({
+                    'precision': attr_prf['precision'],
+                    'recall': attr_prf['recall'],
+                    'f1': attr_prf['f1'],
+                    'weight': weight
+                })
+
+        # Calculate weighted averages
+        if attr_metrics_with_weights:
+            total_weight = sum(m['weight'] for m in attr_metrics_with_weights)
+            if total_weight > 0:
+                weighted_precision_sum = sum(m['precision'] * m['weight'] for m in attr_metrics_with_weights)
+                weighted_recall_sum = sum(m['recall'] * m['weight'] for m in attr_metrics_with_weights)
+                weighted_f1_sum = sum(m['f1'] * m['weight'] for m in attr_metrics_with_weights)
+
+                return {
+                    "precision": round(weighted_precision_sum / total_weight, self.config.precision_digits),
+                    "recall": round(weighted_recall_sum / total_weight, self.config.precision_digits),
+                    "f1": round(weighted_f1_sum / total_weight, self.config.precision_digits)
+                }
+
+        # Fallback to uniform weighting
+        return self.macro_averaged_metrics(predictions, ground_truths)

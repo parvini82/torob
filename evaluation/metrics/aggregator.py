@@ -170,6 +170,19 @@ class MetricsAggregator:
                     "macro_recall": macro_results["recall"],
                     "macro_f1": macro_results["f1"]
                 })
+                # NEW: weighted macro (optional)
+                entity_weights_path = getattr(self.config, "entity_weights_path", None)
+                enable_weighted = getattr(self.config, "enable_weighted_macro", False)
+                if enable_weighted and entity_weights_path:
+                    # Categories per sample if present in metadata (optional).
+                    # If your prediction file has categories per sample, pass them here.
+                    categories = None  # or list with same length as predictions
+                    wmacro = metric.weighted_macro_averaged_metrics(predictions, ground_truths, categories)
+                    aggregated_results.update({
+                        "weighted_macro_precision": wmacro["precision"],
+                        "weighted_macro_recall": wmacro["recall"],
+                        "weighted_macro_f1": wmacro["f1"]
+                    })
 
                 # Exact match rate
                 exact_matches = [r.get("exact_match", 0) for r in sample_results]

@@ -4,8 +4,8 @@ Provides abstract interfaces and common utilities for all metric implementations
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Set, Tuple
-
+from typing import List, Dict, Any, Set, Tuple, Optional
+from pathlib import Path
 
 class BaseMetric(ABC):
     """Abstract base class for all evaluation metrics."""
@@ -110,3 +110,20 @@ class EntityProcessor:
                         if normalized_value:
                             values.add(normalized_value)
         return values
+
+    @staticmethod
+    def load_entity_weights(weights_path: Path) -> Dict[str, Dict[str, float]]:
+        """Load entity weights from JSON file."""
+        try:
+            with open(weights_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load entity weights from {weights_path}: {e}")
+            return {}
+
+    @staticmethod
+    def get_entity_weight(entity_name: str, category: str,
+                          entity_weights: Dict[str, Dict[str, float]]) -> float:
+        """Get weight for specific entity in category."""
+        category_weights = entity_weights.get(category, {})
+        return category_weights.get(entity_name.lower().strip(), 1.0)
