@@ -15,7 +15,7 @@ load_dotenv()
 app = FastAPI(title="Image Tagging API")
 
 # CORS configuration
-origins = ["http://localhost:3000", "http://127.0.0.1:3000","https://torob-production.up.railway.app"]
+origins = ["http://localhost:3000", "http://127.0.0.1:3000","https://torob-production.up.railway.app,*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

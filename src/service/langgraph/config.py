@@ -19,8 +19,8 @@ OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "").strip()
 MODEL_CONFIG = {
     "fast": {
         "vision_model": "mistralai/mistral-small-3.2-24b-instruct:free",
-        "translate_model": "meituan/longcat-flash-chat:free",
-        "use_serpapi": False,
+        "translate_model": "tngtech/deepseek-r1t2-chimera:free",
+        "use_serpapi": True,
     },
     "reasoning": {
         "vision_model": "mistralai/mistral-small-3.2-24b-instruct:free",
