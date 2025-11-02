@@ -188,6 +188,9 @@ class MetricsAggregator:
                 exact_matches = [r.get("exact_match", 0) for r in sample_results]
                 aggregated_results["exact_match"] = sum(exact_matches) / len(exact_matches)
 
+
+
+            # جایگزین کردن قسمت similarity در evaluate_batch:
             else:
                 # Other metrics: aggregate per-sample results
                 metric_sample_results = []
@@ -208,6 +211,16 @@ class MetricsAggregator:
                 if metric_sample_results:
                     aggregated_metric_results = metric.aggregate_batch_results(metric_sample_results)
                     aggregated_results.update(aggregated_metric_results)
+
+                # NEW: weighted semantic similarity (only for similarity metrics)
+                if metric_name == 'similarity':
+                    entity_weights_path = getattr(self.config, "entity_weights_path", None)
+                    enable_weighted = getattr(self.config, "enable_weighted_macro", False)
+                    if enable_weighted and entity_weights_path:
+                        categories = None  # یا از جایی که categories را دارید
+                        weighted_semantic = metric.weighted_semantic_similarity_metrics(predictions, ground_truths,
+                                                                                        categories)
+                        aggregated_results.update(weighted_semantic)
 
         # Add ROUGE-1
         rouge_values = [r.get("rouge_1") for r in sample_results if r.get("rouge_1") is not None]
@@ -278,6 +291,10 @@ class MetricsAggregator:
                 table.append(f"Dice Similarity\t\t{results.get('dice', 0.0):.4f}")
                 table.append(f"Semantic Match Rate\t{results.get('semantic_match_rate', 0.0):.4f}")
 
+                # NEW: weighted semantic
+                if 'weighted_semantic_match_rate' in results:
+                    table.append(f"Weighted Semantic Rate\t{results.get('weighted_semantic_match_rate', 0.0):.4f}")
+
             # Partial evaluation
             if 'partial' in self.enabled_metrics:
                 table.append("\nPartial Evaluation:")
@@ -322,7 +339,8 @@ class MetricsAggregator:
             'f1', 'precision', 'recall', 'exact_match',
             'macro_f1', 'jaccard', 'dice',
             'partial_f1', 'lenient_f1', 'rouge_1',
-            'semantic_match_rate'
+            'semantic_match_rate',
+            'weighted_semantic_match_rate'  # NEW
         ]
 
         for metric in key_metrics:

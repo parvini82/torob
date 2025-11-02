@@ -4,10 +4,11 @@ This module provides independent components for data operations:
 1. DataDownloader: Download and extract data from Google Drive
 2. ToySampleGenerator: Generate balanced toy samples from datasets
 3. HighEntitySampleGenerator: Generate samples with minimum entity requirements
+4. CategorySampleGenerator: Generate samples with category requirements
 
 Each component can be used separately with its own configuration.
 """
-
+from .category_sample_generator import CategorySampleGenerator
 from .config import DownloadConfig, SampleConfig
 from .downloader import DataDownloader
 from .toy_sample_generator import ToySampleGenerator
@@ -19,4 +20,5 @@ __all__ = [
     "DataDownloader",
     "ToySampleGenerator",
     "HighEntitySampleGenerator",
+    "CategorySampleGenerator"
 ]

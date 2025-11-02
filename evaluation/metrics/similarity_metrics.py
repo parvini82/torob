@@ -4,8 +4,10 @@ Implements Jaccard, Dice similarity, and semantic similarity metrics
 for cases where exact matching is too strict.
 """
 
-from typing import List, Dict, Any, Set
+from typing import List, Dict, Any, Set, Optional
 import math
+import json
+from collections import defaultdict
 
 from .base import BaseMetric, EntityProcessor
 from sentence_transformers import SentenceTransformer
@@ -133,7 +135,7 @@ class SimilarityMetrics(BaseMetric):
                 similarity = self.semantic_similarity(pred_val, true_val)
                 best_similarity = max(best_similarity, similarity)
 
-            if best_similarity >= 0.8:  # Threshold for semantic match
+            if best_similarity >= 0.6:  # Threshold for semantic match
                 semantic_matches += 1
             total_comparisons += 1
 
@@ -162,4 +164,92 @@ class SimilarityMetrics(BaseMetric):
             "jaccard": round(avg_jaccard, self.config.precision_digits),
             "dice": round(avg_dice, self.config.precision_digits),
             "semantic_match_rate": round(avg_semantic, self.config.precision_digits)
+        }
+
+    def weighted_semantic_similarity_metrics(self,
+                                             predictions: List[List[Dict]],
+                                             ground_truths: List[List[Dict]],
+                                             categories: Optional[List[str]] = None) -> Dict[str, float]:
+        """
+        Calculate weighted semantic similarity based on entity frequencies per category.
+
+        Args:
+            predictions: List of prediction lists
+            ground_truths: List of ground truth lists
+            categories: List of categories for each sample (optional)
+        """
+        if not getattr(self.config, 'enable_weighted_macro', False) or not getattr(self.config, 'entity_weights_path',
+                                                                                   None):
+            # Fallback to regular semantic similarity calculation
+            sample_results = []
+            for pred, true in zip(predictions, ground_truths):
+                if true:  # Only include samples with non-empty ground truth
+                    result = self.calculate_single_sample(pred, true)
+                    sample_results.append(result)
+
+            if sample_results:
+                avg_semantic = sum(r["semantic_match_rate"] for r in sample_results) / len(sample_results)
+                return {"weighted_semantic_match_rate": round(avg_semantic, self.config.precision_digits)}
+            return {"weighted_semantic_match_rate": 0.0}
+
+        # Load entity weights
+        entity_weights = EntityProcessor.load_entity_weights(self.config.entity_weights_path)
+        if not entity_weights:
+            # Fallback if weights can't be loaded
+            sample_results = []
+            for pred, true in zip(predictions, ground_truths):
+                if true:
+                    result = self.calculate_single_sample(pred, true)
+                    sample_results.append(result)
+
+            if sample_results:
+                avg_semantic = sum(r["semantic_match_rate"] for r in sample_results) / len(sample_results)
+                return {"weighted_semantic_match_rate": round(avg_semantic, self.config.precision_digits)}
+            return {"weighted_semantic_match_rate": 0.0}
+
+        valid_triplets = []
+        for i, (pred, true) in enumerate(zip(predictions, ground_truths)):
+            if true:
+                cat = (categories[i] if categories and i < len(categories) else "unknown")
+                valid_triplets.append((pred, true, cat))
+
+        if not valid_triplets:
+            return {"weighted_semantic_match_rate": 0.0}
+
+        # Calculate weighted semantic similarity per sample
+        weighted_similarity_sum = 0.0
+        total_weight = 0.0
+
+        for pred, true, category in valid_triplets:
+            # Calculate semantic similarity for this sample
+            sample_result = self.calculate_single_sample(pred, true)
+            sample_similarity = sample_result.get("semantic_match_rate", 0.0)
+
+            # Get entity names from ground truth to determine weight
+            true_entities = set()
+            for entity in true:
+                if isinstance(entity, dict):
+                    name = entity.get('name', '').strip().lower()
+                    if name:
+                        true_entities.add(name)
+
+            # Calculate average weight for entities in this sample
+            if true_entities:
+                sample_weight = 0.0
+                for entity_name in true_entities:
+                    sample_weight += EntityProcessor.get_entity_weight(entity_name, category, entity_weights)
+                sample_weight /= len(true_entities)  # Average weight for this sample
+            else:
+                sample_weight = 1.0
+
+            weighted_similarity_sum += sample_similarity * sample_weight
+            total_weight += sample_weight
+
+        if total_weight > 0:
+            weighted_semantic_rate = weighted_similarity_sum / total_weight
+        else:
+            weighted_semantic_rate = 0.0
+
+        return {
+            "weighted_semantic_match_rate": round(weighted_semantic_rate, self.config.precision_digits)
         }

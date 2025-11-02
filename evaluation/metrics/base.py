@@ -6,6 +6,8 @@ Provides abstract interfaces and common utilities for all metric implementations
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Set, Tuple, Optional
 from pathlib import Path
+import re
+import json
 
 class BaseMetric(ABC):
     """Abstract base class for all evaluation metrics."""
@@ -70,10 +72,8 @@ class EntityProcessor:
         if mode == "minimal":
             return text.strip()
         elif mode == "standard":
-            import re
             return re.sub(r'\s+', ' ', text.lower().strip())
         elif mode == "semantic":
-            import re
             # More aggressive normalization for semantic similarity
             text = re.sub(r'[^\w\s]', ' ', text.lower())  # Remove punctuation
             text = re.sub(r'\s+', ' ', text.strip())
