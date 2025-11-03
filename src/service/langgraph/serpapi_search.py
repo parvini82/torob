@@ -6,7 +6,8 @@ from typing import Any, Dict, List
 def serpapi_search_node(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Reverse image search via SerpAPI (Google Reverse Image).
-    Cleans response: keeps only titles from image_results and organic_results.
+    Cleans response: keeps only titles from image_results and organic_results,
+    and removes results containing 'آبادیس' or 'دیکشنری'.
     """
 
     image_url = state.get("image_url")
@@ -40,18 +41,19 @@ def serpapi_search_node(state: Dict[str, Any]) -> Dict[str, Any]:
         resp.raise_for_status()
         data = resp.json()
 
-        # Extract only titles
+        # Extract only titles and remove those containing 'آبادیس' or 'دیکشنری'
         titles: List[str] = []
 
         for r in data.get("image_results", []):
             title = r.get("title")
-            if title:
+            if title and ("آبادیس" not in title) and ("دیکشنری" not in title):
                 titles.append(title)
 
         for r in data.get("organic_results", []):
             title = r.get("title")
-            if title:
+            if title and ("آبادیس" not in title) and ("دیکشنری" not in title):
                 titles.append(title)
+
         limited_titles = titles[:3]
         cleaned_text = "\n".join(limited_titles).strip()
 

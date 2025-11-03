@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from .config import TRANSLATE_MODEL
-from .model_client import OpenRouterClient, make_text_part
+from .model_client import MetisClient, make_text_part  # Changed to MetisClient
 
 
 def build_translation_prompt(data: Dict[str, Any]) -> str:
@@ -27,6 +27,7 @@ def build_translation_prompt(data: Dict[str, Any]) -> str:
         "Output (Persian JSON only):"
     )
 
+
 def translate_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
     image_tags_en = state.get("image_tags_en")
     serpapi_results = state.get("serpapi_results", {})
@@ -34,7 +35,7 @@ def translate_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
     if not image_tags_en:
         raise ValueError("translate_tags_node: 'image_tags_en' is missing in state")
 
-    client = OpenRouterClient()
+    client = MetisClient()  # Changed to MetisClient
     combined_input = {
         "image_tags_en": image_tags_en,
         "serpapi_results": serpapi_results,

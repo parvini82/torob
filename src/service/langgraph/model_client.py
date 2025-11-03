@@ -7,37 +7,37 @@ from typing import Any, Dict, List, Optional, Tuple
 import requests
 
 from .config import (
-    OPENROUTER_API_KEY,
-    OPENROUTER_BASE_URL,
-    OPENROUTER_SITE_TITLE,
-    OPENROUTER_SITE_URL,
+    METIS_API_KEY,
+    METIS_BASE_URL,
+    METIS_SITE_TITLE,
+    METIS_SITE_URL,
     REQUEST_TIMEOUT,
 )
 
 
-class OpenRouterError(RuntimeError):
+class MetisError(RuntimeError):
     pass
 
 
 def _auth_headers() -> Dict[str, str]:
-    if not OPENROUTER_API_KEY:
-        raise OpenRouterError(
-            "OPENROUTER_API_KEY is empty. Set it in your environment variables."
+    if not METIS_API_KEY:
+        raise MetisError(
+            "METIS_API_KEY is empty. Set it in your environment variables."
         )
 
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {METIS_API_KEY}",
         "Content-Type": "application/json",
     }
-    if OPENROUTER_SITE_URL:
-        headers["HTTP-Referer"] = OPENROUTER_SITE_URL
-    if OPENROUTER_SITE_TITLE:
-        headers["X-Title"] = OPENROUTER_SITE_TITLE
+    if METIS_SITE_URL:
+        headers["HTTP-Referer"] = METIS_SITE_URL
+    if METIS_SITE_TITLE:
+        headers["X-Title"] = METIS_SITE_TITLE
     return headers
 
 
-def make_image_part(image_url_or_data_uri: str) -> Dict[str, str]:
-    return {"type": "image_url", "image_url": image_url_or_data_uri}
+def make_image_part(image_url_or_data_uri: str) -> Dict[str, Any]:
+    return {"type": "image_url", "image_url": {"url": image_url_or_data_uri}}
 
 
 def make_text_part(text: str) -> Dict[str, str]:
@@ -58,9 +58,9 @@ def extract_json_from_text(text: str) -> Tuple[Optional[dict], Optional[str]]:
         return None, text
 
 
-class OpenRouterClient:
+class MetisClient:
     def __init__(
-        self, base_url: str = OPENROUTER_BASE_URL, timeout: int = REQUEST_TIMEOUT
+        self, base_url: str = METIS_BASE_URL, timeout: int = REQUEST_TIMEOUT
     ):
         self.base_url = base_url
         self.timeout = timeout
@@ -91,8 +91,8 @@ class OpenRouterClient:
                     self.base_url, headers=headers, json=payload, timeout=self.timeout
                 )
                 if resp.status_code != 200:
-                    raise OpenRouterError(
-                        f"OpenRouter HTTP {resp.status_code}: {resp.text[:300]}"
+                    raise MetisError(
+                        f"Metis HTTP {resp.status_code}: {resp.text[:300]}"
                     )
                 data = resp.json()
                 content = data["choices"][0]["message"]["content"]
@@ -105,8 +105,8 @@ class OpenRouterClient:
                 if attempt < max_retries:
                     time.sleep(0.8 * (attempt + 1))
                 else:
-                    raise OpenRouterError(f"OpenRouter call failed: {e}") from e
-        raise OpenRouterError(f"OpenRouter call failed: {last_err}")
+                    raise MetisError(f"Metis call failed: {e}") from e
+        raise MetisError(f"Metis call failed: {last_err}")
 
     def call_json(
         self,

@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from .config import VISION_MODEL
 from .model_client import (
-    OpenRouterClient,
+    MetisClient,  # Using MetisClient instead of OpenRouterClient
     make_image_part,
     make_text_part,
 )
@@ -32,6 +32,7 @@ def build_prompt() -> str:
         '    {"name": "material", "values": ["cotton"]},\n'
         '    {"name": "pattern", "values": ["solid"]},\n'
         '    {"name": "sleeve_type", "values": ["short-sleeve"]}\n'
+        '    {"name": "gender", "values": ["male"]}\n'
         "  ]\n"
         "}\n\n"
         "IMPORTANT: Respond with valid JSON only. Do not include any explanatory "
@@ -44,7 +45,7 @@ def image_to_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
     if not image_url:
         raise ValueError("image_to_tags_node: 'image_url' is missing in state")
 
-    client = OpenRouterClient()
+    client = MetisClient()  # Changed to MetisClient
     prompt = build_prompt()
 
     messages = [
