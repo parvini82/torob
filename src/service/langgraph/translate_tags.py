@@ -31,7 +31,7 @@ def build_translation_prompt(data: Dict[str, Any]) -> str:
 def translate_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
     image_tags_en = state.get("image_tags_en")
     serpapi_results = state.get("serpapi_results", {})
-
+    translate_model = state.get("translate_model", "gpt-4o-mini")
     if not image_tags_en:
         raise ValueError("translate_tags_node: 'image_tags_en' is missing in state")
 
@@ -49,7 +49,7 @@ def translate_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
         }
     ]
 
-    result = client.call_json(model=TRANSLATE_MODEL, messages=messages)
+    result = client.call_json(model=translate_model, messages=messages)
     image_tags_fa = result["json"] or {}
 
     return {

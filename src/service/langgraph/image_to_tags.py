@@ -47,7 +47,7 @@ def image_to_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
 
     client = MetisClient()  # Changed to MetisClient
     prompt = build_prompt()
-
+    vision_model = state.get("vision_model","gpt-4o-mini")
     messages = [
         {
             "role": "user",
@@ -58,7 +58,7 @@ def image_to_tags_node(state: Dict[str, Any]) -> Dict[str, Any]:
         }
     ]
 
-    result = client.call_json(model=VISION_MODEL, messages=messages)
+    result = client.call_json(model=vision_model, messages=messages)
     image_tags_en = result["json"] or {}
 
     return {
