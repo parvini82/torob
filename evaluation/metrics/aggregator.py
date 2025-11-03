@@ -11,7 +11,7 @@ from .base import BaseMetric
 from .exact_metrics import ExactMatchingMetrics
 from .similarity_metrics import SimilarityMetrics
 from .evaluation_modes import PartialEvaluationMetrics, LenientEvaluationMetrics
-
+from .base import EntityProcessor
 
 class MetricsAggregator:
     """Aggregates and manages all evaluation metrics."""
@@ -176,7 +176,16 @@ class MetricsAggregator:
                 if enable_weighted and entity_weights_path:
                     # Categories per sample if present in metadata (optional).
                     # If your prediction file has categories per sample, pass them here.
-                    categories = None  # or list with same length as predictions
+                    # Load entity weights and auto-detect categories
+
+                    # categories = None  # or list with same length as predictions
+                    entity_weights = EntityProcessor.load_entity_weights(entity_weights_path)
+                    if entity_weights:
+                        categories = EntityProcessor.get_categories_for_samples(ground_truths, entity_weights)
+                        print(f"DEBUG: Auto-detected categories: {set(categories)}")
+                    else:
+                        categories = None  # یا از جایی که categories را دارید
+
                     wmacro = metric.weighted_macro_averaged_metrics(predictions, ground_truths, categories)
                     aggregated_results.update({
                         "weighted_macro_precision": wmacro["precision"],
@@ -217,7 +226,12 @@ class MetricsAggregator:
                     entity_weights_path = getattr(self.config, "entity_weights_path", None)
                     enable_weighted = getattr(self.config, "enable_weighted_macro", False)
                     if enable_weighted and entity_weights_path:
-                        categories = None  # یا از جایی که categories را دارید
+                        entity_weights = EntityProcessor.load_entity_weights(entity_weights_path)
+                        if entity_weights:
+                            categories = EntityProcessor.get_categories_for_samples(ground_truths, entity_weights)
+                            print(f"DEBUG: Auto-detected categories for semantic: {set(categories)}")
+                        else:
+                            categories = None  # یا از جایی که categories را دارید
                         weighted_semantic = metric.weighted_semantic_similarity_metrics(predictions, ground_truths,
                                                                                         categories)
                         aggregated_results.update(weighted_semantic)

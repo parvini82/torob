@@ -127,3 +127,90 @@ class EntityProcessor:
         """Get weight for specific entity in category."""
         category_weights = entity_weights.get(category, {})
         return category_weights.get(entity_name.lower().strip(), 1.0)
+
+    @staticmethod
+    def detect_best_category(sample_entities: List[Dict], entity_weights: Dict[str, Dict[str, float]]) -> str:
+        """
+        Detect the best matching category for a sample based on its attributes.
+
+        Args:
+            sample_entities: List of entity dictionaries for one sample
+            entity_weights: Loaded entity weights dictionary
+
+        Returns:
+            str: Best matching category name
+        """
+        if not sample_entities or not entity_weights:
+            return list(entity_weights.keys())[0] if entity_weights else "unknown"
+
+        # Extract attribute names from the sample
+        sample_attributes = set()
+        for entity in sample_entities:
+            if isinstance(entity, dict):
+                attr_name = entity.get('name', '').strip().lower()
+                if attr_name:
+                    sample_attributes.add(attr_name)
+
+        if not sample_attributes:
+            return list(entity_weights.keys())[0] if entity_weights else "unknown"
+
+        # Calculate match score for each category
+        best_category = None
+        best_score = -1
+
+        for category, category_weights in entity_weights.items():
+            # Calculate overlap between sample attributes and category attributes
+            category_attributes = set(attr.lower() for attr in category_weights.keys())
+
+            # Calculate Jaccard similarity
+            intersection = len(sample_attributes & category_attributes)
+            union = len(sample_attributes | category_attributes)
+
+            if union > 0:
+                jaccard_score = intersection / union
+            else:
+                jaccard_score = 0
+
+            # Also consider weighted importance of matched attributes
+            weighted_score = 0
+            total_weight = 0
+            for attr in sample_attributes:
+                if attr in category_attributes:
+                    # Find the original case attribute name
+                    for orig_attr, weight in category_weights.items():
+                        if orig_attr.lower() == attr:
+                            weighted_score += weight
+                            total_weight += weight
+                            break
+
+            # Combine Jaccard and weighted scores
+            if total_weight > 0:
+                final_score = jaccard_score * 0.3 + (weighted_score / total_weight) * 0.7
+            else:
+                final_score = jaccard_score
+
+            if final_score > best_score:
+                best_score = final_score
+                best_category = category
+
+        return best_category if best_category else list(entity_weights.keys())[0]
+
+    @staticmethod
+    def get_categories_for_samples(ground_truths: List[List[Dict]], entity_weights: Dict[str, Dict[str, float]]) -> \
+    List[str]:
+        """
+        Get categories for all samples in a batch.
+
+        Args:
+            ground_truths: List of ground truth samples
+            entity_weights: Loaded entity weights dictionary
+
+        Returns:
+            List[str]: Category for each sample
+        """
+        categories = []
+        for gt_sample in ground_truths:
+            category = EntityProcessor.detect_best_category(gt_sample, entity_weights)
+            categories.append(category)
+
+        return categories

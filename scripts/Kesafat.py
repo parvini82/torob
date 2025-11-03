@@ -1,6 +1,6 @@
 from pathlib import Path
 from src.service.workflow.langgraph_service import run_langgraph_on_url
-
+import time
 x = Path("data/processed/toy_sample.json")
 # print(x.absolute())
 
@@ -36,3 +36,6 @@ from src.service.workflow.langgraph_service import run_langgraph_on_url
 
 output_model2 = run_langgraph_on_url(image_url2)
 print(output_model2)
+
+
+

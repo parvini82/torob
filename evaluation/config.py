@@ -23,8 +23,7 @@ TRANSLATE_MODEL: str = os.getenv(
 
 script_dir = Path(__file__).parent
 project_root = script_dir.parent
-results_dir = project_root / "evaluation" / "results"
-
+# results_dir = project_root / "evaluation" / "results"
 
 
 @dataclass
@@ -46,7 +45,7 @@ class EvaluationConfig:
     partial_match_threshold: float = 0.8
 
     # NEW: Weighted macro settings
-    entity_weights_path: Optional[Path] = results_dir / "entity_weights.json"  # Path to entity_weights.json
+    entity_weights_path: Optional[Path] = project_root / "evaluation" / "results" / "entity_weights.json"  # Path to entity_weights.json
     enable_weighted_macro: bool = True
 
     def ensure_directories(self) -> None:

@@ -4,25 +4,25 @@ COMPREHENSIVE MODEL EVALUATION REPORT
 
 EVALUATION CONFIGURATION
 ----------------------------------------
-Evaluation Date: 2025-11-01T01:39:48.261486
+Evaluation Date: 2025-11-03T05:40:16.389507
 Enabled Metrics: exact, similarity, partial, lenient
 Report Mode: comprehensive
 Semantic Similarity: Enabled
 
 PREDICTION METADATA
 ----------------------------------------
-Model Name: qwen2.5-vl-32b-instruct:free__deepseek-r1t2-chimera:free
+Model Name: qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507
 Sample Path: /home/peyma/projects/torob/data/processed/Ground_Truth_first10.json
 Total Samples: 10
-Prediction Time: 935.64 seconds
-Prediction Date: 2025-11-01T01:23:37.782873
+Prediction Time: 14527.16 seconds
+Prediction Date: 2025-11-03T05:29:04.075035
 
 MODEL EXECUTION PERFORMANCE
 ----------------------------------------
 Successful Predictions: 9
 Failed Predictions: 1
 Success Rate: 90.0%
-Average Time per Product: 93.564s
+Average Time per Product: 1452.716s
 
 EVALUATION RESULTS
 ----------------------------------------
@@ -31,38 +31,39 @@ COMPREHENSIVE EVALUATION RESULTS
 
 Exact Matching Metrics:
 -------------------------
-Precision		0.1744
-Recall			0.2174
-F1			0.1935
-Macro-F1		0.0566
+Precision		0.2316
+Recall			0.3188
+F1			0.2683
+Macro-F1		0.1029
 Exact Match Rate	0.0000
 
 Similarity Metrics:
 -------------------
-Jaccard Similarity	0.1045
-Dice Similarity		0.1829
-Semantic Match Rate	0.4579
+Jaccard Similarity	0.1795
+Dice Similarity		0.2820
+Semantic Match Rate	0.7764
+Weighted Semantic Rate	0.7764
 
 Partial Evaluation:
 -------------------
-Partial Precision	0.1551
-Partial Recall		0.1752
-Partial F1		0.1521
+Partial Precision	0.2863
+Partial Recall		0.3402
+Partial F1		0.3044
 
 Lenient Evaluation:
 -------------------
-Lenient Precision	0.3558
-Lenient Recall		0.3161
-Lenient F1		0.2741
+Lenient Precision	0.3805
+Lenient Recall		0.3845
+Lenient F1		0.3174
 
 Additional Metrics:
 -------------------
-ROUGE-1			0.3734
+ROUGE-1			0.4139
 
 SAMPLE ANALYSIS
 ----------------------------------------
-Best Sample (F1): Sample #10 - F1: 0.3333
-Worst Sample (F1): Sample #7 - F1: 0.0000
+Best Sample (F1): Sample #1 - F1: 0.7059
+Worst Sample (F1): Sample #9 - F1: 0.0000
 Perfect Matches: 0/10 (0.0%)
 High F1 (>0.8): 0/10 (0.0%)
 Valid F1 Scores: 10/10 (100.0%)

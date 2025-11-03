@@ -188,6 +188,7 @@ class ExactMatchingMetrics(BaseMetric):
             categories: List of categories for each sample (optional)
         """
         if not self.config.enable_weighted_macro or not self.config.entity_weights_path:
+            print('not weighted macro averaged avilable metrics')
             # Fallback to regular macro averaging
             return self.macro_averaged_metrics(predictions, ground_truths)
 
