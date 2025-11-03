@@ -69,13 +69,13 @@ async def generate_tags(payload: dict = Body(...), request: Request = None) -> d
     Accessible only from within the server.
     """
     verify_internal_access(request)
-
+    mode = payload.get("mode")
     image_url = payload.get("image_url")
     if not image_url:
         raise HTTPException(status_code=400, detail="Field 'image_url' is required.")
 
     try:
-        result = run_langgraph_on_url(image_url)
+        result = run_langgraph_on_url(image_url,mode)
         return result.get("persian", {})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Image processing failed: {e}")
@@ -96,7 +96,7 @@ async def upload_and_tag(file: UploadFile = File(...), request: Request = None) 
         if not file_content:
             raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-        result = run_langgraph_on_bytes(file_content)
+        result = run_langgraph_on_bytes(file_content,mode='reasoning')
         return {"tags": result.get("persian", {})}
     except HTTPException:
         raise
