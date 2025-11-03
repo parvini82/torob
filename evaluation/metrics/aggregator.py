@@ -180,11 +180,11 @@ class MetricsAggregator:
 
                     # categories = None  # or list with same length as predictions
                     entity_weights = EntityProcessor.load_entity_weights(entity_weights_path)
-                    if entity_weights:
-                        categories = EntityProcessor.get_categories_for_samples(ground_truths, entity_weights)
-                        print(f"DEBUG: Auto-detected categories: {set(categories)}")
-                    else:
-                        categories = None  # یا از جایی که categories را دارید
+                    # if entity_weights:
+                    #     categories = EntityProcessor.get_categories_for_samples(ground_truths, entity_weights)
+                    #     print(f"DEBUG: Auto-detected categories: {set(categories)}")
+                    # else:
+                    categories = None  # یا از جایی که categories را دارید
 
                     wmacro = metric.weighted_macro_averaged_metrics(predictions, ground_truths, categories)
                     aggregated_results.update({
@@ -227,11 +227,11 @@ class MetricsAggregator:
                     enable_weighted = getattr(self.config, "enable_weighted_macro", False)
                     if enable_weighted and entity_weights_path:
                         entity_weights = EntityProcessor.load_entity_weights(entity_weights_path)
-                        if entity_weights:
-                            categories = EntityProcessor.get_categories_for_samples(ground_truths, entity_weights)
-                            print(f"DEBUG: Auto-detected categories for semantic: {set(categories)}")
-                        else:
-                            categories = None  # یا از جایی که categories را دارید
+                        # if entity_weights:
+                        #     categories = EntityProcessor.get_categories_for_samples(ground_truths, entity_weights)
+                        #     print(f"DEBUG: Auto-detected categories for semantic: {set(categories)}")
+                        # else:
+                        categories = None  # یا از جایی که categories را دارید
                         weighted_semantic = metric.weighted_semantic_similarity_metrics(predictions, ground_truths,
                                                                                         categories)
                         aggregated_results.update(weighted_semantic)
