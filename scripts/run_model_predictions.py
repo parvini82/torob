@@ -11,6 +11,11 @@ Usage:
 import json
 from pathlib import Path
 from typing import List, Dict, Any
+import sys
+from pathlib import Path
+script_dir = Path(__file__).parent
+project_root = script_dir.parent
+sys.path.insert(0, str(project_root))
 
 from evaluation import ModelRunner, EvaluationConfig
 
@@ -216,8 +221,8 @@ def find_toy_sample():
 
     # Priority order for toy samples
     sample_names = [
-        "Ground_Truth.json",
         "Ground_Truth_first10.json",
+        "Ground_Truth.json",
         "toy_sample_high_entity.json",
         "toy_sample_standard.json",
         "toy_sample_min_10_entities.json",

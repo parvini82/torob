@@ -1,0 +1,50 @@
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Model Name: gpt-4o__deepseek-chat-v3-0324
+Prediction File: /home/p_naseri/projects/torob/evaluation/predictions/predictions_gpt-4o__deepseek-chat-v3-0324_Ground_Truth_first10.json
+Total Samples: 10
+Timestamp: 2025-11-04T07:13:42.133354
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 9
+Failed Predictions:     1
+Success Rate:           90.0%
+Avg Time/Product:       181.716s
+
+EXACT MATCHING (MAVE-style)
+----------------------------------------
+Precision (Micro)	0.3243
+Recall (Micro)		0.1739
+F1 (Micro)		0.2264
+Precision (Macro)	0.0922
+Recall (Macro)		0.0691
+F1 (Macro)		0.0782
+Exact Match Rate	0.0000
+
+SIMILARITY METRICS
+----------------------------------------
+Jaccard			0.1126
+Dice			0.1935
+Semantic Match Rate	0.6931
+Weighted Semantic Rate	0.6931
+
+PARTIAL EVALUATION
+----------------------------------------
+Partial Precision	0.2058
+Partial Recall		0.1406
+Partial F1		0.1590
+
+LENIENT EVALUATION
+----------------------------------------
+Lenient Precision	0.4544
+Lenient Recall		0.2338
+Lenient F1		0.2737
+
+ADDITIONAL
+----------------------------------------
+ROUGE-1			0.4212

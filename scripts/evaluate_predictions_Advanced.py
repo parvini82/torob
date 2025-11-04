@@ -31,6 +31,11 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional, List
+import sys
+from pathlib import Path
+script_dir = Path(__file__).parent
+project_root = script_dir.parent
+sys.path.insert(0, str(project_root))
 
 from evaluation import EvaluationConfig
 from evaluation.metrics import MetricsAggregator

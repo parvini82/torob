@@ -1,0 +1,50 @@
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Model Name: gemma-3-4b-it__deepseek-chat-v3-0324
+Prediction File: /home/p_naseri/projects/torob/evaluation/predictions/predictions_gemma-3-4b-it__deepseek-chat-v3-0324_Ground_Truth_first10.json
+Total Samples: 10
+Timestamp: 2025-11-04T15:37:52.201327
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 9
+Failed Predictions:     1
+Success Rate:           90.0%
+Avg Time/Product:       476.060s
+
+EXACT MATCHING (MAVE-style)
+----------------------------------------
+Precision (Micro)	0.3000
+Recall (Micro)		0.2609
+F1 (Micro)		0.2791
+Precision (Macro)	0.0994
+Recall (Macro)		0.1059
+F1 (Macro)		0.1020
+Exact Match Rate	0.0000
+
+SIMILARITY METRICS
+----------------------------------------
+Jaccard			0.1770
+Dice			0.2893
+Semantic Match Rate	0.6985
+Weighted Semantic Rate	0.6985
+
+PARTIAL EVALUATION
+----------------------------------------
+Partial Precision	0.2700
+Partial Recall		0.2635
+Partial F1		0.2600
+
+LENIENT EVALUATION
+----------------------------------------
+Lenient Precision	0.5005
+Lenient Recall		0.3662
+Lenient F1		0.3689
+
+ADDITIONAL
+----------------------------------------
+ROUGE-1			0.4600
