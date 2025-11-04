@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function UploadPage() {
   const [imageUrl, setImageUrl] = useState("");
@@ -12,6 +12,20 @@ export default function UploadPage() {
   const [progress, setProgress] = useState(0);
   const [minioImageUrl, setMinioImageUrl] = useState("");
   const [mode, setMode] = useState("fast");
+  const [windowWidth, setWindowWidth] = useState(null);
+
+  // Track window width for responsive layout (avoid window usage during SSR/build)
+  useEffect(() => {
+    function updateWidth() {
+      setWindowWidth(window.innerWidth);
+    }
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const isMobile = windowWidth !== null ? windowWidth <= 1024 : false;
+  const isSmallMobile = windowWidth !== null ? windowWidth <= 768 : false;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +40,7 @@ export default function UploadPage() {
     try {
       let res;
 
+      // In advanced_reasoning mode disable upload file usage
       if (file && mode === "fast") {
         const formData = new FormData();
         formData.append("file", file);
@@ -350,7 +365,7 @@ export default function UploadPage() {
         style={{
           flex: "1",
           display: "flex",
-          flexDirection: window.innerWidth <= 1024 ? "column" : "row",
+          flexDirection: isMobile ? "column" : "row",
           width: "100%",
           maxWidth: "1600px",
           margin: "0 auto",
@@ -360,18 +375,19 @@ export default function UploadPage() {
       >
         <div
           style={{
-            flex: window.innerWidth <= 1024 ? "none" : "0 0 auto",
-            width: window.innerWidth <= 1024 ? "100%" : "400px",
+            flex: isMobile ? "none" : "0 0 auto",
+            width: isMobile ? "100%" : "400px",
             maxWidth: "100%",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            marginBottom: isMobile ? 20 : 0,
           }}
         >
           <div
             style={{
               width: "100%",
-              height: window.innerWidth <= 768 ? "300px" : "450px",
+              height: isSmallMobile ? "300px" : "450px",
               border: "3px dashed rgba(0,0,0,0.2)",
               borderRadius: "12px",
               background: darkMode
@@ -460,7 +476,7 @@ export default function UploadPage() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-start",
-            maxHeight: window.innerWidth <= 1024 ? "400px" : "450px",
+            maxHeight: isMobile ? "400px" : "450px",
             overflowY: "auto",
             overflowX: "hidden",
             padding: "0 10px",
@@ -540,8 +556,8 @@ export default function UploadPage() {
 
         <div
           style={{
-            flex: window.innerWidth <= 1024 ? "none" : "0 0 auto",
-            width: window.innerWidth <= 1024 ? "100%" : "450px",
+            flex: isMobile ? "none" : "0 0 auto",
+            width: isMobile ? "100%" : "450px",
             maxWidth: "100%",
             display: "flex",
             flexDirection: "column",
@@ -557,7 +573,7 @@ export default function UploadPage() {
               background: darkMode
                 ? "rgba(255, 255, 255, 0.05)"
                 : "#f0f0f0",
-              padding: window.innerWidth <= 768 ? "20px" : "30px",
+              padding: isSmallMobile ? "20px" : "30px",
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
