@@ -12,29 +12,6 @@ export default function UploadPage() {
   const [progress, setProgress] = useState(0);
   const [minioImageUrl, setMinioImageUrl] = useState("");
   const [mode, setMode] = useState("fast");
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type.startsWith("image/")) {
-      setFile(droppedFile);
-      setImageUrl("");
-      setUploadedImage(URL.createObjectURL(droppedFile));
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,7 +26,7 @@ export default function UploadPage() {
     try {
       let res;
 
-      if (file) {
+      if (file && mode === "fast") {
         const formData = new FormData();
         formData.append("file", file);
         setUploadedImage(URL.createObjectURL(file));
@@ -116,59 +93,59 @@ export default function UploadPage() {
   };
 
   const categoryStyle = {
-    marginBottom: "20px",
-    padding: "18px",
-    borderRadius: "14px",
+    marginBottom: "12px",
+    padding: "12px",
+    borderRadius: "10px",
     background: darkMode
       ? "rgba(255, 255, 255, 0.08)"
       : "rgba(245, 245, 245, 0.95)",
     backdropFilter: "blur(12px)",
     boxShadow: darkMode
-      ? "0 6px 20px rgba(0,0,0,0.3)"
-      : "0 6px 20px rgba(0,0,0,0.12)",
+      ? "0 4px 12px rgba(0,0,0,0.3)"
+      : "0 4px 12px rgba(0,0,0,0.12)",
     maxWidth: "100%",
     width: "100%",
     transition: "all 0.3s ease",
   };
 
   const categoryTitleStyle = {
-    fontSize: "1.15rem",
+    fontSize: "0.95rem",
     fontWeight: "700",
-    marginBottom: "14px",
+    marginBottom: "10px",
     color: darkMode ? "#fff" : "#2c3e50",
     display: "flex",
     alignItems: "center",
-    gap: "10px",
+    gap: "8px",
     letterSpacing: "0.3px",
   };
 
   const tagStyle = {
     display: "inline-block",
-    padding: "10px 18px",
-    margin: "6px",
-    borderRadius: "22px",
+    padding: "6px 12px",
+    margin: "4px",
+    borderRadius: "16px",
     color: "#fff",
     fontWeight: "600",
-    fontSize: "0.95rem",
+    fontSize: "0.8rem",
     background: "linear-gradient(45deg, #6a11cb, #2575fc)",
     backgroundSize: "200% 200%",
     transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.18)",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.18)",
     cursor: "pointer",
-    minWidth: "70px",
+    minWidth: "50px",
     textAlign: "center",
     border: "none",
   };
 
   const skeletonCategoryStyle = {
     width: "100%",
-    height: "90px",
-    borderRadius: "14px",
+    height: "70px",
+    borderRadius: "10px",
     background:
       "linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%)",
     backgroundSize: "200% 100%",
     animation: "loading 1.5s infinite",
-    margin: "12px 0",
+    margin: "10px 0",
   };
 
   const progressBarStyle = {
@@ -182,7 +159,7 @@ export default function UploadPage() {
   return (
     <div
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         fontFamily: "'Inter', 'Segoe UI', sans-serif",
@@ -192,7 +169,6 @@ export default function UploadPage() {
           : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
         position: "relative",
         transition: "background 0.6s ease",
-        overflow: "hidden",
       }}
     >
       <button
@@ -331,7 +307,13 @@ export default function UploadPage() {
           </p>
           <select
             value={mode}
-            onChange={(e) => setMode(e.target.value)}
+            onChange={(e) => {
+              setMode(e.target.value);
+              if (e.target.value === "advanced_reasoning") {
+                setFile(null);
+                setUploadedImage(null);
+              }
+            }}
             style={{
               width: "100%",
               padding: "14px 18px",
@@ -368,8 +350,7 @@ export default function UploadPage() {
         style={{
           flex: "1",
           display: "flex",
-          flexDirection: "row",
-          overflow: "hidden",
+          flexDirection: window.innerWidth <= 1024 ? "column" : "row",
           width: "100%",
           maxWidth: "1600px",
           margin: "0 auto",
@@ -379,30 +360,23 @@ export default function UploadPage() {
       >
         <div
           style={{
-            flex: "0 0 auto",
-            minWidth: "400px",
-            maxWidth: "500px",
+            flex: window.innerWidth <= 1024 ? "none" : "0 0 auto",
+            width: window.innerWidth <= 1024 ? "100%" : "400px",
+            maxWidth: "100%",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
+            alignItems: "center",
           }}
         >
           <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
             style={{
               width: "100%",
-              height: "550px",
-              border: isDragging
-                ? "3px dashed #6a11cb"
-                : "3px dashed rgba(0,0,0,0.2)",
+              height: window.innerWidth <= 768 ? "300px" : "450px",
+              border: "3px dashed rgba(0,0,0,0.2)",
               borderRadius: "12px",
-              background: isDragging
-                ? "rgba(106,17,203,0.1)"
-                : darkMode
-                  ? "rgba(255,255,255,0.05)"
-                  : "#f0f0f0",
+              background: darkMode
+                ? "rgba(255,255,255,0.05)"
+                : "#f0f0f0",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -470,24 +444,10 @@ export default function UploadPage() {
                   opacity: 0.7,
                 }}
               >
-                {isDragging ? (
-                  <>
-                    <div style={{ fontSize: "3rem", marginBottom: "10px" }}>
-                      📤
-                    </div>
-                    <div>Drop image here</div>
-                  </>
-                ) : (
-                  <>
-                    <div style={{ fontSize: "3rem", marginBottom: "10px" }}>
-                      🖼️
-                    </div>
-                    <div>Drag & drop image here</div>
-                    <div style={{ fontSize: "0.9rem", marginTop: "10px" }}>
-                      or use upload below
-                    </div>
-                  </>
-                )}
+                <div style={{ fontSize: "3rem", marginBottom: "10px" }}>
+                  🖼️
+                </div>
+                <div>Image preview will appear here</div>
               </div>
             )}
           </div>
@@ -500,10 +460,10 @@ export default function UploadPage() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-start",
-            maxHeight: "550px",
+            maxHeight: window.innerWidth <= 1024 ? "400px" : "450px",
             overflowY: "auto",
             overflowX: "hidden",
-            padding: "0 15px",
+            padding: "0 10px",
           }}
         >
           {tagGroups.length > 0 && (
@@ -511,9 +471,9 @@ export default function UploadPage() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "12px",
+                gap: "10px",
                 width: "100%",
-                maxWidth: "400px",
+                maxWidth: "100%",
               }}
             >
               {tagGroups.map((group, i) => (
@@ -531,14 +491,14 @@ export default function UploadPage() {
                   }}
                 >
                   <div style={categoryTitleStyle}>
-                    <span style={{ fontSize: "20px" }}>🏷️</span>
+                    <span style={{ fontSize: "16px" }}>🏷️</span>
                     <span>{group.نام || group.name}</span>
                   </div>
                   <div
                     style={{
                       display: "flex",
                       flexWrap: "wrap",
-                      gap: "6px",
+                      gap: "4px",
                       justifyContent: "flex-start",
                     }}
                   >
@@ -547,8 +507,6 @@ export default function UploadPage() {
                         key={j}
                         style={{
                           ...tagStyle,
-                          padding: "8px 14px",
-                          fontSize: "0.85rem",
                           opacity: animateTags ? 1 : 0,
                           transform: animateTags
                             ? "translateY(0)"
@@ -561,13 +519,13 @@ export default function UploadPage() {
                           e.target.style.transform =
                             "scale(1.12) translateY(-2px)";
                           e.target.style.boxShadow =
-                            "0 8px 20px rgba(0,0,0,0.3)";
+                            "0 6px 16px rgba(0,0,0,0.3)";
                         }}
                         onMouseLeave={(e) => {
                           e.target.style.backgroundPosition = "0 0";
                           e.target.style.transform = "scale(1) translateY(0)";
                           e.target.style.boxShadow =
-                            "0 3px 8px rgba(0,0,0,0.18)";
+                            "0 2px 6px rgba(0,0,0,0.18)";
                         }}
                       >
                         {value}
@@ -582,9 +540,9 @@ export default function UploadPage() {
 
         <div
           style={{
-            flex: "0 0 auto",
-            minWidth: "450px",
-            maxWidth: "550px",
+            flex: window.innerWidth <= 1024 ? "none" : "0 0 auto",
+            width: window.innerWidth <= 1024 ? "100%" : "450px",
+            maxWidth: "100%",
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-start",
@@ -599,11 +557,10 @@ export default function UploadPage() {
               background: darkMode
                 ? "rgba(255, 255, 255, 0.05)"
                 : "#f0f0f0",
-              padding: "30px",
+              padding: window.innerWidth <= 768 ? "20px" : "30px",
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-              minHeight: "550px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
@@ -650,71 +607,67 @@ export default function UploadPage() {
               }}
             />
 
-            <p
-              style={{
-                color: darkMode ? "#fff" : "#2c3e50",
-                fontSize: "1.05rem",
-                marginBottom: "10px",
-                fontWeight: "600",
-              }}
-            >
-              Or upload an image file:
-            </p>
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              onClick={() => document.getElementById("file-upload-input").click()}
-              style={{
-                width: "100%",
-                marginBottom: "15px",
-                padding: "20px",
-                color: darkMode ? "#fff" : "#2c3e50",
-                background: isDragging
-                  ? "rgba(106,17,203,0.2)"
-                  : "#e0e0e0",
-                borderRadius: "10px",
-                border: isDragging
-                  ? "2px dashed #6a11cb"
-                  : "2px dashed rgba(0,0,0,0.3)",
-                cursor: "pointer",
-                fontSize: "0.95rem",
-                textAlign: "center",
-                transition: "all 0.3s ease",
-                position: "relative",
-              }}
-            >
-              {isDragging ? (
-                <div>📤 Drop image here</div>
-              ) : (
-                <>
+            {mode === "fast" && (
+              <>
+                <p
+                  style={{
+                    color: darkMode ? "#fff" : "#2c3e50",
+                    fontSize: "1.05rem",
+                    marginBottom: "10px",
+                    fontWeight: "600",
+                  }}
+                >
+                  Or upload an image file:
+                </p>
+                <div
+                  onClick={() => document.getElementById("file-upload-input").click()}
+                  style={{
+                    width: "100%",
+                    marginBottom: "15px",
+                    padding: "20px",
+                    color: darkMode ? "#fff" : "#2c3e50",
+                    background: "#e0e0e0",
+                    borderRadius: "10px",
+                    border: "2px dashed rgba(0,0,0,0.3)",
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    textAlign: "center",
+                    transition: "all 0.3s ease",
+                    position: "relative",
+                  }}
+                >
                   <div style={{ marginBottom: "8px" }}>📁</div>
-                  <div>Click to upload or drag & drop</div>
-                </>
-              )}
-              <input
-                id="file-upload-input"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const selectedFile = e.target.files[0];
-                  if (selectedFile) {
-                    setFile(selectedFile);
-                    setImageUrl("");
-                    setUploadedImage(URL.createObjectURL(selectedFile));
-                  }
-                }}
-                style={{
-                  position: "absolute",
-                  opacity: 0,
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                  top: 0,
-                  left: 0,
-                }}
-              />
-            </div>
+                  <div>Click to upload</div>
+                  {file && (
+                    <div style={{ marginTop: "8px", fontSize: "0.85rem" }}>
+                      Selected: {file.name}
+                    </div>
+                  )}
+                  <input
+                    id="file-upload-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const selectedFile = e.target.files[0];
+                      if (selectedFile) {
+                        setFile(selectedFile);
+                        setImageUrl("");
+                        setUploadedImage(URL.createObjectURL(selectedFile));
+                      }
+                    }}
+                    style={{
+                      position: "absolute",
+                      opacity: 0,
+                      width: "100%",
+                      height: "100%",
+                      cursor: "pointer",
+                      top: 0,
+                      left: 0,
+                    }}
+                  />
+                </div>
+              </>
+            )}
 
             <button
               type="submit"
