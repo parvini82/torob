@@ -359,7 +359,6 @@ export default function UploadPage() {
             }}
           >
             <option value="fast">⚡ Fast (Fastest processing)</option>
-            <option value="reasoning">🧠 Reasoning (Better accuracy)</option>
             <option value="advanced_reasoning">🚀 Advanced Reasoning (Best quality with SerpAPI)</option>
           </select>
         </div>
