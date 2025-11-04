@@ -271,7 +271,7 @@ class TranslatorNode(BaseNode):
             model,
             messages,
             max_tokens=2500,
-            temperature=0.1
+            temperature=0.05
         )
 
         try:

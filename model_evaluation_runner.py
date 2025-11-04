@@ -16,16 +16,21 @@ import sys
 from pathlib import Path
 import itertools
 
+# Add project root to Python path
+project_root = Path(__file__).parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 # List of Vision models to test
 VISION_MODEL_ALTERNATIVES = [
-    # "x-ai/grok-4-fast",
-    # "google/gemma-3-12b-it",
-    # "openai/gpt-5-mini",
-    # "openai/gpt-5",
-    # "google/gemma-3-27b-it",
-    # "openai/gpt-4o",
+    "openai/gpt-5-mini",
+    "x-ai/grok-4-fast",
+    "google/gemma-3-12b-it",
+    "openai/gpt-5",
+    "google/gemma-3-27b-it",
+    "openai/gpt-4o",
     "anthropic/claude-3.5-haiku",
-    # "google/gemma-3-4b-it",
+    "google/gemma-3-4b-it",
 
 ]
 

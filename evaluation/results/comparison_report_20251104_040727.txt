@@ -1,0 +1,129 @@
+================================================================================
+EVALUATION COMPARISON REPORT
+================================================================================
+
+Generated: 2025-11-04T04:07:27.930026
+Total Evaluations: 5
+
+FILES COMPARED
+----------------------------------------
+  1. evaluation_gemini-2.5-flash-lite__gpt-4o-mini_20251104_021820.json
+  2. evaluation_gemini-2.5-flash__gpt-4o-mini_20251103_194702.json
+  3. evaluation_qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507_20251103_054016.json
+  4. evaluation_gpt-4o-mini__gpt-4o-mini_20251103_052305.json
+  5. evaluation_claude-sonnet-4.5__gpt-4o-mini_20251103_160524.json
+
+EVALUATION DETAILS
+----------------------------------------
+Model: gemini-2.5-flash-lite__gpt-4o-mini
+  File: evaluation_gemini-2.5-flash-lite__gpt-4o-mini_20251104_021820.json
+  Samples: 10
+  Timestamp: 2025-11-04T02:18:20.012427
+
+Model: gemini-2.5-flash__gpt-4o-mini
+  File: evaluation_gemini-2.5-flash__gpt-4o-mini_20251103_194702.json
+  Samples: 10
+  Timestamp: 2025-11-03T19:47:02.553013
+
+Model: qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507
+  File: evaluation_qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507_20251103_054016.json
+  Samples: 10
+  Timestamp: 2025-11-03T05:40:16.388769
+
+Model: gpt-4o-mini__gpt-4o-mini
+  File: evaluation_gpt-4o-mini__gpt-4o-mini_20251103_052305.json
+  Samples: 10
+  Timestamp: 2025-11-03T05:23:05.235048
+
+Model: claude-sonnet-4.5__gpt-4o-mini
+  File: evaluation_claude-sonnet-4.5__gpt-4o-mini_20251103_160524.json
+  Samples: 10
+  Timestamp: 2025-11-03T16:05:24.660180
+
+METRICS COMPARISON TABLE
+----------------------------------------
+       Model |           F1 |    Precision |       Recall |  Exact Match |     Macro-F1 |      Jaccard |     Semantic |      ROUGE-1 |   W-Macro-F1 |    W-Macro-P |    W-Macro-R |   W-Semantic
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+gemini-2.5-f |       0.3019 |       0.2667 |       0.3478 |       0.0000 |       0.1198 |       0.1766 |       0.8675 |       0.4629 |       0.2520 |       0.2482 |       0.2645 |       0.8675
+gemini-2.5-f |       0.2878 |       0.2857 |       0.2899 |       0.0000 |       0.0892 |       0.1679 |       0.7976 |       0.4441 |       0.1048 |       0.0999 |       0.1250 |       0.7841
+qwen3-vl-235 |       0.2683 |       0.2316 |       0.3188 |       0.0000 |       0.1029 |       0.1795 |       0.7764 |       0.4139 |       0.2373 |       0.2317 |       0.2601 |       0.7764
+gpt-4o-mini_ |       0.2273 |       0.2381 |       0.2174 |       0.0000 |       0.1042 |       0.1460 |       0.7963 |       0.5129 |       0.1861 |       0.1861 |       0.1861 |       0.7963
+claude-sonne |       0.1762 |       0.1371 |       0.2464 |       0.0000 |       0.0474 |       0.1345 |       0.9221 |       0.3738 |       0.0613 |       0.0541 |       0.0756 |       0.9142
+
+DETAILED RANKINGS
+----------------------------------------
+
+📊 F1 Score Rankings:
+------------------------------
+🥇 gemini-2.5-flash-lite__gpt-4o-mini 0.3019
+🥈 gemini-2.5-flash__gpt-4o-mini 0.2878
+🥉 qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507 0.2683
+ 4. gpt-4o-mini__gpt-4o-mini  0.2273
+ 5. claude-sonnet-4.5__gpt-4o-mini 0.1762
+
+📊 Macro-F1 Rankings:
+------------------------------
+🥇 gemini-2.5-flash-lite__gpt-4o-mini 0.1198
+🥈 gpt-4o-mini__gpt-4o-mini  0.1042
+🥉 qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507 0.1029
+ 4. gemini-2.5-flash__gpt-4o-mini 0.0892
+ 5. claude-sonnet-4.5__gpt-4o-mini 0.0474
+
+📊 Weighted Macro-F1 Rankings:
+------------------------------
+🥇 gemini-2.5-flash-lite__gpt-4o-mini 0.2520
+🥈 qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507 0.2373
+🥉 gpt-4o-mini__gpt-4o-mini  0.1861
+ 4. gemini-2.5-flash__gpt-4o-mini 0.1048
+ 5. claude-sonnet-4.5__gpt-4o-mini 0.0613
+
+📊 Weighted Semantic Rankings:
+------------------------------
+🥇 claude-sonnet-4.5__gpt-4o-mini 0.9142
+🥈 gemini-2.5-flash-lite__gpt-4o-mini 0.8675
+🥉 gpt-4o-mini__gpt-4o-mini  0.7963
+ 4. gemini-2.5-flash__gpt-4o-mini 0.7841
+ 5. qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507 0.7764
+
+📊 Exact Match Rankings:
+------------------------------
+🥇 gemini-2.5-flash-lite__gpt-4o-mini 0.0000
+🥈 gemini-2.5-flash__gpt-4o-mini 0.0000
+🥉 qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507 0.0000
+ 4. gpt-4o-mini__gpt-4o-mini  0.0000
+ 5. claude-sonnet-4.5__gpt-4o-mini 0.0000
+
+📊 Semantic Similarity Rankings:
+------------------------------
+🥇 claude-sonnet-4.5__gpt-4o-mini 0.9221
+🥈 gemini-2.5-flash-lite__gpt-4o-mini 0.8675
+🥉 gemini-2.5-flash__gpt-4o-mini 0.7976
+ 4. gpt-4o-mini__gpt-4o-mini  0.7963
+ 5. qwen3-vl-235b-a22b-instruct__qwen3-235b-a22b-2507 0.7764
+
+============================================================
+BEST PERFORMERS SUMMARY
+============================================================
+🏆 Best Overall (F1): gemini-2.5-flash-lite__gpt-4o-mini (0.3019)
+⚖️  Best Weighted (Macro-F1): gemini-2.5-flash-lite__gpt-4o-mini (0.2520)
+🧠 Best Semantic: claude-sonnet-4.5__gpt-4o-mini (0.9221)
+
+============================================================
+PERFORMANCE INSIGHTS
+============================================================
+F1 Score Statistics:
+  Average: 0.2523
+  Best:    0.3019
+  Worst:   0.1762
+  Range:   0.1257
+
+Weighted Metrics Analysis:
+  gemini-2.5-flash-lit: Regular=0.1198, Weighted=0.2520, Δ=+0.1322
+  gemini-2.5-flash__gp: Regular=0.0892, Weighted=0.1048, Δ=+0.0156
+  qwen3-vl-235b-a22b-i: Regular=0.1029, Weighted=0.2373, Δ=+0.1344
+  gpt-4o-mini__gpt-4o-: Regular=0.1042, Weighted=0.1861, Δ=+0.0819
+  claude-sonnet-4.5__g: Regular=0.0474, Weighted=0.0613, Δ=+0.0139
+
+================================================================================
+END OF REPORT
+================================================================================

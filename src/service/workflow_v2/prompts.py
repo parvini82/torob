@@ -136,7 +136,7 @@ OUTPUT FORMAT:
     {"name": "features", "values": ["functional_elements"]},
     {"name": "occasion", "values": ["usage_contexts"]},
     {"name": "season", "values": ["seasonal_relevance"]},
-    {"name": "construction", "values": ["design_details"]},
+    {"name": "construction_features", "values": ["design_details"]},
     {"name": "quality_level", "values": ["quality_indicators"]}
   ]
 }
@@ -333,6 +333,28 @@ Input JSON:
 
 Output JSON (valid syntax required, start with '{{' or '[' only):
 """
+
+
+# class TranslationPrompts:
+#     """Simplified translation prompt for smaller models."""
+#
+#     SYSTEM_PROMPT = """
+# You are a Persian translator for fashion products.
+#
+# Translate the JSON below from English to Persian.
+# - Keep structure exactly the same.
+# - Translate only "name" and "values" fields.
+# - Do NOT explain, comment, or add markdown.
+# - Output valid JSON only.
+#
+# Example:
+# Input: {"name": "color", "values": ["black", "white"]}
+# Output: {"name": "رنگ", "values": ["مشکی", "سفید"]}
+# """
+#
+#     @staticmethod
+#     def format_user_message(tags_json: str) -> str:
+#         return f"Translate to Persian:\n{tags_json}"
 
 
 
