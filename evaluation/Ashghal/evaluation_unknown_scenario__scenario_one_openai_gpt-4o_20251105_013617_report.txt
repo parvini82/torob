@@ -1,0 +1,51 @@
+================================================================================
+SCENARIO EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Scenario: unknown_scenario
+Model Name: unknown_scenario__scenario_one_openai_gpt-4o
+Prediction File: /home/peyma/projects/torob/evaluation/scenario_predictions/predictions_scenario_one_openai_gpt-4o_Ground_Truth_first10.json
+Total Samples: 10
+Timestamp: 2025-11-05T01:36:17.062958
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 8
+Failed Predictions:     2
+Success Rate:           80.0%
+Avg Time/Product:       50.100s
+
+EXACT MATCHING (MAVE-style)
+----------------------------------------
+Precision (Micro)	0.0511
+Recall (Micro)		0.1014
+F1 (Micro)		0.0680
+Precision (Macro)	0.0295
+Recall (Macro)		0.0279
+F1 (Macro)		0.0283
+Exact Match Rate	0.0000
+
+SIMILARITY METRICS
+----------------------------------------
+Jaccard			0.0443
+Dice			0.0825
+Semantic Match Rate	0.6408
+Weighted Semantic Rate	0.6408
+
+PARTIAL EVALUATION
+----------------------------------------
+Partial Precision	0.0418
+Partial Recall		0.0903
+Partial F1		0.0571
+
+LENIENT EVALUATION
+----------------------------------------
+Lenient Precision	0.2737
+Lenient Recall		0.1935
+Lenient F1		0.1057
+
+ADDITIONAL
+----------------------------------------
+ROUGE-1			0.1843

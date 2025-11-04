@@ -6,22 +6,55 @@ preserving structure and maintaining fashion industry terminology accuracy.
 """
 
 from typing import Dict, Any, List
+import json
+import re
+import traceback
+from datetime import datetime
 
 from ..core.base_node import BaseNode
 from ..model_client import create_model_client, ModelClientError
-from ..prompts import TranslationPrompts
-from ..config import get_model  # Import centralized model getter
-
-
-
-
-import json
+from ..prompts import TranslationPrompts  # استفاده از پرامپت موجود
+from ..config import get_model
 from .utils.json_sanitizer import sanitize_json_response
 from .utils.retry_handler import with_retry, RetryError
-import re  # for pre-sanitization of pseudo-JSON
 
 
+class TranslationLogger:
+    """Enhanced logging for translation debugging."""
 
+    def __init__(self, logger):
+        self.logger = logger
+
+    def log_parsing_failure(self, raw_response: str, error: Exception, model: str):
+        """Log detailed parsing failure info."""
+        timestamp = datetime.now().isoformat()
+        error_details = {
+            "timestamp": timestamp,
+            "model": model,
+            "error_type": type(error).__name__,
+            "error_message": str(error),
+            "response_length": len(raw_response),
+            "response_preview": raw_response[:200].replace('\n', ' '),
+            "traceback": traceback.format_exc()
+        }
+
+        self.logger.error(f"JSON Parsing Failure Details: {json.dumps(error_details, indent=2)}")
+
+        # Check for common patterns in failed responses
+        self._analyze_failure_patterns(raw_response)
+
+    def _analyze_failure_patterns(self, response: str):
+        """Analyze common failure patterns in LLM responses."""
+        patterns = {
+            "has_explanation": bool(re.search(r'^(here|this|the result)', response.lower().strip())),
+            "has_markdown": bool(re.search(r'```', response)),
+            "has_single_quotes": bool(re.search(r"'[^']*':", response)),
+            "has_unquoted_keys": bool(re.search(r'[{,]\s*[a-zA-Z_]+\s*:', response)),
+            "truncated_response": response.strip().endswith(',') or not (
+                response.strip().endswith('}') or response.strip().endswith(']')),
+        }
+
+        self.logger.warning(f"Failure pattern analysis: {patterns}")
 
 
 class TranslatorNode(BaseNode):
@@ -50,6 +83,7 @@ class TranslatorNode(BaseNode):
         self.target_language = target_language
         self.source_language = source_language
         self.client = None
+        self.translation_logger = TranslationLogger(self.logger)
 
         self.logger.info(f"Initialized translation: {source_language} → {target_language}")
         self.logger.info(f"Using model: {self.model}")
@@ -200,9 +234,8 @@ class TranslatorNode(BaseNode):
                 fallback_key = next(
                     (key for key in translatable_sources if key in found),
                     next(iter(found))
-                ) # First in priority order
+                )
 
-                # fallback_key = source_names[0]  # First in priority order
                 self.logger.warning(f"Falling back to single source: {fallback_key}")
                 return {fallback_key: found[fallback_key]}
 
@@ -240,12 +273,9 @@ class TranslatorNode(BaseNode):
 
         # Prepare fashion content for translation
         translation_content = self._prepare_fashion_content_for_translation(content)
-
-        # Convert to JSON string for translation
-
         content_json = json.dumps(translation_content, indent=2, ensure_ascii=False)
 
-        # Prepare specialized fashion translation request
+        # استفاده از پرامپت موجود
         messages = [
             {
                 "role": "system",
@@ -257,97 +287,57 @@ class TranslatorNode(BaseNode):
             }
         ]
 
-        # Get translation
-        # OLD:
-        # translated_result = self.client.call_json(
-        #     model,
-        #     messages,
-        #     max_tokens=2500,
-        #     temperature=0.1
-        # )
-
-        # NEW: get raw text, then sanitize+parse
-        translated_raw = self.client.call_text(
-            model,
-            messages,
-            max_tokens=2500,
-            temperature=0.05
-        )
-
+        # Get raw response with enhanced error handling
         try:
-            # --- PRE-SANITIZATION: normalize common pseudo-JSON before main sanitizer ---
-            # Purpose: Handle ScenarioZero-style outputs like {'entities': ...} or '...'
-            # without affecting valid JSON (e.g., {"entities": ...}).
-            # --- PRE-SANITIZATION: robust normalization for pseudo/Python-style JSON ---
-            # --- PRE-SANITIZATION: robust normalization for pseudo/Python-style JSON ---
-            translated_raw = translated_raw.strip()
-
-            # Force extraction even if explanation precedes JSON
-            if "{" in translated_raw and "}" in translated_raw:
-                start = translated_raw.find("{")
-                end = translated_raw.rfind("}")
-                translated_raw = translated_raw[start:end + 1].strip()
-
-
-            # If the model wrapped JSON inside explanations, try to extract only the JSON part
-            match_json = re.search(r"(\{[\s\S]+\})", translated_raw)
-            if match_json:
-                translated_raw = match_json.group(1).strip()
-
-            # Detect JSON-like content that might use single quotes or unquoted keys
-            if (
-                re.match(r"^\s*\{", translated_raw)
-                and not re.match(r"^\s*\{\s*\"", translated_raw)
-            ):
-                self.logger.debug("Detected single-quoted or unquoted JSON-like structure → enforcing JSON compliance.")
-
-                # Replace single-quoted KEYS → double-quoted
-                translated_raw = re.sub(r"([{\[,]\s*)'([^'\"]+?)'\s*:", r'\1"\2":', translated_raw)
-                # Replace single-quoted VALUES → double-quoted
-                translated_raw = re.sub(r':\s*\'([^\'"]*)\'(\s*[,}\]])', r': "\1"\2', translated_raw)
-                # Handle unquoted KEYS → wrap in double quotes
-                translated_raw = re.sub(r'([{,]\s*)([A-Za-z0-9_\-]+)\s*:', r'\1"\2":', translated_raw)
-
-            # Strip markdown/code fences or helper prefixes
-            translated_raw = re.sub(
-                r"^\s*(?:```json|```|Here is.*?:|JSON output:)\s*", "", translated_raw, flags=re.IGNORECASE
+            translated_raw = self.client.call_text(
+                model,
+                messages,
+                max_tokens=3000,  # Increased for complex content
+                temperature=0.0   # Lower temperature for consistency
             )
-            translated_raw = re.sub(r"\s*```$", "", translated_raw)
 
+            self.logger.debug(f"Raw model response length: {len(translated_raw)}")
 
+            # Use enhanced sanitizer
             translated_result = sanitize_json_response(translated_raw)
+
         except Exception as e:
-            self.logger.warning(f"⚠️ JSON parse failed: {e}. Attempting self-healing retry...")
+            self.logger.warning(f"⚠️ Initial parsing failed: {e}. Trying repair strategy...")
 
-            # ---- Phase 2: repair prompt ----
-            repair_prompt = f"""
-        The following text failed JSON parsing. 
-        Your task: rewrite it into syntactically valid JSON without changing meanings, 
-        preserving field names and structure exactly. 
-        Do NOT add explanations or extra text.
+            # Log detailed failure information
+            self.translation_logger.log_parsing_failure(translated_raw, e, model)
 
-        Text to repair:
-        {translated_raw}
-        """
+            # Repair strategy with focused prompt
+            repair_messages = [
+                {
+                    "role": "system",
+                    "content": "You are a JSON formatter. Convert the given text to valid JSON format. Output ONLY the JSON, no explanations."
+                },
+                {
+                    "role": "user",
+                    "content": f"Convert this to valid JSON:\n\n{translated_raw}"
+                }
+            ]
+
             try:
-                fixed_raw = self.client.call_text(
-                    model,
-                    [{"role": "user", "content": repair_prompt}],
-                    max_tokens=2000,
-                    temperature=0.0
-                )
-                translated_result = sanitize_json_response(fixed_raw)
-                self.logger.info("✅ JSON successfully repaired after retry.")
-            except Exception as repair_error:
-                self.logger.error(f"❌ JSON repair retry failed: {repair_error}")
-                raise repair_error
+                repaired_raw = self.client.call_text(model, repair_messages, max_tokens=3000, temperature=0.0)
+                translated_result = sanitize_json_response(repaired_raw)
+                self.logger.info("✅ Successfully repaired JSON after retry")
 
-        # If the model returned a top-level list (e.g., entities-only), normalize it.
+            except Exception as repair_error:
+                self.logger.error(f"❌ JSON repair failed: {repair_error}")
+                # Fallback to predefined strategy
+                return self._fallback_translation(content, repair_error)
+
+        # Normalize list responses
         if isinstance(translated_result, list):
-            # Normalize to an object so downstream code remains stable.
             translated_result = {"entities": translated_result}
 
-        # Structure the translated result
+        # Validate the result
+        if not self._validate_translation_result(translated_result, content):
+            self.logger.warning("Translation validation failed, using fallback")
+            return self._fallback_translation(content, Exception("Validation failed"))
+
         return self._structure_fashion_translated_result(translated_result, content, target_lang)
 
     def _prepare_fashion_content_for_translation(self, content: Dict[str, Any]) -> Dict[str, Any]:
@@ -516,3 +506,41 @@ class TranslatorNode(BaseNode):
         merged_result["summary"] = max(summaries, key=len) if summaries else ""
 
         return merged_result
+
+    def _validate_translation_result(self, result: Dict[str, Any], original: Dict[str, Any]) -> bool:
+        """Validate translation result maintains structure."""
+        try:
+            # Check essential fields exist
+            required_fields = ["entities", "categories"]
+            for field in required_fields:
+                if field in original and field not in result:
+                    self.logger.warning(f"Missing field after translation: {field}")
+                    return False
+
+            # Check entities structure
+            if "entities" in result and isinstance(result["entities"], list):
+                for entity in result["entities"]:
+                    if not isinstance(entity, dict) or "name" not in entity:
+                        self.logger.warning("Invalid entity structure in translation")
+                        return False
+
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Validation error: {e}")
+            return False
+
+    def _fallback_translation(self, content: Dict[str, Any], error: Exception) -> Dict[str, Any]:
+        """Fallback when JSON parsing completely fails."""
+        self.logger.warning("Using fallback translation strategy")
+
+        # Return original content with Persian language marker
+        fallback_result = content.copy()
+        fallback_result.update({
+            "language": "persian",
+            "translation_method": "fallback",
+            "translation_error": str(error),
+            "original_language": "english"
+        })
+
+        return fallback_result

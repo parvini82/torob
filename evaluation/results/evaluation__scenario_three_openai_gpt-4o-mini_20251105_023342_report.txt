@@ -1,50 +1,51 @@
 ================================================================================
-COMPREHENSIVE MODEL EVALUATION REPORT
+SCENARIO EVALUATION REPORT
 ================================================================================
 
 EVALUATION METADATA
 ----------------------------------------
-Model Name: gemini-2.5-flash__gpt-4o-mini
-Prediction File: /home/peyma/projects/torob/evaluation/predictions/predictions_gemini-2.5-flash__gpt-4o-mini_Ground_Truth_first10.json
+Scenario: scenario_three
+Model Name: scenario_three_openai_gpt-4o-mini
+Prediction File: /home/peyma/projects/torob/evaluation/scenario_predictions/predictions_scenario_three_openai_gpt-4o-mini_Ground_Truth_first10.json
 Total Samples: 10
-Timestamp: 2025-11-03T19:47:02.553688
+Timestamp: 2025-11-05T02:33:42.118330
 
 MODEL EXECUTION PERFORMANCE
 ----------------------------------------
 Successful Predictions: 10
 Failed Predictions:     0
 Success Rate:           100.0%
-Avg Time/Product:       20.228s
+Avg Time/Product:       54.664s
 
 EXACT MATCHING (MAVE-style)
 ----------------------------------------
-Precision (Micro)	0.2857
-Recall (Micro)		0.2899
-F1 (Micro)		0.2878
-Precision (Macro)	0.0856
-Recall (Macro)		0.1011
-F1 (Macro)		0.0892
+Precision (Micro)	0.0380
+Recall (Micro)		0.1014
+F1 (Micro)		0.0553
+Precision (Macro)	0.0213
+Recall (Macro)		0.0276
+F1 (Macro)		0.0239
 Exact Match Rate	0.0000
 
 SIMILARITY METRICS
 ----------------------------------------
-Jaccard			0.1679
-Dice			0.2803
-Semantic Match Rate	0.7976
-Weighted Semantic Rate	0.7841
+Jaccard			0.0403
+Dice			0.0763
+Semantic Match Rate	0.8450
+Weighted Semantic Rate	0.8450
 
 PARTIAL EVALUATION
 ----------------------------------------
-Partial Precision	0.3022
-Partial Recall		0.2844
-Partial F1		0.2799
+Partial Precision	0.0346
+Partial Recall		0.0786
+Partial F1		0.0470
 
 LENIENT EVALUATION
 ----------------------------------------
-Lenient Precision	0.3497
-Lenient Recall		0.3258
-Lenient F1		0.3280
+Lenient Precision	0.0817
+Lenient Recall		0.2477
+Lenient F1		0.1220
 
 ADDITIONAL
 ----------------------------------------
-ROUGE-1			0.4441
+ROUGE-1			0.2172

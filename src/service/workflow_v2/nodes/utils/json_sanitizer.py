@@ -1,177 +1,199 @@
 """
-JSON sanitization utilities for node responses.
+Enhanced JSON sanitization utilities for LLM responses.
 """
 
 import json
 import re
 import logging
-from typing import Dict, Any, Union
-
+from typing import Dict, Any, Union, Tuple
 
 def sanitize_json_response(response_text: str) -> Union[Dict[str, Any], list]:
     """
-    Sanitize and parse JSON from model responses.
-
-    Handles common LLM JSON formatting issues safely and progressively.
-    Returns either a dict (object) or a list (array) depending on payload.
-
-    Raises:
-        json.JSONDecodeError if parsing fails after all steps.
+    Enhanced sanitize and parse JSON from model responses.
+    Handles more robust LLM JSON formatting issues.
     """
     logger = logging.getLogger(__name__)
     if not response_text or not isinstance(response_text, str):
         raise json.JSONDecodeError("Empty or invalid response_text", "", 0)
 
-    # 0) Normalize Unicode quotes and strip BOM if present
-    text = _normalize_unicode_and_bom(response_text)
+    # Log the raw response for debugging
+    logger.debug(f"Raw response (first 500 chars): {response_text[:500]}")
 
-    # 1) Extract the most likely JSON payload (object or array) from any surrounding text/markdown
-    text = _extract_json_payload(text)
+    # Enhanced normalization steps
+    text = _comprehensive_normalize(response_text)
 
-    # 2) Progressive sanitization & parsing attempts
+    # Try direct parsing first (for well-formed responses)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        logger.debug("Direct parsing failed, applying progressive sanitization")
+
+    # Progressive sanitization with better error tracking
     steps = [
+        _extract_json_payload_enhanced,
+        _fix_pseudo_json_syntax,
         _fix_trailing_commas,
         _fix_missing_commas_between_objects,
         _fix_newlines_in_strings,
-        _fix_unescaped_inner_double_quotes,
-        _fix_single_quoted_keys_and_values,  # careful, limited to proper contexts
-        _balance_brackets,                   # close one missing '}' or ']' if clearly unbalanced
+        _fix_unescaped_quotes_robust,
+        _balance_brackets_smart
     ]
 
     current = text
-    for step in steps:
+    for i, step in enumerate(steps):
         try:
-            return json.loads(current)
-        except json.JSONDecodeError:
+            result = json.loads(current)
+            logger.debug(f"Successfully parsed after step {i}: {step.__name__}")
+            return result
+        except json.JSONDecodeError as e:
+            logger.debug(f"Step {i} ({step.__name__}) failed: {e}")
             current = step(current)
-            logger.debug(f"Applied sanitization step: {step.__name__}")
 
-    # Final parse attempt
+    # Final attempt with detailed error info
     try:
         return json.loads(current)
     except json.JSONDecodeError as e:
-        snippet = current[:400].replace("\n", " ")
-        logger.error(f"Failed to parse JSON after sanitization: {e}")
-        logger.debug(f"Final sanitized text head: {snippet}...")
+        logger.error(f"All sanitization steps failed. Final error: {e}")
+        logger.error(f"Problem area: {current[max(0, e.pos-50):e.pos+50]}")
         raise
 
+def _comprehensive_normalize(text: str) -> str:
+    """Enhanced normalization for various LLM output formats."""
+    # Strip BOM and normalize Unicode
+    text = text.lstrip("\ufeff").strip()
 
-# ------------------------ Helpers ------------------------
+    # Normalize various quote types
+    replacements = [
+        (""", '"'), (""", '"'), ("'", "'"), ("'", "'"),
+        ("'", "'"), ("'", "'")  # Additional smart quotes
+    ]
 
-def _normalize_unicode_and_bom(text: str) -> str:
-    """Normalize BOM and typographic quotes to plain ASCII quotes."""
-    # Strip BOM
-    if text.startswith("\ufeff"):
-        text = text.lstrip("\ufeff")
+    for old, new in replacements:
+        text = text.replace(old, new)
 
-    # Replace typographic quotes “ ” ‘ ’ with normal quotes
-    text = text.replace("“", '"').replace("”", '"')
-    text = text.replace("‘", "'").replace("’", "'")
     return text
 
-
-def _extract_json_payload(text: str) -> str:
-    """
-    Extract the JSON payload from surrounding text or markdown fences.
-    Supports both object `{...}` and array `[...]` top-level payloads.
-    Prefers the first well-formed boundary found.
-    """
-    # Remove markdown code fences like ```json ... ``` or ```
-    text = re.sub(r"```(?:json)?", "", text, flags=re.IGNORECASE).strip()
+def _extract_json_payload_enhanced(text: str) -> str:
+    """Enhanced JSON extraction with better boundary detection."""
+    # Remove code blocks and XML-style tags
+    text = re.sub(r"```")
     text = re.sub(r"```", "", text).strip()
+    text = re.sub(r"<output[^>]*>|</output>", "", text, flags=re.IGNORECASE).strip()
 
-    # Try object boundaries
-    obj_start = text.find("{")
-    obj_end = text.rfind("}")
+    # Find JSON boundaries with better heuristics
+    json_patterns = [
+        r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}',  # Nested object
+        r'\[[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\]'  # Nested array
+    ]
 
-    # Try array boundaries
-    arr_start = text.find("[")
-    arr_end = text.rfind("]")
+    for pattern in json_patterns:
+        matches = re.findall(pattern, text, re.DOTALL)
+        if matches:
+            # Return the longest match (likely the main JSON)
+            return max(matches, key=len).strip()
 
-    candidates = []
+    # Fallback to simple boundary detection
+    obj_start, obj_end = text.find("{"), text.rfind("}")
+    arr_start, arr_end = text.find("["), text.rfind("]")
+
     if obj_start != -1 and obj_end > obj_start:
-        candidates.append(text[obj_start:obj_end + 1])
-    if arr_start != -1 and arr_end > arr_start:
-        candidates.append(text[arr_start:arr_end + 1])
+        return text[obj_start:obj_end + 1].strip()
+    elif arr_start != -1 and arr_end > arr_start:
+        return text[arr_start:arr_end + 1].strip()
 
-    if not candidates:
-        return text.strip()
+    return text.strip()
 
-    # Prefer the longest candidate (often the real payload)
-    candidate = max(candidates, key=len).strip()
-    return candidate
+def _fix_pseudo_json_syntax(text: str) -> str:
+    """Fix Python-like dictionary syntax to valid JSON."""
+    # Convert Python None/True/False to JSON null/true/false
+    text = re.sub(r'\bNone\b', 'null', text)
+    text = re.sub(r'\bTrue\b', 'true', text)
+    text = re.sub(r'\bFalse\b', 'false', text)
 
+    # Fix unquoted keys (common in LLM outputs)
+    text = re.sub(r'([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', text)
 
+    # Fix single-quoted strings to double-quoted
+    # Be careful not to affect apostrophes inside already double-quoted strings
+    text = re.sub(r"(?<![\\\"])'([^']*?)'(?=\s*[,}\]:])", r'"\1"', text)
+
+    return text
+
+def _fix_unescaped_quotes_robust(text: str) -> str:
+    """More robust handling of unescaped quotes in strings."""
+    # Pattern for finding string values that might contain unescaped quotes
+    def fix_string_quotes(match):
+        key_part = match.group(1)
+        value_part = match.group(2)
+        # Escape internal quotes in the value
+        value_part = value_part.replace('"', '\\"')
+        return f'{key_part}"{value_part}"'
+
+    # Fix quotes in string values
+    text = re.sub(r'(:\s*")([^"]*?"[^"]*?)(")', fix_string_quotes, text)
+
+    return text
+
+def _balance_brackets_smart(text: str) -> str:
+    """Smart bracket balancing with context awareness."""
+    def count_unescaped(char, s):
+        """Count unescaped occurrences of character."""
+        count = 0
+        escaped = False
+        for c in s:
+            if escaped:
+                escaped = False
+                continue
+            if c == '\\':
+                escaped = True
+            elif c == char:
+                count += 1
+        return count
+
+    # Check and fix braces
+    open_braces = count_unescaped('{', text)
+    close_braces = count_unescaped('}', text)
+
+    if open_braces > close_braces:
+        text += '}' * (open_braces - close_braces)
+
+    # Check and fix brackets
+    open_brackets = count_unescaped('[', text)
+    close_brackets = count_unescaped(']', text)
+
+    if open_brackets > close_brackets:
+        text += ']' * (open_brackets - close_brackets)
+
+    return text
+
+# Keep existing helper functions but enhance them
 def _fix_trailing_commas(s: str) -> str:
-    """Remove trailing commas before closing brackets/braces."""
-    s = re.sub(r",\s*([}\]])", r"\1", s)
+    """Enhanced trailing comma removal."""
+    # Remove trailing commas before closing brackets/braces
+    s = re.sub(r',\s*([}\]])', r'\1', s)
+    # Also handle trailing commas at end of lines
+    s = re.sub(r',\s*\n\s*([}\]])', r'\n\1', s)
     return s
-
 
 def _fix_missing_commas_between_objects(s: str) -> str:
-    """
-    Add missing commas between adjacent JSON elements.
-    This is conservative to avoid injecting commas inside strings.
-    """
-    # } {  -> }, {
-    s = re.sub(r"}\s*{", r"}, {", s)
-    # ] {  -> ], {
-    s = re.sub(r"]\s*{", r"], {", s)
-    # } "  -> }, "
-    s = re.sub(r"}\s*\"", r"}, \"", s)
-    # ] "  -> ], "
-    s = re.sub(r"]\s*\"", r"], \"", s)
-    return s
+    """Enhanced comma insertion between JSON elements."""
+    patterns = [
+        (r'}\s*{', '}, {'),           # Adjacent objects
+        (r']\s*{', '], {'),           # Array followed by object
+        (r'}\s*"', '}, "'),           # Object followed by string
+        (r']\s*"', '], "'),           # Array followed by string
+        (r'"\s*{(?=\s*")', '", {'),   # String followed by object
+        (r'"\s*\[(?=\s*")', '", ['),  # String followed by array
+    ]
 
+    for pattern, replacement in patterns:
+        s = re.sub(pattern, replacement, s)
+
+    return s
 
 def _fix_newlines_in_strings(s: str) -> str:
-    """
-    Replace raw newlines that often appear inside string values right
-    before the closing quote. This reduces broken strings.
-    """
-    # Replace newline + spaces before a closing quote with a single space
-    s = re.sub(r"\n\s*\"", r" \"", s)
-    # Collapse multiple newlines into single space
-    s = re.sub(r"\s*\n\s*", " ", s)
-    return s
-
-
-def _fix_unescaped_inner_double_quotes(s: str) -> str:
-    """
-    Attempt to escape stray unescaped double quotes inside JSON string values.
-    Conservative approach: only target quotes between known delimiters like ': " ... " , or ': " ... " }'
-    """
-    # Pattern: colon -> space -> opening quote -> some chars without proper closing -> stray quote -> continue
-    # This is intentionally limited; many cases are already fixed by other steps.
-    s = re.sub(r'(:\s*")([^"]*?)(")([^,\}\]]*\s*[,}\]])', r'\1\2\3\4', s)
-    return s
-
-
-def _fix_single_quoted_keys_and_values(s: str) -> str:
-    """
-    Replace single-quoted keys/values with double-quoted equivalents ONLY when they form JSON delimiters,
-    not apostrophes inside already double-quoted strings (e.g., "women's" must remain intact).
-    """
-    # Keys:  'key':  ->  "key":
-    s = re.sub(r"(?<![\\\w])'([A-Za-z0-9_\- ]+)'\s*:", r'"\1":', s)
-
-    # Values: : 'value'  ->  : "value"
-    s = re.sub(r':\s*\'([^\'"]*)\'', r': "\1"', s)
-    return s
-
-
-def _balance_brackets(s: str) -> str:
-    """
-    If braces/brackets are clearly unbalanced by 1, try to fix by appending the missing closer.
-    Avoids aggressive changes.
-    """
-    def _balance(chars_open: str, chars_close: str, text: str) -> str:
-        open_count = text.count(chars_open)
-        close_count = text.count(chars_close)
-        if open_count - close_count == 1:
-            return text + chars_close
-        return text
-
-    s = _balance("{", "}", s)
-    s = _balance("[", "]", s)
+    """Enhanced newline handling in JSON strings."""
+    # Replace problematic newlines in string values
+    s = re.sub(r'"\s*\n\s*"', '" "', s)  # Broken string continuation
+    s = re.sub(r':\s*"\s*\n\s*([^"]*?)\s*\n\s*"', r': "\1"', s)  # Multi-line string values
     return s

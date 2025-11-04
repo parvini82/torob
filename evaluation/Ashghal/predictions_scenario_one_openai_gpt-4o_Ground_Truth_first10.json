@@ -1,0 +1,2090 @@
+{
+  "metadata": {
+    "model_name": "scenario_one_openai_gpt-4o",
+    "sample_path": "/home/peyma/projects/torob/data/processed/Ground_Truth_first10.json",
+    "sample_size": 10,
+    "execution_time": 501.0030109882355,
+    "timestamp": "2025-11-05T01:28:31.648187"
+  },
+  "products": [
+    {
+      "index": 1,
+      "image_url": "https://image.torob.com/base/images/ST/V0/STV0N9liwgLNmi27.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "باکسر بریفز"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "سیاه",
+            "خاکستری",
+            "سبز"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "پنبه"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "یکدست"
+          ]
+        },
+        {
+          "name": "برند",
+          "values": [
+            "فریدوم"
+          ]
+        },
+        {
+          "name": "سبک",
+          "values": [
+            "کمربند الاستیک"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "image_url": "https://image.torob.com/base/images/P-/f_/P-f_QMAfF6u30BQF.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "بلوز"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "مشکی",
+            "خاکستری"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "استاین"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "یکدست"
+          ]
+        },
+        {
+          "name": "نوع آستین",
+          "values": [
+            "بلند"
+          ]
+        },
+        {
+          "name": "نوع یقه",
+          "values": [
+            "V شکل"
+          ]
+        },
+        {
+          "name": "ویژگیهای سبک",
+          "values": [
+            "دکمه دار"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "image_url": "https://image.torob.com/base/images/Ls/z7/Lsz71VTLh8xUdBLL.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "مایو"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "بورگوندی",
+            "مشکی"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "نایلون",
+            "اسپاندکس"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "یکدست"
+          ]
+        },
+        {
+          "name": "سبک",
+          "values": [
+            "گردنبند",
+            "پیشکش بلند",
+            "چین‌دار"
+          ]
+        },
+        {
+          "name": "فیت",
+          "values": [
+            "فیت شده"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "image_url": "https://image.torob.com/base/images/30/Ys/30YsoRxuA-XTNz4B.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "ساعت"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "آبی",
+            "سبز دودی",
+            "مشکی",
+            "قرمز",
+            "سفید"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "فلز",
+            "لاستیک"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "یکدست"
+          ]
+        },
+        {
+          "name": "ویژگی‌های سبک",
+          "values": [
+            "کرونوگراف",
+            "آنالوگ"
+          ]
+        },
+        {
+          "name": "ویژگی‌های خاص",
+          "values": [
+            "صفحه نمایش‌های متعدد",
+            "گردنه پیچشی",
+            "دکمه‌های فشاری"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "image_url": "https://image.torob.com/base/images/vL/0p/vL0p1KbGJsZetff_.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "کیف دستی"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "مشکی",
+            "چندرنگ"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "چرم"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "گلدار",
+            "مونوگرام"
+          ]
+        },
+        {
+          "name": "سبک",
+          "values": [
+            "بسته‌شونده با قفل فلپ",
+            "دست‌گیر"
+          ]
+        },
+        {
+          "name": "برند",
+          "values": [
+            "گوچی"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "image_url": "https://image.torob.com/base/images/Gl/tN/GltNtC2yOfGRKI0h.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "تی‌شرت"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "صورتی"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "پنبه"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "چاپی"
+          ]
+        },
+        {
+          "name": "نوع آستین",
+          "values": [
+            "کوتاه"
+          ]
+        },
+        {
+          "name": "فیت",
+          "values": [
+            "چیره"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "image_url": "https://image.torob.com/base/images/be/5o/be5ohjwwQfN856Xu.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "کفش ورزشی"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "سیاه"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "چرم",
+            "مصنوعی"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "یکدست"
+          ]
+        },
+        {
+          "name": "ویژگی‌های سبک",
+          "values": [
+            "برنده با فینگر کش",
+            "نوک گرد"
+          ]
+        },
+        {
+          "name": "برند",
+          "values": [
+            "نیو بالانس"
+          ]
+        },
+        {
+          "name": "ویژگی‌های خاص",
+          "values": [
+            "زیره متناوب",
+            "لوگوی برند"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "image_url": "https://image.torob.com/base/images/Xo/fu/XofuFjYa8ntWiFiQ.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "لباس"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "سیاه",
+            "قهوه‌ای",
+            "سفید"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "زبرا"
+          ]
+        },
+        {
+          "name": "نوع آستین",
+          "values": [
+            "بی‌آستین"
+          ]
+        },
+        {
+          "name": "فیت",
+          "values": [
+            "فیت‌شده"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "image_url": "https://image.torob.com/base/images/Tn/Oc/TnOcyt0Kbulemoa2.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "شلوار"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "سیاه"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "پلی‌استر",
+            "اسپ‌اندکس"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "یکدست"
+          ]
+        },
+        {
+          "name": "شکل",
+          "values": [
+            "لاغر"
+          ]
+        },
+        {
+          "name": "ویژگی‌های خاص",
+          "values": [
+            "کمربند انعطاف‌پذیر"
+          ]
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "image_url": "https://image.torob.com/base/images/47/ZT/47ZT57zAOfQ_3-xO.jpg",
+      "entities": [
+        {
+          "name": "نوع کلی",
+          "values": [
+            "کیف دستی"
+          ]
+        },
+        {
+          "name": "رنگ",
+          "values": [
+            "مشکی"
+          ]
+        },
+        {
+          "name": "جنس",
+          "values": [
+            "دانه‌دار"
+          ]
+        },
+        {
+          "name": "طرح",
+          "values": [
+            "سوراخ‌دار"
+          ]
+        },
+        {
+          "name": "نوع دسته",
+          "values": [
+            "دو دسته‌ای"
+          ]
+        },
+        {
+          "name": "برند",
+          "values": [
+            "BEGA"
+          ]
+        },
+        {
+          "name": "نوع بست",
+          "values": [
+            "چرخشی"
+          ]
+        }
+      ]
+    }
+  ],
+  "predictions": [
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "شورت باکسر"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "زیرپوش"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کژوال",
+          "فعال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "مردان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "خاکستری ملانژ",
+          "سبز جنگلی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "ترکیب پنبه"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "صاف",
+          "مات"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "میانه",
+          "تنگ",
+          "قابل انعطاف"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "کمربند کشی",
+          "کیسه فرم‌دار",
+          "دوخت دوگانه",
+          "دوخت فلت لاک"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "پوشش روزمره",
+          "کژوال",
+          "فعال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تمام سال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "خاصیت رطوبت‌زدا",
+          "دوام"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [
+          "استاندارد"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "مایو"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "لباس شنا"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کژوال",
+          "لباس ساحلی",
+          "کنار استخر"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "زنان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "بوردو",
+          "مشکی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "نایلون",
+          "اسپندکس"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "صاف",
+          "مات"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "برش کلاسیک",
+          "راحت",
+          "خوش‌فرم"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "تاپ تانکینی",
+          "پایین مایو",
+          "طراحی بند ضربدری",
+          "لبه پپلوم"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "ساحل",
+          "استراحت کنار استخر"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تابستان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "دو تکه",
+          "طراحی مدرن"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [
+          "مقاوم"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "ساعت‌های ورزشی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "لوازم جانبی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کژوال",
+          "ورزشی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "یونیسکس"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "فیروزه‌ای",
+          "آبی تیره",
+          "آبی متالیک",
+          "نارنجی",
+          "آبی مایل به سبز",
+          "قرمز"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "سیلیکون",
+          "فلز"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "صاف"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "راحت"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "عملکرد کرنوگراف",
+          "نمایش تاریخ",
+          "مقاوم در برابر آب"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "پوشاک فعال",
+          "پوشاک کژوال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تمام سال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "صفحه‌های بزرگ",
+          "پیچ‌های شش‌گوش",
+          "طراحی چندلایه",
+          "نشانگرهای ساعتی درخشان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "تی‌شرت"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "پیراهن‌ها"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کژوال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "زنان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "هلو"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "چاپ گرافیکی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "صاف"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "راحت"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "یقه گرد",
+          "آستین‌های کوتاه"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "پوشاک روزمره",
+          "کژوال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تمام سال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "لبه صاف"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [
+          "استاندارد"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "کتانی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "کفش"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "ورزشی",
+          "کژوال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "مردان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم مصنوعی",
+          "لاستیک"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "مات",
+          "بافت‌دار"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "باریک"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "یقه پددار",
+          "زبان پددار",
+          "چشمک‌های تقویت‌شده",
+          "طرح بافت‌دار"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "کژوال",
+          "ورزشی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تمام سال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "لوگوی برجسته",
+          "برندینگ یکپارچه"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [
+          "استاندارد"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "بلوز"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "پیراهن"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کژوال",
+          "مجلسی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "زنان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "برنزه",
+          "مشکی",
+          "کرم"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "طرح حیوانات مختلط"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "سبک",
+          "کمی شفاف"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "نرم",
+          "جاری"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "راحت"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "بدون شانه",
+          "بدهی جمع شده",
+          "جزئیات کشی",
+          "آستین‌های بلند پف‌دار",
+          "مچ‌های جمع شده",
+          "لبه صاف"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "کژوال",
+          "مناسبت شب"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تمام سال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "سیلوئت متناسب"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [
+          "استاندارد"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "شلوار"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "شلوار"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کسب و کار",
+          "رسمی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "زنان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "ترکیب پلی استر"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "صاف",
+          "مات"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "دوخته شده",
+          "میانه‌قد",
+          "راست"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "حلقه کمربند",
+          "زیپ کناری پنهان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "اداری",
+          "رسمی کسب و کار"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "ساختار تصفیه شده",
+          "طراحی مینیمالیستی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ],
+    [
+      {
+        "name": "نوع محصول",
+        "values": [
+          "کیف دستی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "زیردسته",
+        "values": [
+          "اکسسوری"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "شیک",
+          "رسمی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جمعیت هدف",
+        "values": [
+          "زنان"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "مرواریدی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "مروارید",
+          "فلز"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "بافت",
+        "values": [
+          "براق",
+          "دارای بافت"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فرم",
+        "values": [
+          "فشرده"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌ها",
+        "values": [
+          "دستگیره‌های دوگانه",
+          "بست زیپی بالا",
+          "پلاک لوگو"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "مناسبت",
+        "values": [
+          "شب",
+          "مناسبت‌های رسمی"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "فصل",
+        "values": [
+          "تمام سال"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "ویژگی‌های ساخت",
+        "values": [
+          "سیلوئت ساختاری"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      },
+      {
+        "name": "درجه کیفیت",
+        "values": [
+          "لوکس"
+        ],
+        "entity_type": "fashion_attribute",
+        "confidence": 0.85,
+        "source": "text_extraction",
+        "language": "persian"
+      }
+    ]
+  ],
+  "ground_truths": [
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "باکسر بریفز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "خاکستری",
+          "سبز"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "فریدوم"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "کمربند الاستیک"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "بلوز"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "خاکستری"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "استاین"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بلند"
+        ]
+      },
+      {
+        "name": "نوع یقه",
+        "values": [
+          "V شکل"
+        ]
+      },
+      {
+        "name": "ویژگیهای سبک",
+        "values": [
+          "دکمه دار"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "مایو"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "بورگوندی",
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "نایلون",
+          "اسپاندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "گردنبند",
+          "پیشکش بلند",
+          "چین‌دار"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت شده"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "ساعت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "آبی",
+          "سبز دودی",
+          "مشکی",
+          "قرمز",
+          "سفید"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "فلز",
+          "لاستیک"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "کرونوگراف",
+          "آنالوگ"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "صفحه نمایش‌های متعدد",
+          "گردنه پیچشی",
+          "دکمه‌های فشاری"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی",
+          "چندرنگ"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "گلدار",
+          "مونوگرام"
+        ]
+      },
+      {
+        "name": "سبک",
+        "values": [
+          "بسته‌شونده با قفل فلپ",
+          "دست‌گیر"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "گوچی"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "تی‌شرت"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "صورتی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پنبه"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "چاپی"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "کوتاه"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "چیره"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کفش ورزشی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "چرم",
+          "مصنوعی"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "ویژگی‌های سبک",
+        "values": [
+          "برنده با فینگر کش",
+          "نوک گرد"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "نیو بالانس"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "زیره متناوب",
+          "لوگوی برند"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "لباس"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه",
+          "قهوه‌ای",
+          "سفید"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "زبرا"
+        ]
+      },
+      {
+        "name": "نوع آستین",
+        "values": [
+          "بی‌آستین"
+        ]
+      },
+      {
+        "name": "فیت",
+        "values": [
+          "فیت‌شده"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "شلوار"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "سیاه"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "پلی‌استر",
+          "اسپ‌اندکس"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "یکدست"
+        ]
+      },
+      {
+        "name": "شکل",
+        "values": [
+          "لاغر"
+        ]
+      },
+      {
+        "name": "ویژگی‌های خاص",
+        "values": [
+          "کمربند انعطاف‌پذیر"
+        ]
+      }
+    ],
+    [
+      {
+        "name": "نوع کلی",
+        "values": [
+          "کیف دستی"
+        ]
+      },
+      {
+        "name": "رنگ",
+        "values": [
+          "مشکی"
+        ]
+      },
+      {
+        "name": "جنس",
+        "values": [
+          "دانه‌دار"
+        ]
+      },
+      {
+        "name": "طرح",
+        "values": [
+          "سوراخ‌دار"
+        ]
+      },
+      {
+        "name": "نوع دسته",
+        "values": [
+          "دو دسته‌ای"
+        ]
+      },
+      {
+        "name": "برند",
+        "values": [
+          "BEGA"
+        ]
+      },
+      {
+        "name": "نوع بست",
+        "values": [
+          "چرخشی"
+        ]
+      }
+    ]
+  ],
+  "performance": {
+    "total_products": 10,
+    "successful_predictions": 8,
+    "failed_predictions": 2,
+    "avg_time_per_product": 50.10030109882355
+  }
+}

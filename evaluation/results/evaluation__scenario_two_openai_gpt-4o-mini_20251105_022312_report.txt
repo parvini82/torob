@@ -1,50 +1,51 @@
 ================================================================================
-COMPREHENSIVE MODEL EVALUATION REPORT
+SCENARIO EVALUATION REPORT
 ================================================================================
 
 EVALUATION METADATA
 ----------------------------------------
-Model Name: gpt-4o-mini__gpt-4o-mini
-Prediction File: /home/peyma/projects/torob/evaluation/predictions/predictions_gpt-4o-mini__gpt-4o-mini_Ground_Truth_first10.json
+Scenario: scenario_two
+Model Name: scenario_two_openai_gpt-4o-mini
+Prediction File: /home/peyma/projects/torob/evaluation/scenario_predictions/predictions_scenario_two_openai_gpt-4o-mini_Ground_Truth_first10.json
 Total Samples: 10
-Timestamp: 2025-11-03T05:23:05.235829
+Timestamp: 2025-11-05T02:23:12.380894
 
 MODEL EXECUTION PERFORMANCE
 ----------------------------------------
 Successful Predictions: 10
 Failed Predictions:     0
 Success Rate:           100.0%
-Avg Time/Product:       39.538s
+Avg Time/Product:       111.379s
 
 EXACT MATCHING (MAVE-style)
 ----------------------------------------
-Precision (Micro)	0.2381
+Precision (Micro)	0.0542
 Recall (Micro)		0.2174
-F1 (Micro)		0.2273
-Precision (Macro)	0.1027
-Recall (Macro)		0.1064
-F1 (Macro)		0.1042
+F1 (Micro)		0.0867
+Precision (Macro)	0.0291
+Recall (Macro)		0.0522
+F1 (Macro)		0.0374
 Exact Match Rate	0.0000
 
 SIMILARITY METRICS
 ----------------------------------------
-Jaccard			0.1460
-Dice			0.2502
-Semantic Match Rate	0.7963
-Weighted Semantic Rate	0.7963
+Jaccard			0.0553
+Dice			0.1035
+Semantic Match Rate	0.9075
+Weighted Semantic Rate	0.9075
 
 PARTIAL EVALUATION
 ----------------------------------------
-Partial Precision	0.2368
-Partial Recall		0.2102
-Partial F1		0.2210
+Partial Precision	0.0604
+Partial Recall		0.1847
+Partial F1		0.0885
 
 LENIENT EVALUATION
 ----------------------------------------
-Lenient Precision	0.3878
-Lenient Recall		0.3277
-Lenient F1		0.3513
+Lenient Precision	0.0738
+Lenient Recall		0.3106
+Lenient F1		0.1176
 
 ADDITIONAL
 ----------------------------------------
-ROUGE-1			0.5129
+ROUGE-1			0.2006

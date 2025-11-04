@@ -15,7 +15,7 @@ if str(project_root) not in sys.path:
 SCENARIOS = ["scenario_zero", "scenario_one", "scenario_two", "scenario_three", "scenario_four"]
 
 VISION_MODELS = [
-    "openai/gpt-4o",
+    "openai/gpt-4o-mini",
     # "anthropic/claude-3.5-haiku",
 ]
 
@@ -25,7 +25,7 @@ TRANSLATION_MODELS = [
 ]
 
 REFINER_MODELS = [
-    "openai/gpt-4o",
+    "openai/gpt-4o-mini",
 ]
 
 def update_env(models):

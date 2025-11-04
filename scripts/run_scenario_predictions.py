@@ -22,6 +22,7 @@ from src.service.workflow_v2 import run_scenario_from_url  # convenience API
 
 def create_scenario_model_function(scenario_name: str):
     """Returns a callable(image_url) -> List[Dict[str, Any]] that runs the given scenario."""
+
     def scenario_model_function(image_url: str) -> List[Dict[str, Any]]:
         MAX_RETRIES = 3
         BASE_DELAY = 5
@@ -38,19 +39,61 @@ def create_scenario_model_function(scenario_name: str):
                 if not output_model:
                     raise ValueError("Scenario returned empty result")
 
-                persian = output_model.get("persian", {})
-                entities = persian.get("entities")
+                # اصلاح: workflow_v2 ساختار متفاوتی دارد
+                # چک کردن کلیدهای مختلف براساس سناریو و خروجی
+                entities = None
+
+                # ابتدا کلیدهای احتمالی برای persian/target language را چک کنیم
+                persian_keys = ["persian_output", "target_language_output", "persian"]
+                for key in persian_keys:
+                    if key in output_model:
+                        persian_data = output_model[key]
+                        if isinstance(persian_data, dict) and "entities" in persian_data:
+                            entities = persian_data["entities"]
+                            print(
+                                f"    Found entities in {key}: {len(entities) if isinstance(entities, list) else 'invalid'}")
+                            break
+
+                # اگر در persian keys نیافتیم، کلیدهای extracted را چک کنیم
+                if entities is None:
+                    extracted_keys = ["extracted_tags", "merged_tags", "conversation_tags", "image_tags"]
+                    for key in extracted_keys:
+                        if key in output_model:
+                            extracted_data = output_model[key]
+                            if isinstance(extracted_data, dict) and "entities" in extracted_data:
+                                entities = extracted_data["entities"]
+                                print(
+                                    f"    Found entities in {key}: {len(entities) if isinstance(entities, list) else 'invalid'}")
+                                break
+
+                # اگر هنوز entities نیافتیم، کل output_model را لاگ کنیم
+                if entities is None:
+                    print(f"    Debug: Available keys in output: {list(output_model.keys())}")
+
+                    # چاپ ساختار تا level 2 برای دیباگ
+                    for key, value in output_model.items():
+                        if isinstance(value, dict):
+                            print(f"    Debug: {key} -> {list(value.keys())}")
+                        else:
+                            print(f"    Debug: {key} -> {type(value).__name__}")
+
+                    raise KeyError("entities not found in any expected location")
+
                 if not isinstance(entities, list):
-                    raise KeyError("persian.entities is missing or not a list")
+                    raise TypeError(f"entities is not a list, got: {type(entities)}")
+
+                if attempt > 0:
+                    print(f"    ✓ Success on retry {attempt + 1}")
 
                 return entities
 
             except Exception as e:
-                print(f"    ⚠ Error on attempt {attempt + 1}: {e}")
+                print(f"    ⚠ Error on attempt {attempt + 1}: {str(e)}")
                 if attempt == MAX_RETRIES - 1:
-                    print(f"    ✗ Failed after {MAX_RETRIES} attempts: {image_url[:60]}...")
+                    print(f"    ✗ Failed after {MAX_RETRIES} attempts for: {image_url[:60]}...")
                     return []
         return []
+
     return scenario_model_function
 
 
