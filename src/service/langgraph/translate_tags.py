@@ -18,7 +18,7 @@ def build_translation_prompt(data: Dict[str, Any]) -> str:
         "1. Identify the product type using VLM tags as the main evidence.\n"
         "2. Analyze the Persian titles to detect common or cultural terms used for this product.\n"
         "3. If the Persian titles mention a specific term a similar cultural term, use it in the output.\n"
-        "4. Output only a clean Persian JSON object with the product description.\n\n"
+        "4. Output only a clean Persian JSON object.\n\n"
         f"{data}\n\n"
         "Example output format:\n"
         "{\n"
@@ -26,7 +26,6 @@ def build_translation_prompt(data: Dict[str, Any]) -> str:
         '    {"name": "", "values": ["","",...]},\n'
         "  ]\n"
         "}\n\n"
-        "Output (Persian JSON only):"
     )
 
 
