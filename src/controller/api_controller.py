@@ -1,6 +1,7 @@
 import os
 from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile, Query, Depends
 from fastapi.security import APIKeyHeader
+from flask import Response
 
 from src.service.database.database import save_request_response
 from src.service.ratelimit.rate_limit_service import RateLimitService
@@ -11,7 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from redis import Redis
 from dotenv import load_dotenv
-from typing import Optional
+from prometheus_client import Histogram, Counter, generate_latest
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -42,8 +44,39 @@ app.add_middleware(
 redis_client = Redis(host="redis", port=6379, db=0)  # Adjust as needed
 rate_limit_service = RateLimitService(redis_client=redis_client, limit=10, window_seconds=60)
 
+@app.get("/metrics")
+async def metrics():
+    return Response(generate_latest(), media_type="text/plain")
+
 # Dependency to fetch API token for authentication
 api_key_header = APIKeyHeader(name="Authorization", auto_error=True)
+
+# Cache hit/miss counters
+CACHE_HIT_COUNTER = Counter(
+    "cache_hit_count",
+    "Number of cache hits",
+    ["endpoint"]
+)
+
+CACHE_MISS_COUNTER = Counter(
+    "cache_miss_count",
+    "Number of cache misses",
+    ["endpoint"]
+)
+REQUEST_LATENCY = Histogram(
+    "api_response_latency_seconds",
+    "Response latency (seconds) for API endpoints",
+    ["method", "endpoint"]
+)
+
+@app.middleware("http")
+async def add_latency_metric(request: Request, call_next):
+    start_time = time.perf_counter()
+    response = await call_next(request)
+    process_time = time.perf_counter() - start_time
+    REQUEST_LATENCY.labels(request.method, request.url.path).observe(process_time)
+    response.headers["X-Process-Time"] = f"{process_time:.3f}s"
+    return response
 
 @app.get("/health")
 async def health():
@@ -80,7 +113,12 @@ async def generate_tags(
 
         if cached_tags:
             # If tags are cached, return them directly
+            CACHE_HIT_COUNTER.labels(request.url.path).inc()  # Increment cache hit
+
             return cached_tags
+
+        else:
+            CACHE_MISS_COUNTER.labels(request.url.path).inc()
 
         try:
             # If not cached, call the LangGraph service to process the URL and get the response

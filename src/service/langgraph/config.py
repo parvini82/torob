@@ -13,8 +13,8 @@ OPENROUTER_SITE_TITLE: str = os.getenv("OPENROUTER_SITE_TITLE", "")
 # Model configurations for different modes
 MODEL_CONFIG = {
     "fast": {
-        "vision_model": "nvidia/nemotron-nano-12b-v2-vl:free",
-        "translate_model": "meituan/longcat-flash-chat:free",
+        "vision_model": "google/gemini-2.5-flash-lite",
+        "translate_model": "google/gemini-2.5-flash-lite",
         "use_serpapi": False
     },
     "reasoning": {
@@ -23,8 +23,8 @@ MODEL_CONFIG = {
         "use_serpapi": False
     },
     "advanced_reasoning": {
-        "vision_model": "nvidia/nemotron-nano-12b-v2-vl:free",
-        "translate_model": "tngtech/deepseek-r1t2-chimera:free",
+        "vision_model": "openai/gpt-4o",
+        "translate_model": "openai/gpt-4o",
         "use_serpapi": True
     }
 }
