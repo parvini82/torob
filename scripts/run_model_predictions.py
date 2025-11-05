@@ -221,8 +221,8 @@ def find_toy_sample():
 
     # Priority order for toy samples
     sample_names = [
-        "Ground_Truth.json",
         "Ground_Truth_first10.json",
+        "Ground_Truth.json",
         "toy_sample_high_entity.json",
         "toy_sample_standard.json",
         "toy_sample_min_10_entities.json",

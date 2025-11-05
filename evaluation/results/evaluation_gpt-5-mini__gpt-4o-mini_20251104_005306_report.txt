@@ -1,0 +1,50 @@
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Model Name: gpt-5-mini__gpt-4o-mini
+Prediction File: /home/p_naseri/projects/torob/evaluation/predictions/predictions_gpt-5-mini__gpt-4o-mini_Ground_Truth_first10.json
+Total Samples: 10
+Timestamp: 2025-11-04T00:53:06.270093
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 10
+Failed Predictions:     0
+Success Rate:           100.0%
+Avg Time/Product:       36.902s
+
+EXACT MATCHING (MAVE-style)
+----------------------------------------
+Precision (Micro)	0.0928
+Recall (Micro)		0.2609
+F1 (Micro)		0.1369
+Precision (Macro)	0.0302
+Recall (Macro)		0.0595
+F1 (Macro)		0.0398
+Exact Match Rate	0.0000
+
+SIMILARITY METRICS
+----------------------------------------
+Jaccard			0.0626
+Dice			0.1160
+Semantic Match Rate	0.8557
+Weighted Semantic Rate	0.8557
+
+PARTIAL EVALUATION
+----------------------------------------
+Partial Precision	0.0864
+Partial Recall		0.1935
+Partial F1		0.1180
+
+LENIENT EVALUATION
+----------------------------------------
+Lenient Precision	0.1395
+Lenient Recall		0.3358
+Lenient F1		0.1949
+
+ADDITIONAL
+----------------------------------------
+ROUGE-1			0.2861

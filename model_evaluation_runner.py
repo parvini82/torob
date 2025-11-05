@@ -16,22 +16,21 @@ import sys
 from pathlib import Path
 import itertools
 
-# Add project root to Python path
-project_root = Path(__file__).parent
+# اضافه کردن project root به Python path
+project_root = Path(__file__).parent.absolute()
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 # List of Vision models to test
 VISION_MODEL_ALTERNATIVES = [
-    "openai/gpt-5-mini",
-    "x-ai/grok-4-fast",
-    "google/gemma-3-12b-it",
-    "openai/gpt-5",
+    # "openai/gpt-5-mini",
+    # "openai/gpt-4o",
+    # "google/gemma-3-12b-it",
+    # "anthropic/claude-3.5-haiku",
     "google/gemma-3-27b-it",
-    "openai/gpt-4o",
-    "anthropic/claude-3.5-haiku",
     "google/gemma-3-4b-it",
-
+    "x-ai/grok-4-fast",
+    # "openai/gpt-5",
 ]
 
 # List of Translation models to test
@@ -118,6 +117,10 @@ def run_script(script_path):
         print(f"🚀 Running {script_path}...")
         print(f"{'─' * 50}")
 
+        # Set up environment with PYTHONPATH
+        env = os.environ.copy()
+        env['PYTHONPATH'] = str(project_root)
+
         # Run with real-time output streaming
         process = subprocess.Popen(
             [sys.executable, script_path],
@@ -125,8 +128,10 @@ def run_script(script_path):
             stderr=subprocess.STDOUT,  # Merge stderr into stdout
             text=True,
             encoding='utf-8',
-            bufsize=1,  # Line buffered
-            universal_newlines=True
+            bufsize=0,  # Unbuffered for real-time output
+            universal_newlines=True,
+            env=env,  # Pass environment with PYTHONPATH
+            cwd=project_root  # Set working directory to project root
         )
 
         # Stream output in real-time
@@ -135,7 +140,8 @@ def run_script(script_path):
             if output == '' and process.poll() is not None:
                 break
             if output:
-                print(output.strip())
+                print(output.rstrip())  # Use rstrip instead of strip to preserve formatting
+                sys.stdout.flush()  # Force flush for real-time output
 
         # Get the final return code
         return_code = process.poll()

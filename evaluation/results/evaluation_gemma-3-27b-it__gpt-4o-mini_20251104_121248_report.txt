@@ -1,0 +1,50 @@
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Model Name: gemma-3-27b-it__gpt-4o-mini
+Prediction File: /home/p_naseri/projects/torob/evaluation/predictions/predictions_gemma-3-27b-it__gpt-4o-mini_Ground_Truth_first10.json
+Total Samples: 10
+Timestamp: 2025-11-04T12:12:48.547903
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 10
+Failed Predictions:     0
+Success Rate:           100.0%
+Avg Time/Product:       26.621s
+
+EXACT MATCHING (MAVE-style)
+----------------------------------------
+Precision (Micro)	0.2949
+Recall (Micro)		0.3333
+F1 (Micro)		0.3129
+Precision (Macro)	0.1100
+Recall (Macro)		0.1352
+F1 (Macro)		0.1192
+Exact Match Rate	0.0000
+
+SIMILARITY METRICS
+----------------------------------------
+Jaccard			0.1810
+Dice			0.2953
+Semantic Match Rate	0.8153
+Weighted Semantic Rate	0.8153
+
+PARTIAL EVALUATION
+----------------------------------------
+Partial Precision	0.2729
+Partial Recall		0.2879
+Partial F1		0.2771
+
+LENIENT EVALUATION
+----------------------------------------
+Lenient Precision	0.3256
+Lenient Recall		0.3488
+Lenient F1		0.3307
+
+ADDITIONAL
+----------------------------------------
+ROUGE-1			0.4636

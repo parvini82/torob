@@ -1,0 +1,50 @@
+================================================================================
+COMPREHENSIVE MODEL EVALUATION REPORT
+================================================================================
+
+EVALUATION METADATA
+----------------------------------------
+Model Name: gpt-5__deepseek-r1t2-chimera:free
+Prediction File: /home/p_naseri/projects/torob/evaluation/predictions/predictions_gpt-5__deepseek-r1t2-chimera:free_Ground_Truth_first10.json
+Total Samples: 10
+Timestamp: 2025-11-04T04:58:13.608894
+
+MODEL EXECUTION PERFORMANCE
+----------------------------------------
+Successful Predictions: 10
+Failed Predictions:     0
+Success Rate:           100.0%
+Avg Time/Product:       192.371s
+
+EXACT MATCHING (MAVE-style)
+----------------------------------------
+Precision (Micro)	0.1348
+Recall (Micro)		0.1739
+F1 (Micro)		0.1519
+Precision (Macro)	0.0398
+Recall (Macro)		0.0442
+F1 (Macro)		0.0390
+Exact Match Rate	0.0000
+
+SIMILARITY METRICS
+----------------------------------------
+Jaccard			0.0718
+Dice			0.1286
+Semantic Match Rate	0.6989
+Weighted Semantic Rate	0.6989
+
+PARTIAL EVALUATION
+----------------------------------------
+Partial Precision	0.0681
+Partial Recall		0.1045
+Partial F1		0.0806
+
+LENIENT EVALUATION
+----------------------------------------
+Lenient Precision	0.3435
+Lenient Recall		0.2082
+Lenient F1		0.1677
+
+ADDITIONAL
+----------------------------------------
+ROUGE-1			0.2815
