@@ -30,7 +30,7 @@ MODEL_CONFIG = {
     },
     "advanced_reasoning": {
         "vision_model": "gpt-4o",
-        "translate_model": "o3-mini",
+        "translate_model": "gpt-5",
         "use_serpapi": True
     }
 }
