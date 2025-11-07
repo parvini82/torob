@@ -12,7 +12,7 @@ def debug_scenario_detailed(scenario_name: str):
     print(f"\n🔍 DEBUGGING {scenario_name.upper()}")
     print("=" * 60)
 
-    example_URL = "https://image.torob.com/base/images/86/EL/86ELVwp4Q_NClfU6.jpg"
+    example_URL = "https://image.torob.com/base/images/ST/V0/STV0N9liwgLNmi27.jpg"
 
     try:
         runner = create_scenario_runner()

@@ -53,15 +53,15 @@ def update_env_file(vision_model, translate_model):
     Returns:
         bool: True if successful, False otherwise
     """
-    env_file_path = Path(".env")
+    env_file_path = Path("../.env")
 
     # If .env doesn't exist, copy from .env.example
     if not env_file_path.exists():
-        env_example_path = Path(".env.example")
+        env_example_path = Path("../.env.example")
         if env_example_path.exists():
-            with open(env_example_path, 'r', encoding='utf-8') as f:
+            with open(env_example_path, "r", encoding="utf-8") as f:
                 content = f.read()
-            with open(env_file_path, 'w', encoding='utf-8') as f:
+            with open(env_file_path, "w", encoding="utf-8") as f:
                 f.write(content)
             print(f"Created .env file from .env.example")
         else:
@@ -70,7 +70,7 @@ def update_env_file(vision_model, translate_model):
 
     # Read the .env file content
     try:
-        with open(env_file_path, 'r', encoding='utf-8') as f:
+        with open(env_file_path, "r", encoding="utf-8") as f:
             content = f.read()
     except Exception as e:
         print(f"Error reading .env file: {e}")
@@ -78,22 +78,24 @@ def update_env_file(vision_model, translate_model):
 
     # Replace both VISION_MODEL and TRANSLATE_MODEL variables
     updates = [
-        (r'^VISION_MODEL=.*$', f'VISION_MODEL={vision_model}'),
-        (r'^TRANSLATE_MODEL=.*$', f'TRANSLATE_MODEL={translate_model}')
+        (r"^VISION_MODEL=.*$", f"VISION_MODEL={vision_model}"),
+        (r"^TRANSLATE_MODEL=.*$", f"TRANSLATE_MODEL={translate_model}"),
     ]
 
     updated_content = content
     for pattern, new_line in updates:
         if re.search(pattern, updated_content, re.MULTILINE):
             # If the variable exists, replace it
-            updated_content = re.sub(pattern, new_line, updated_content, flags=re.MULTILINE)
+            updated_content = re.sub(
+                pattern, new_line, updated_content, flags=re.MULTILINE
+            )
         else:
             # If the variable doesn't exist, add it
-            updated_content = updated_content + f'\n{new_line}\n'
+            updated_content = updated_content + f"\n{new_line}\n"
 
     # Write the updated content
     try:
-        with open(env_file_path, 'w', encoding='utf-8') as f:
+        with open(env_file_path, "w", encoding="utf-8") as f:
             f.write(updated_content)
         print(f"✅ VISION_MODEL updated to {vision_model}")
         print(f"✅ TRANSLATE_MODEL updated to {translate_model}")
@@ -119,7 +121,7 @@ def run_script(script_path):
 
         # Set up environment with PYTHONPATH
         env = os.environ.copy()
-        env['PYTHONPATH'] = str(project_root)
+        env["PYTHONPATH"] = str(project_root)
 
         # Run with real-time output streaming
         process = subprocess.Popen(
@@ -127,20 +129,22 @@ def run_script(script_path):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,  # Merge stderr into stdout
             text=True,
-            encoding='utf-8',
+            encoding="utf-8",
             bufsize=0,  # Unbuffered for real-time output
             universal_newlines=True,
             env=env,  # Pass environment with PYTHONPATH
-            cwd=project_root  # Set working directory to project root
+            cwd=project_root,  # Set working directory to project root
         )
 
         # Stream output in real-time
         while True:
             output = process.stdout.readline()
-            if output == '' and process.poll() is not None:
+            if output == "" and process.poll() is not None:
                 break
             if output:
-                print(output.rstrip())  # Use rstrip instead of strip to preserve formatting
+                print(
+                    output.rstrip()
+                )  # Use rstrip instead of strip to preserve formatting
                 sys.stdout.flush()  # Force flush for real-time output
 
         # Get the final return code
@@ -169,7 +173,7 @@ def validate_scripts():
     required_scripts = [
         "scripts/run_model_predictions.py",
         "scripts/evaluate_predictions_full.py",
-        "scripts/compare_evaluations.py"
+        "scripts/compare_evaluations.py",
     ]
 
     missing_scripts = []
@@ -191,7 +195,9 @@ def main():
     Main function that executes all the steps
     """
     # Generate all combinations of vision and translation models
-    model_combinations = list(itertools.product(VISION_MODEL_ALTERNATIVES, TRANSLATE_MODEL_ALTERNATIVES))
+    model_combinations = list(
+        itertools.product(VISION_MODEL_ALTERNATIVES, TRANSLATE_MODEL_ALTERNATIVES)
+    )
 
     print("🎯 Starting Model Evaluation")
     print(f"Vision models: {len(VISION_MODEL_ALTERNATIVES)}")
@@ -205,8 +211,12 @@ def main():
         print(f"      Translation: {translate}")
 
     # Ask for confirmation
-    response = input(f"\nProceed with testing {len(model_combinations)} combinations? (y/N): ").strip().lower()
-    if response not in ['y', 'yes']:
+    response = (
+        input(f"\nProceed with testing {len(model_combinations)} combinations? (y/N): ")
+        .strip()
+        .lower()
+    )
+    if response not in ["y", "yes"]:
         print("Operation cancelled by user")
         return
 
@@ -233,13 +243,13 @@ def main():
             continue
 
         # Step 2: Run prediction script
-        if not run_script("scripts/run_model_predictions.py"):
+        if not run_script("run_model_predictions.py"):
             print(f"❌ Failed to run predictions for combination {i}")
             failed_combinations.append((vision_model, translate_model))
             continue
 
         # Step 3: Run evaluation script
-        if not run_script("scripts/evaluate_predictions_full.py"):
+        if not run_script("evaluate_predictions_full.py"):
             print(f"❌ Failed to run evaluation for combination {i}")
             failed_combinations.append((vision_model, translate_model))
             continue
@@ -253,7 +263,7 @@ def main():
     print(f"{'=' * 80}")
 
     if successful_combinations:
-        if run_script("scripts/compare_evaluations.py"):
+        if run_script("compare_evaluations.py"):
             print("✅ Final comparison completed successfully")
         else:
             print("❌ Error running final comparison")
@@ -275,9 +285,11 @@ def main():
             print(f"  {i:2d}. Vision: {vision}")
             print(f"      Translation: {translate}")
 
-    print(f"\n🎯 Total: {len(model_combinations)} combinations, "
-          f"Successful: {len(successful_combinations)}, "
-          f"Failed: {len(failed_combinations)}")
+    print(
+        f"\n🎯 Total: {len(model_combinations)} combinations, "
+        f"Successful: {len(successful_combinations)}, "
+        f"Failed: {len(failed_combinations)}"
+    )
 
 
 if __name__ == "__main__":

@@ -17,12 +17,12 @@ gdown>=5.0.0
 
 # --- GPU Support ---  # take long time
 # Using the latest supported CUDA build from PyTorch repo (e.g., cu128)
---extra-index-url https://download.pytorch.org/whl/cu128
-torch==2.9.0+cu128
-torchvision==0.24.0+cu128
+# --extra-index-url https://download.pytorch.org/whl/cu128
+# torch==2.9.0+cu128
+# torchvision==0.24.0+cu128
 # torchaudio==2.9.0+cu128
 # --- Embedding Models ---
-sentence-transformers==5.1.2  # requires torch with GPU support
+# sentence-transformers==5.1.2  # requires torch with GPU support
 
 
 

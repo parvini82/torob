@@ -1,7 +1,0 @@
-[
-  {
-    "provider": "openrouter",
-    "vision_model": "qwen/qwen2.5-vl-32b-instruct:free",
-    "translate_model": "deepseek/deepseek-r1:free"
-  }
-]
