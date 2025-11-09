@@ -6,15 +6,46 @@
 
 An intelligent product discovery platform that uses AI to analyze product images and generate multilingual tags for improved search and categorization. The system processes images using advanced vision models and provides results in both English and Persian.
 
+---
+
 ## ✨ Key Features
 
 - 🖼️ AI-powered image analysis for product categorization
-- 🌐 Multilingual tag generation (English/Persian)
-- ⚡ Fast API backend with Python
+- 🌐 Multilingual tag generation (English & Persian)
+- ⚡ FastAPI backend in Python
 - 🎯 Modern Next.js frontend interface
-- 📊 Comaaluation pipeline
-- 🔄 Flexible workflow using LangGraph
+- 📊 Evaluation pipeline for performance benchmarking
+- 🔄 Flexible workflow using [LangGraph](https://langgraph.org/)
+- 🛠️ Extensible modular software architecture
 - 📦 Docker support for easy deployment
+
+---
+
+## 🏗️ System Architecture
+
+### Overall Software Architecture
+
+Below is an overview of the main components and how they interact:
+
+> ![image](/docs/SoftwareArchitecture.png)
+
+- **Frontend (Next.js)**: User interface for image upload, results visualization, tagging and search
+- **Backend (FastAPI)**: API, image processing pipeline, orchestration
+- **LangGraph Workflow**: Manages stepwise, modular, and robust pipelines for inference
+- **Evaluation Suite**: For benchmarking performance on different datasets
+
+---
+
+### 📉 LangGraph Workflow Architecture
+
+The system leverages [LangGraph](https://langgraph.org/) for orchestrating various steps in the AI-powered product analysis and tagging process.
+
+
+> ![image](/docs/WorkflowArchitecture.jpg)
+
+The workflow ensures modularity, fault tolerance, and easy extensions for custom pipelines.
+
+---
 
 ## 🚀 Installation & Setup
 
@@ -27,41 +58,43 @@ An intelligent product discovery platform that uses AI to analyze product images
 ### Backend Setup
 
 1. Clone the repository:
-```bash
-git clone https://github.com/parvini82/torob.git
-cd torob
-```
+   ```bash
+   git clone https://github.com/parvini82/torob.git
+   cd torob
+   ```
 
 2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-```
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+   ```
 
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
+   ```bash
+   cp .env.example .env
+   # Edit .env for your configuration
+   ```
 
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
+   ```bash
+   cd frontend
+   ```
 
 2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+---
 
 ## 💻 Usage
 
@@ -71,42 +104,49 @@ Start the FastAPI server:
 ```bash
 python src/main.py
 ```
-
 The API will be available at `http://localhost:8000`
 
 ### Running the Frontend
 
-In the frontend directory:
+Inside the `frontend` directory:
 ```bash
 npm run dev
 # or
 yarn dev
 ```
-
 Visit `http://localhost:3000` in your browser.
 
 ### Using Docker
 
-Build and run the container:
+To build and run the container:
 ```bash
 docker build -t torob .
 docker run -p 8000:8000 torob
 ```
 
-## 🔧 Development
+---
+
+## 🔬 Evaluation & Challenging Tests
+
+We have conducted a set of challenging tests using tricky, complex product images to benchmark the robustness of our AI models. The test images and detailed results can be found in the [`docs/ChallengingExamples`](docs/ChallengingExamples) folder.
+
+
+---
+
+## 🧪 Development
 
 ### Code Quality Tools
 
-#### Backend (Python)
+**Backend (Python)**
 - **Black**: Code formatting (`black .`)
 - **isort**: Import sorting (`isort .`)
 - **mypy**: Type checking (`mypy .`)
 - **flake8**: Linting (`flake8 .`)
 
-#### Frontend (Next.js + TypeScript)
-- ESLint
-- Prettier
-- TypeScript
+**Frontend (Next.js + TypeScript)**
+- **ESLint**  
+- **Prettier**
+- **TypeScript**
 
 ### Running Tests
 
@@ -121,11 +161,15 @@ python scripts/generate_toy_sample.py
 python scripts/run_evaluation.py
 ```
 
+---
+
 ## 📖 Documentation
 
-- API Documentation: Available at `http://localhost:8000/docs` when the server is running
-- Frontend Documentation: See `frontend/README.md`
-- Evaluation Results: Check `evaluation/results/` after running evaluations
+- **API Documentation**: Available at `http://localhost:8000/docs` when the backend server is running.
+- **Frontend Documentation**: See [`frontend/README.md`](./frontend/README.md)
+- **Evaluation & Results**: See [`evaluation/`](./evaluation/) for benchmarks, scripts, and detailed results.
+
+---
 
 ## 🤝 Contributing
 
@@ -143,15 +187,21 @@ python scripts/run_evaluation.py
 
 Please ensure your code passes all tests and follows the project's coding standards.
 
+---
+
 ## 📄 License
 
 [MIT License](LICENSE) - See the LICENSE file for details
 
+---
+
 ## 🆘 Support
 
-- 📫 **Issues**: Use the [GitHub Issues](https://github.com/parvini82/torob/issues) page
-- 📝 **Documentation**: Check the `docs/` directory for detailed guides
-- 💬 **Questions**: Start a [Discussion](https://github.com/parvini82/torob/discussions)
+- **Issues**: Use the [GitHub Issues](https://github.com/parvini82/torob/issues) page
+- **Documentation**: Check the [`docs/`](./docs/) directory for detailed guides
+- **Questions**: Start a [Discussion](https://github.com/parvini82/torob/discussions)
+
+---
 
 ## 🛠️ Project Structure
 
@@ -170,5 +220,8 @@ torob/
 ├── notebooks/               # Jupyter notebooks for analysis
 ├── tests/                   # Test files
 ├── scripts/                 # Utility scripts
-└── evaluation/             # Evaluation results and configs
+├── evaluation/              # Evaluation configs, scripts, challenging test results
+└── docs/                    # Documentation and architecture images
 ```
+
+---
