@@ -23,8 +23,8 @@ MODEL_CONFIG = {
         "use_serpapi": False
     },
     "advanced_reasoning": {
-        "vision_model": "openai/gpt-4o",
-        "translate_model": "openai/gpt-4o",
+        "vision_model": "qwen/qwen2.5-vl-32b-instruct:free",
+        "translate_model": "tngtech/deepseek-r1t2-chimera:free",
         "use_serpapi": True
     }
 }

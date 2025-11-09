@@ -46,13 +46,20 @@ def serpapi_search_node(state: Dict[str, Any]) -> Dict[str, Any]:
         for r in data.get("image_results", []):
             title = r.get("title")
             if title:
+                # skip abadis/dictionary titles
+                if "آبادیس" in title or "abadis" in title.lower():
+                    continue
                 titles.append(title)
 
         for r in data.get("organic_results", []):
             title = r.get("title")
             if title:
+                # skip abadis/dictionary titles
+                if "آبادیس" in title or "abadis" in title.lower():
+                    continue
                 titles.append(title)
-        limited_titles = titles[:3]
+        limited_titles = titles[:5]
+        print(limited_titles)
         cleaned_text = "\n".join(limited_titles).strip()
 
         state["serpapi_results"] = {

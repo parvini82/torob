@@ -1,7 +1,6 @@
 import os
 from fastapi import BackgroundTasks, Body, FastAPI, HTTPException, Request, File, UploadFile, Query, Depends
 from fastapi.security import APIKeyHeader
-from flask import Response
 
 from src.service.database.database import save_request_response
 from src.service.ratelimit.rate_limit_service import RateLimitService
@@ -44,9 +43,7 @@ app.add_middleware(
 redis_client = Redis(host="redis", port=6379, db=0)  # Adjust as needed
 rate_limit_service = RateLimitService(redis_client=redis_client, limit=10, window_seconds=60)
 
-@app.get("/metrics")
-async def metrics():
-    return Response(generate_latest(), media_type="text/plain")
+
 
 # Dependency to fetch API token for authentication
 api_key_header = APIKeyHeader(name="Authorization", auto_error=True)

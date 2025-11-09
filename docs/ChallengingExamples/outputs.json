@@ -1,0 +1,1005 @@
+[
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "کفتان",
+                    "پیراهن سنتی"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "قهوه‌ای",
+                    "طلایی",
+                    "قرمز",
+                    "آبی",
+                    "زرد"
+                ]
+            },
+            {
+                "name": "embellishment",
+                "values": [
+                    "گلدوزی",
+                    "پولک دوزی",
+                    "نواردوزی"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "هندسی",
+                    "ساده"
+                ]
+            },
+            {
+                "name": "neckline",
+                "values": [
+                    "یقه هفت"
+                ]
+            },
+            {
+                "name": "sleeve_type",
+                "values": [
+                    "آستین بلند",
+                    "آستین گشاد"
+                ]
+            }
+        ],
+        "index": 1,
+        "image_path": "torob_images/1.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "کفش",
+                    "گیوه"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "سفید"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "پارچه"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "قلاب بافی",
+                    "ساده"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "پنجه گرد",
+                    "آستین",
+                    "آکسفورد"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "زیره تخت",
+                    "سبک وزن",
+                    "بدون بند"
+                ]
+            }
+        ],
+        "index": 2,
+        "image_path": "torob_images/2.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "حجاب",
+                    "مقنعه",
+                    "مانتو",
+                    "لباس زنانه"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "مشکی"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "یقه دار",
+                    "برگردان"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "جیب دار"
+                ]
+            },
+            {
+                "name": "size_indicators",
+                "values": [
+                    "90"
+                ]
+            }
+        ],
+        "index": 3,
+        "image_path": "torob_images/3.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "پالتو خز",
+                    "پالتو"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "قرمز"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "خز",
+                    "خز مصنوعی"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "sleeve_type",
+                "values": [
+                    "آستین بلند"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "جلوی باز"
+                ]
+            }
+        ],
+        "index": 4,
+        "image_path": "torob_images/4.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "مانتو و شلوار اداری"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "طوسی"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "رافتی"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "پارچه"
+                ]
+            },
+            {
+                "name": "intended_usage",
+                "values": [
+                    "اداری",
+                    "رسمی"
+                ]
+            }
+        ],
+        "index": 5,
+        "image_path": "torob_images/5.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "چادر نماز",
+                    "مقنعه"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "سفید",
+                    "صورتی",
+                    "قرمز"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "پارچه"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "گلدار",
+                    "ساده"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "آستین بلند",
+                    "تمام قد",
+                    "کلاه دار"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "بسته شدن با دکمه"
+                ]
+            }
+        ],
+        "index": 6,
+        "image_path": "torob_images/6.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "باندانا",
+                    "دستمال گردن"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "صورتی هلویی"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "ساتن"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "brand",
+                "values": [
+                    "Palmyra"
+                ]
+            }
+        ],
+        "index": 7,
+        "image_path": "torob_images/7.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "کفش اسپرت",
+                    "کفش راحتی"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "طوسی",
+                    "نقره‌ای"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "جیر"
+                ]
+            },
+            {
+                "name": "closure_type",
+                "values": [
+                    "چسبی"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "پنجه سوراخ‌دار"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "مچ‌بند"
+                ]
+            }
+        ],
+        "index": 8,
+        "image_path": "torob_images/8.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "مانتو دانشجویی بلند"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "سبز زیتونی"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "پنبه"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "sleeve_length",
+                "values": [
+                    "بلند"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "بنددار",
+                    "دکمهدار",
+                    "سرآستین برشخورده",
+                    "شیک",
+                    "جلوبسته"
+                ]
+            }
+        ],
+        "index": 9,
+        "image_path": "torob_images/9.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "نوع محصول",
+                "values": [
+                    "شلوار کردی"
+                ]
+            },
+            {
+                "name": "رنگ",
+                "values": [
+                    "قهوه ای"
+                ]
+            },
+            {
+                "name": "جنس",
+                "values": [
+                    "پنبه"
+                ]
+            },
+            {
+                "name": "طرح",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "اندازه",
+                "values": [
+                    "متوسط"
+                ]
+            },
+            {
+                "name": "ویژگی‌های خاص",
+                "values": [
+                    "دکمه جلو",
+                    "جیب",
+                    "حلقه کمربند"
+                ]
+            }
+        ],
+        "index": 10,
+        "image_path": "torob_images/10.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "انگشتر",
+                    "انگشتر عقیق"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "قرمز",
+                    "نقره‌ای"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "سنگ",
+                    "فلز"
+                ]
+            },
+            {
+                "name": "gemstone",
+                "values": [
+                    "عقیق"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "نگین‌دار",
+                    "رکاب طرح‌دار"
+                ]
+            }
+        ],
+        "index": 11,
+        "image_path": "torob_images/11.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "نوار یراق",
+                    "نوار تزئینی",
+                    "لبه دوزی"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "مشکی"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "تور",
+                    "مروارید"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "مروارید دوزی شده",
+                    "منجوق دوزی شده"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "یراق توری",
+                    "لبه دوزی توری"
+                ]
+            }
+        ],
+        "index": 12,
+        "image_path": "torob_images/12.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "گیره روسری"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "نقره ای",
+                    "طلایی",
+                    "رزگلد"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "فلزی"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "style_feature",
+                "values": [
+                    "سر گوی دار"
+                ]
+            }
+        ],
+        "index": 13,
+        "image_path": "torob_images/13.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "پیراهن",
+                    "سارافون",
+                    "شومیز",
+                    "لباس"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "سبز",
+                    "سفید",
+                    "مشکی",
+                    "کرم"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "نخی",
+                    "پارچه"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده",
+                    "گلدار"
+                ]
+            },
+            {
+                "name": "sleeve_type",
+                "values": [
+                    "آستین بلند"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "مدل کمربند دار",
+                    "ست"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "دکمه دار"
+                ]
+            }
+        ],
+        "index": 14,
+        "image_path": "torob_images/14.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "کلاه نمدی",
+                    "کلاه"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "سفید"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "پشمی",
+                    "نمدی"
+                ]
+            }
+        ],
+        "index": 15,
+        "image_path": "torob_images/15.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "شلوار جین",
+                    "شلوار بوت کات"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "ذغالی",
+                    "طوسی تیره"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "جین",
+                    "دنیم"
+                ]
+            },
+            {
+                "name": "fit",
+                "values": [
+                    "بوت کات",
+                    "دمپا گشاد"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "closure",
+                "values": [
+                    "دکمه",
+                    "زیپ"
+                ]
+            },
+            {
+                "name": "pocket",
+                "values": [
+                    "جیب جلو",
+                    "جیب پشت"
+                ]
+            }
+        ],
+        "index": 16,
+        "image_path": "torob_images/16.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "تل سر",
+                    "هدبند"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "صورتی",
+                    "آبی"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "پلاستیکی",
+                    "مروارید دوزی شده"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده",
+                    "گلدار"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "آویز گل",
+                    "مهره‌های تراش‌خورده",
+                    "سنگ بیضی"
+                ]
+            }
+        ],
+        "index": 17,
+        "image_path": "torob_images/17.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "کفش ورزشی",
+                    "کتانی"
+                ]
+            },
+            {
+                "name": "brand",
+                "values": [
+                    "آدیداس"
+                ]
+            },
+            {
+                "name": "product_name",
+                "values": [
+                    "آدیداس سامبا"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "سفید",
+                    "مشکی",
+                    "خاکستری",
+                    "قهوه ای"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "چرم",
+                    "جیر"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "لژ کوتاه",
+                    "بند دار"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "سه خط آدیداس",
+                    "زیره لاستیکی",
+                    "دوخت طرح دار"
+                ]
+            }
+        ],
+        "index": 18,
+        "image_path": "torob_images/18.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "سرهمی",
+                    "پیراهن آستین بلند"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "آبی روشن",
+                    "بژ"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "جین",
+                    "پنبه"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده"
+                ]
+            },
+            {
+                "name": "sleeve_type",
+                "values": [
+                    "آستین بلند"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "جزئیات بند",
+                    "بستن دکمه",
+                    "جزئیات جیب"
+                ]
+            },
+            {
+                "name": "size_indicator",
+                "values": [
+                    "۲-۱۴ سال"
+                ]
+            }
+        ],
+        "index": 19,
+        "image_path": "torob_images/19.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "تاپ",
+                    "تیشرت بدون آستین"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "مشکی",
+                    "بژ",
+                    "سفید"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "ترکیب پنبه"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "ساده",
+                    "طرح‌دار"
+                ]
+            },
+            {
+                "name": "sleeve_type",
+                "values": [
+                    "آستین حلقه ای",
+                    "بدون آستین"
+                ]
+            },
+            {
+                "name": "style_features",
+                "values": [
+                    "پاپیون",
+                    "بند سرشانه",
+                    "یقه گرد"
+                ]
+            },
+            {
+                "name": "special_features",
+                "values": [
+                    "بسته شدن با زیپ"
+                ]
+            }
+        ],
+        "index": 20,
+        "image_path": "torob_images/20.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "شلوار",
+                    "شلوار دمپا"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "کرم",
+                    "بژ"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "مازراتی"
+                ]
+            },
+            {
+                "name": "style_feature",
+                "values": [
+                    "دمپا",
+                    "تنگ و گشاد"
+                ]
+            }
+        ],
+        "index": 21,
+        "image_path": "torob_images/21.jpeg"
+    },
+    {
+        "entities": [
+            {
+                "name": "product_type",
+                "values": [
+                    "تیشرت"
+                ]
+            },
+            {
+                "name": "color",
+                "values": [
+                    "مشکی",
+                    "سفید",
+                    "قرمز",
+                    "سبز"
+                ]
+            },
+            {
+                "name": "material",
+                "values": [
+                    "نخی"
+                ]
+            },
+            {
+                "name": "pattern",
+                "values": [
+                    "طرح گرافیکی"
+                ]
+            },
+            {
+                "name": "sleeve_type",
+                "values": [
+                    "آستین کوتاه"
+                ]
+            },
+            {
+                "name": "neckline",
+                "values": [
+                    "یقه گرد"
+                ]
+            },
+            {
+                "name": "print",
+                "values": [
+                    "تصویر علی دایی"
+                ]
+            },
+            {
+                "name": "brand",
+                "values": [
+                    "بدروز"
+                ]
+            }
+        ],
+        "index": 22,
+        "image_path": "torob_images/22.jpeg"
+    }
+]
