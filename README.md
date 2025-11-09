@@ -110,7 +110,7 @@ docker-compose up --build
 ```
 
 
-### Running the Backend
+###🧩 Run Backend Manually
 
 Start the FastAPI server:
 ```bash
@@ -118,8 +118,7 @@ python src/main.py
 ```
 The API will be available at `http://localhost:8000`
 
-### Running the Frontend
-
+###💠 Run Frontend Manually
 Inside the `frontend` directory:
 ```bash
 npm run dev
