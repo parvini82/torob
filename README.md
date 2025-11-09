@@ -98,6 +98,18 @@ The workflow ensures modularity, fault tolerance, and easy extensions for custom
 
 ## 💻 Usage
 
+### 🐳 Run with Docker Compose (recommended)
+
+To start the entire stack (backend and frontend) using Docker Compose:
+
+```bash
+# From the project root
+docker compose up --build
+# or, if using the older CLI
+docker-compose up --build
+```
+
+
 ### Running the Backend
 
 Start the FastAPI server:
@@ -116,17 +128,6 @@ yarn dev
 ```
 Visit `http://localhost:3000` in your browser.
 
-
-### 🐳 Run with Docker Compose (recommended)
-
-To start the entire stack (backend and frontend) using Docker Compose:
-
-```bash
-# From the project root
-docker compose up --build
-# or, if using the older CLI
-docker-compose up --build
-```
 
 ---
 
