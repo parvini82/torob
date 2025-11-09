@@ -116,12 +116,16 @@ yarn dev
 ```
 Visit `http://localhost:3000` in your browser.
 
-### Using Docker
 
-To build and run the container:
+### 🐳 Run with Docker Compose (recommended)
+
+To start the entire stack (backend and frontend) using Docker Compose:
+
 ```bash
-docker build -t torob .
-docker run -p 8000:8000 torob
+# From the project root
+docker compose up --build
+# or, if using the older CLI
+docker-compose up --build
 ```
 
 ---
@@ -130,6 +134,13 @@ docker run -p 8000:8000 torob
 
 We have conducted a set of challenging tests using tricky, complex product images to benchmark the robustness of our AI models. The test images and detailed results can be found in the [`docs/ChallengingExamples`](docs/ChallengingExamples) folder.
 
+We also maintain an *experimental* suite for comparing different LLMs and VLMs and for testing advanced scenarios
+(e.g., long-context prompts, noisy/occluded images, domain-specific vocabularies).  
+The code lives on the `experiment/model-eval` branch, and results are committed to:
+
+- Branch: `experiment/model-eval`
+
+> Clone the branch to reproduce or extend these experiments.
 
 ---
 
